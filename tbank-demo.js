@@ -8,6 +8,27 @@ function sign(fields,password){
  const values={...fields,Password:password};
  return crypto.createHash("sha256").update(Object.keys(values).filter(k=>k!=="Token"&&values[k]!==null&&typeof values[k]!=="object").sort().map(k=>String(values[k])).join(""),"utf8").digest("hex");
 }
+// API endpoint and hosted payment form use different T-Bank hostnames.
+// Allow only the officially documented payment hosts (exact hostname match).
+function trustedPaymentUrl(value){
+ if(typeof value!=="string")return false;
+ try{
+  const url=new URL(value);
+  return url.protocol==="https:" && !url.username && !url.password && !url.port &&
+   ["securepay.tinkoff.ru","securepayments.tinkoff.ru"].includes(url.hostname);
+ }catch{return false}
+}
+function safeBankFailure(result){
+ const redact=value=>{
+  if(typeof value!=="string")return undefined;
+  let clean=value.slice(0,300);
+  for(const secret of [process.env.TBANK_DEMO_PASSWORD,process.env.TBANK_DEMO_TERMINAL]){
+   if(secret)clean=clean.split(secret).join("[redacted]");
+  }
+  return clean.slice(0,180);
+ };
+ return {success:result?.Success===true,errorCode:redact(String(result?.ErrorCode??"unknown")),message:redact(result?.Message),details:redact(result?.Details),hasPaymentUrl:typeof result?.PaymentURL==="string"};
+}
 const configured=()=>Boolean(process.env.TBANK_DEMO_TERMINAL&&process.env.TBANK_DEMO_PASSWORD&&process.env.TBANK_DEMO_TERMINAL.endsWith("DEMO"));
 async function bank(method,fields){
  const body={...fields,TerminalKey:process.env.TBANK_DEMO_TERMINAL};
@@ -32,7 +53,7 @@ function registerTestPayments(app,pool,getCatalog){
    const orderId=crypto.randomUUID();
    await pool.query("INSERT INTO viona_demo_payments(order_id,telegram_id,amount_kopecks,status) VALUES($1,$2,$3,'NEW')",[orderId,user.id,amount]);
    const result=await bank("Init",{Amount:amount,OrderId:orderId,Description:"VIONA DEMO: "+selected.map(p=>String(p.title)).join(", ").slice(0,140),NotificationURL:(process.env.PUBLIC_BASE_URL||"https://viona.space").replace(/\/$/,"")+"/api/payments/test/notification"});
-   if(result.Success!==true||!result.PaymentURL||!/^https:\/\//.test(result.PaymentURL)||!String(result.PaymentURL).startsWith("https://securepay.tinkoff.ru/"))return res.status(502).json({error:"Банк не создал тестовый платёж."});
+   if(result.Success!==true||!trustedPaymentUrl(result.PaymentURL)){console.warn("Demo payment Init bank response:",safeBankFailure(result));return res.status(502).json({error:"Банк не создал тестовый платёж."})}
    await pool.query("UPDATE viona_demo_payments SET payment_id=$2,status='INITIATED' WHERE order_id=$1",[orderId,String(result.PaymentId)]);
    res.json({paymentUrl:result.PaymentURL,orderId,mode:"demo"});
   }catch(e){console.error("Demo payment Init:",e.message,"network:",safeNetworkError(e));res.status(503).json({error:"Не удалось создать тестовый платёж."})}
