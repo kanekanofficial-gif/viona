@@ -274,3 +274,15 @@ html[data-world="de"] .world-art-de{inset:0!important;max-width:100%;min-width:0
 html[data-world="de"] .hero-copy{position:relative;z-index:3;min-width:0}
 html[data-world="de"] .hero h1{font-size:clamp(42px,5vw,70px);overflow-wrap:break-word}
 @media(max-width:780px){html[data-world="de"] .hero{grid-template-columns:minmax(0,1fr)!important;overflow:hidden}html[data-world="de"] .hero-art{width:100%;min-width:0}}
+
+/* Procedural animated cathedral, not a photograph */
+html[data-world="de"] .cathedral-stage{position:absolute;inset:0;overflow:hidden;background:radial-gradient(ellipse at 50% 34%,#393a4b,#10111a 65%,#06070d)}
+html[data-world="de"] .cathedral-stage canvas{display:block;width:100%;height:100%;touch-action:pan-y}
+html[data-world="de"] .cathedral-fallback{position:absolute;inset:0;display:grid;place-items:center;color:#d5bd9f;font:700 54px Georgia,serif;letter-spacing:12px;opacity:.4;pointer-events:none}
+html[data-world="de"] .cathedral-fallback span{font-size:20px}
+html[data-world="de"] .cathedral-stage.ready .cathedral-fallback{display:none}
+html[data-world="de"] .gothic-vignette{pointer-events:none;z-index:2;background:linear-gradient(180deg,#05070d00 48%,#0708113b 75%,#06070be8 100%),radial-gradient(ellipse at 50% 40%,transparent 48%,#05050c7a 100%)!important}
+html[data-world="de"] .gothic-title,html[data-world="de"] .gothic-subtitle{z-index:3;pointer-events:none}
+html[data-world="de"] .gothic-title{font-size:clamp(27px,3vw,42px)!important;bottom:52px!important}
+html[data-world="de"] .world-art-de{background:#0a0b12}
+@media(prefers-reduced-motion:reduce){html[data-world="de"] .cathedral-stage canvas{animation:none}}
