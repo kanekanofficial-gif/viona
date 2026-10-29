@@ -21,4 +21,5 @@ app.get("/auth/telegram/widget",(req,res)=>{res.set("Cache-Control","no-store");
 app.get("/auth/telegram/start",(_req,res)=>res.redirect(302,"/#contact"));
 app.post("/api/auth/logout",(_req,res)=>{cookie(res,"viona_session","",0);res.json({ok:true})});
 }
-module.exports={register};
+function getUser(req){const session=verify(cookies(req).viona_session);if(!session||typeof session.exp!=="number"||session.exp<Date.now()||typeof session.id!=="string"||!/^\d{1,20}$/.test(session.id))return null;return {id:session.id,name:session.name,username:session.username,picture:session.picture||null}}
+module.exports={register,getUser};
