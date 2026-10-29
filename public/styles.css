@@ -76,3 +76,71 @@ body{background:#0c080b}
 .drawer-footer .btn:disabled{opacity:.6;cursor:not-allowed}
 @media(max-width:650px){.glass{backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px)}.aurora{display:none}.fog{display:none}.product-card:hover{transform:none}}
 @media(prefers-reduced-motion:reduce){.hero-copy,.hero-art,.orb,.moon,.ghost,.pumpkin,.sparkle{animation:none!important}}
+
+
+/* Five complete visual worlds — shared functionality, distinct editorial systems */
+html{min-height:100%;scrollbar-gutter:stable}body{min-height:100dvh;display:flex;flex-direction:column}main{flex:1 0 auto;position:relative;isolation:isolate}footer{flex-shrink:0;width:100%;margin-top:auto;position:relative;z-index:2}body:has(.drawer.open){overflow:hidden}
+.world-select-wrap{display:flex;align-items:center;gap:7px;min-width:0;padding:2px 7px;border-radius:14px;background:#ffffff13;border:1px solid #ffffff30;box-shadow:inset 0 1px 0 #ffffff38}.world-icon{color:var(--amber);font-size:15px}.world-select-wrap select{background:transparent;border:0;outline:0;color:var(--text);padding:9px 4px;font-size:11px;font-weight:700;max-width:155px;cursor:pointer}.world-select-wrap option{background:#1b1320;color:#fff}.world-select-wrap:focus-within{outline:2px solid var(--amber);outline-offset:2px}
+.world-atmosphere{position:absolute;inset:0;z-index:-1;overflow:hidden;pointer-events:none}.world-shape{position:absolute;border:1px solid currentColor;opacity:.12;pointer-events:none}.shape-one{width:360px;height:360px;border-radius:50%;right:-160px;top:120px}.shape-two{width:220px;height:220px;left:-130px;top:900px;border-radius:50%}.shape-three{width:360px;height:360px;right:-170px;bottom:160px;border-radius:50%}
+.world-identity{display:flex;align-items:center;gap:12px;margin-bottom:22px;font-size:9px;letter-spacing:2px;font-weight:800;color:var(--amber)}#worldMark{padding:8px 12px;border:1px solid currentColor;border-radius:30px}.world-art{display:none;position:absolute;inset:0;pointer-events:none}.world-motif{position:absolute;right:0;top:0;font-size:75px;line-height:1;opacity:.72;text-shadow:0 0 30px currentColor}.world-art-caption{position:absolute;bottom:8%;right:2%;font-size:10px;letter-spacing:3px;font-weight:800}.world-art-ru{display:block}.world-art-ru .world-motif{color:#ff9c43}
+.hero,.section{width:100%}.section{min-height:0}.hero{min-height:570px}.glass{will-change:auto}.product-card{content-visibility:auto;contain-intrinsic-size:auto 290px}.product-card:focus-within{content-visibility:visible}
+@media(max-width:780px){.head-actions{gap:6px}.world-select-wrap select{max-width:112px}.world-icon{display:none}.hero{min-height:0}.world-art-caption{right:12%}}
+@media(max-width:650px){.top{flex-wrap:wrap}.head-actions{margin-left:auto}.world-select-wrap{padding:1px 3px}.world-select-wrap select{font-size:10px;max-width:104px}.hero{padding-top:40px}.world-identity{font-size:8px;gap:6px;letter-spacing:1px}.world-motif{font-size:50px;right:4%}footer{min-height:110px}.world-shape{opacity:.07}}
+/* EN: London after-dark editorial, electric cobalt and copper, serif typography */
+html[data-world="en"]{--bg:#07121e;--surface:#c4e6ff0a;--text:#edf7ff;--muted:#a2b5c8;--orange:#f8a85a;--amber:#9cd8ff;--line:#9bcaff38}
+html[data-world="en"] body{font-family:Manrope,Arial,sans-serif;background:#07121e}
+html[data-world="en"] .ambient{background:radial-gradient(ellipse at 78% 17%,#154e8c80,transparent 36%),radial-gradient(ellipse at 13% 75%,#ca79322e,transparent 43%),linear-gradient(145deg,#081321,#040a11)}
+html[data-world="en"] .moon{background:radial-gradient(circle at 35% 30%,#e8f7ff,#6ca6d6 65%,#234b77);box-shadow:0 0 90px 40px #5ba4ef30}
+html[data-world="en"] .brand b,html[data-world="en"] .primary{background:linear-gradient(135deg,#b7e6ff,#4f9ed5);color:#08243b}
+html[data-world="en"] h1,html[data-world="en"] h2{font-family:Georgia,"Times New Roman",serif;font-weight:700;letter-spacing:-1.8px}
+html[data-world="en"] h1 span,html[data-world="en"] h2 span{background:linear-gradient(110deg,#fff1d5,#86cbff);background-clip:text}
+html[data-world="en"] .hero-art .orb{border-radius:160px 160px 30px 30px;transform:rotate(-3deg);background:linear-gradient(140deg,#d5edff40,#2664a41b)}
+html[data-world="en"] .product-card{border-radius:10px 26px 10px 26px}
+html[data-world="en"] .world-art-en{display:block;color:#a6d6ff}html[data-world="en"] .world-art-ru{display:none}
+html[data-world="en"] .ghost,html[data-world="en"] .pumpkin{opacity:.18;filter:none}
+html[data-world="en"] .world-shape{border-radius:0;transform:rotate(25deg)}
+/* JP: neon Tokyo night, cherry blossoms, signage and refined compact rhythm */
+html[data-world="ja"]{--bg:#0a0b21;--surface:#ffffff0b;--text:#f8f0ff;--muted:#b9b1d5;--orange:#ff6db4;--amber:#ffb9de;--line:#ffc0e840}
+html[data-world="ja"] body{font-family:"Noto Sans JP",Manrope,sans-serif;background:#090a21}
+html[data-world="ja"] .ambient{background:radial-gradient(ellipse at 72% 22%,#fd3c9b46,transparent 36%),radial-gradient(ellipse at 10% 65%,#5442e466,transparent 45%),linear-gradient(155deg,#0c0b2b,#080918)}
+html[data-world="ja"] .moon{background:radial-gradient(circle at 40% 30%,#fff4fb,#ffb2df 65%,#985ab0);box-shadow:0 0 100px 30px #ff6ab43b}
+html[data-world="ja"] .brand b,html[data-world="ja"] .primary{background:linear-gradient(130deg,#ffc0df,#fa5ca7);color:#3c1032}
+html[data-world="ja"] h1 span,html[data-world="ja"] h2 span{background:linear-gradient(110deg,#ffd6ed,#ff6bba 55%,#bda5ff);background-clip:text}
+html[data-world="ja"] .hero-art .orb{border-radius:40px 10px 40px 10px;transform:rotate(-5deg);box-shadow:inset 0 1px 2px #fff8,0 20px 70px #fa4da333}
+html[data-world="ja"] .product-card{border-radius:9px 30px 9px 30px;border-left:3px solid #ff85c4aa}
+html[data-world="ja"] .world-art-ja{display:block;color:#ffb3dd}html[data-world="ja"] .world-art-ru{display:none}
+html[data-world="ja"] .world-motif{font-family:serif;font-size:95px}html[data-world="ja"] .ghost,html[data-world="ja"] .pumpkin{opacity:0}
+html[data-world="ja"] .world-shape{border-radius:12px;transform:rotate(45deg);border-color:#f78bd7}
+html[data-world="ja"] .eyebrow{letter-spacing:3px}
+/* DE: modern Bauhaus architecture, industrial graphite, precise geometry */
+html[data-world="de"]{--bg:#111513;--surface:#d5e2da09;--text:#f1f4ee;--muted:#b0bdb5;--orange:#e0ff6c;--amber:#d5fb8c;--line:#e5f5d83a}
+html[data-world="de"] body{background:#111513}
+html[data-world="de"] .ambient{background:radial-gradient(ellipse at 78% 13%,#657f4a38,transparent 36%),linear-gradient(135deg,#151c18,#0b0e0c)}
+html[data-world="de"] .moon{background:radial-gradient(circle at 40% 30%,#f4ffcb,#8ba66b 68%,#52644d);box-shadow:0 0 70px 20px #c7f39b1a}
+html[data-world="de"] .brand b,html[data-world="de"] .primary{background:#d9f58d;color:#182414;box-shadow:none}
+html[data-world="de"] h1,html[data-world="de"] h2{font-weight:800;letter-spacing:-2.5px;text-transform:uppercase}
+html[data-world="de"] h1 span,html[data-world="de"] h2 span{background:linear-gradient(120deg,#e8ffb3,#94b985);background-clip:text}
+html[data-world="de"] .glass{border-radius:5px;box-shadow:inset 0 1px #ffffff40,0 12px 32px #0005}
+html[data-world="de"] .product-card{border-radius:3px;border-top:3px solid #d5fb8c90}
+html[data-world="de"] .btn,html[data-world="de"] .icon-button,html[data-world="de"] .small-btn,html[data-world="de"] .search-wrap,html[data-world="de"] .filters button{border-radius:3px}
+html[data-world="de"] .hero-art .orb{border-radius:4px;transform:rotate(0)}
+html[data-world="de"] .world-art-de{display:block;color:#d5fb8c}html[data-world="de"] .world-art-ru{display:none}
+html[data-world="de"] .ghost,html[data-world="de"] .pumpkin{opacity:0}
+html[data-world="de"] .world-shape{border-radius:0;transform:rotate(0);border-width:2px}
+html[data-world="de"] .eyebrow{font-family:monospace}
+/* Femboy: fictional soft-pop kawaii theme, lilac-pink pearlescence, heart details */
+html[data-world="femboy"]{--bg:#190f25;--surface:#ffd4f514;--text:#fff1fc;--muted:#d9b8d8;--orange:#ff9bda;--amber:#ffd1f0;--line:#ffe5fa58}
+html[data-world="femboy"] body{background:#190f25}
+html[data-world="femboy"] .ambient{background:radial-gradient(ellipse at 80% 20%,#ff9bdb61,transparent 39%),radial-gradient(ellipse at 20% 65%,#a18eff6b,transparent 46%),linear-gradient(150deg,#251330,#130d22)}
+html[data-world="femboy"] .moon{background:radial-gradient(circle at 35% 30%,#fff8ff,#f5bbef 68%,#a47cbf);box-shadow:0 0 110px 35px #f4a0f445}
+html[data-world="femboy"] .brand b,html[data-world="femboy"] .primary{background:linear-gradient(130deg,#fff0ff,#ffa7dd);color:#572049}
+html[data-world="femboy"] h1 span,html[data-world="femboy"] h2 span{background:linear-gradient(110deg,#ffe9fa,#ff9ed9,#b9a8ff);background-clip:text}
+html[data-world="femboy"] .glass{border-color:#ffe5f973;background:linear-gradient(145deg,#ffffff37,#ffffff07 50%,#ff8ddc18);box-shadow:inset 0 2px 2px #ffffff72,0 15px 40px #6b29713b}
+html[data-world="femboy"] .product-card{border-radius:34px}
+html[data-world="femboy"] .btn,html[data-world="femboy"] .icon-button,html[data-world="femboy"] .small-btn{border-radius:25px}
+html[data-world="femboy"] .hero-art .orb{border-radius:65px;transform:rotate(7deg)}
+html[data-world="femboy"] .world-art-femboy{display:block;color:#ffd1f0}html[data-world="femboy"] .world-art-ru{display:none}
+html[data-world="femboy"] .world-motif{font-size:100px}
+html[data-world="femboy"] .ghost{opacity:.35}html[data-world="femboy"] .pumpkin{opacity:.15}
+html[data-world="femboy"] .world-shape{border-radius:42% 58% 56% 44%;border-color:#ffd0f1}
+@media(prefers-reduced-motion:reduce){.world-shape,.world-art{animation:none!important}}
