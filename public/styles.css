@@ -298,7 +298,29 @@ html[data-world="de"] .cathedral-light{position:absolute;inset:0;background:radi
 @keyframes cathedral-light{from{opacity:.35}to{opacity:.8}}
 @media(prefers-reduced-motion:reduce){html[data-world="de"] .cathedral-svg-scene img,html[data-world="de"] .cathedral-fog,html[data-world="de"] .cathedral-light{animation:none!important}}
 /* Sorting popover is portaled to body, above cards and transformed sections */
-body>#sortOptions.sort-options{position:fixed!important;z-index:2147483000!important;inset:auto!important;width:220px;max-width:calc(100vw - 20px);background:linear-gradient(145deg,#41323af7,#15141afc)!important;box-shadow:0 24px 70px #000d,inset 0 1px #ffffff58;isolation:isolate}
+body>#sortOptions.sort-options{position:fixed!important;z-index:2147483000!important;right:auto!important;bottom:auto!important;width:220px;max-width:calc(100vw - 20px);background:linear-gradient(145deg,#41323af7,#15141afc)!important;box-shadow:0 24px 70px #000d,inset 0 1px #ffffff58;isolation:isolate}
 body>#sortOptions.sort-options[hidden]{display:none!important}
 .sort-trigger{position:relative;z-index:1}
 .currency-note{font-size:11px;color:var(--muted);margin:-9px 0 18px;line-height:1.5}.currency-note:empty{display:none}
+/* FIX: the previous inset:auto!important overrode inline top/left and stranded the menu at 0,0. */
+body>#sortOptions.sort-options{
+  position:fixed!important;
+  right:auto!important;
+  bottom:auto!important;
+  margin:0!important;
+  transform-origin:top right;
+  z-index:2147483000!important;
+  border:1px solid #ffffff63!important;
+  border-radius:20px!important;
+  background:linear-gradient(155deg,#40333df9,#17151efb)!important;
+  box-shadow:0 25px 70px #000d,inset 0 1px #ffffff50;
+  backdrop-filter:blur(18px);
+  -webkit-backdrop-filter:blur(18px);
+  animation:sort-pop-in .23s cubic-bezier(.2,.8,.2,1) both;
+}
+body>#sortOptions.sort-options[hidden]{display:none!important}
+body>#sortOptions.sort-options button{transition:background .18s ease,transform .18s ease,color .18s ease}
+body>#sortOptions.sort-options button:hover{transform:translateX(3px)}
+@keyframes sort-pop-in{from{opacity:0;transform:translateY(-9px) scale(.96)}to{opacity:1;transform:translateY(0) scale(1)}}
+html[data-world="de"] .gothic-title{font-size:clamp(34px,4vw,56px)!important;letter-spacing:.11em!important;text-shadow:0 3px 20px #000d}
+@media(prefers-reduced-motion:reduce){body>#sortOptions.sort-options{animation:none!important}}
