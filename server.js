@@ -4,6 +4,7 @@ const { Pool } = require("pg");
 const app = express();
 const {register:registerTelegramAuth}=require("./telegram-auth");
 const {registerV16}=require("./v16-api");
+const {initializeDatabase}=require("./db-init");
 const PORT = process.env.PORT || 3000;
 app.use(express.json({limit:"1mb"}));
 app.use(express.static(path.join(__dirname,"public")));
@@ -19,6 +20,9 @@ const demo = [
 {id:6,title:"Custom Development",category:"Услуги",description:"Опиши задачу и найди разработчика для своего проекта.",price:0,icon:"↗",tag:"Заказ"},
 {id:7,title:"MAX Bot Starter",category:"Боты",description:"Стартовый шаблон чат-бота для мессенджера MAX: обработка сообщений, команды и структура проекта. Концепт товара, не готовый подключённый бот.",price:0,icon:"✦",tag:"MAX / Шаблон"}
 ];
+const start=async()=>{
+const ready=await initializeDatabase(pool);
+if(pool&&!ready){console.error("VIONA: database schema unavailable; persistent APIs disabled");await pool.end().catch(()=>{});pool=null}
 registerV16(app,pool,async()=>{if(pool){try{const r=await pool.query("SELECT id,title,category,description,price,icon,tag FROM products ORDER BY id");return r.rows.some(p=>String(p.title).toLowerCase().includes("max bot"))?r.rows:[...r.rows,demo[6]]}catch(e){console.error("Catalog fallback:",e.message)}}return demo});
 app.get("/api/health",(_req,res)=>res.json({ok:true,app:"VIONA"}));
 app.get("/api/products",async(_req,res)=>{
@@ -33,3 +37,5 @@ app.post("/api/request",async(req,res)=>{
 });
 app.get("*path",(_req,res)=>res.sendFile(path.join(__dirname,"public","index.html")));
 app.listen(PORT,()=>console.log("VIONA listening on "+PORT));
+};
+start().catch(err=>{console.error("VIONA startup failed:",err);process.exitCode=1});
