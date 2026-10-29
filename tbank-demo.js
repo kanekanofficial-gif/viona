@@ -2,6 +2,8 @@
 const crypto=require("node:crypto");
 const {getUser}=require("./telegram-auth");
 const BASE="https://securepay.tinkoff.ru/v2";
+// Only log network error codes, never request bodies, terminal credentials or payment tokens.
+function safeNetworkError(err){const cause=err?.cause;const code=typeof cause?.code==="string"?cause.code:"unknown";const syscall=typeof cause?.syscall==="string"?cause.syscall:"unknown";const name=typeof err?.name==="string"?err.name:"Error";return {name,code,syscall,aborted:name==="AbortError"||name==="TimeoutError"};}
 function sign(fields,password){
  const values={...fields,Password:password};
  return crypto.createHash("sha256").update(Object.keys(values).filter(k=>k!=="Token"&&values[k]!==null&&typeof values[k]!=="object").sort().map(k=>String(values[k])).join(""),"utf8").digest("hex");
@@ -33,7 +35,7 @@ function registerTestPayments(app,pool,getCatalog){
    if(result.Success!==true||!result.PaymentURL||!/^https:\/\//.test(result.PaymentURL)||!String(result.PaymentURL).startsWith("https://securepay.tinkoff.ru/"))return res.status(502).json({error:"Банк не создал тестовый платёж."});
    await pool.query("UPDATE viona_demo_payments SET payment_id=$2,status='INITIATED' WHERE order_id=$1",[orderId,String(result.PaymentId)]);
    res.json({paymentUrl:result.PaymentURL,orderId,mode:"demo"});
-  }catch(e){console.error("Demo payment Init:",e.message);res.status(503).json({error:"Не удалось создать тестовый платёж."})}
+  }catch(e){console.error("Demo payment Init:",e.message,"network:",safeNetworkError(e));res.status(503).json({error:"Не удалось создать тестовый платёж."})}
  });
  app.post("/api/payments/test/notification",async(req,res)=>{
   if(!configured()||!pool)return res.sendStatus(503);
