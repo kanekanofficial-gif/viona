@@ -62,3 +62,64 @@
 .detail-layout .viona-preview-visual .viona-rich-code{height:100%;border:0}
 .detail-layout .viona-preview-visual .viona-rich-code pre{max-height:220px;overflow:hidden;font-size:10px}
 }
+
+/* VIONA: allow visitors to scroll the whole product detail and reach purchase controls. */
+@media (min-width:721px){
+ .v15-dialog:has(.detail-layout){
+  height:auto!important;
+  max-height:calc(100dvh - 28px)!important;
+  overflow-y:auto!important;
+  overflow-x:hidden!important;
+  overscroll-behavior:contain;
+  scrollbar-width:thin;
+  scrollbar-color:#bb886e #17151e;
+ }
+ .detail-layout:has(.viona-rich-details){
+  height:auto!important;
+  min-height:780px!important;
+  grid-template-rows:minmax(450px,auto) minmax(320px,auto)!important;
+  align-items:start!important;
+ }
+ .detail-layout .detail-visual.viona-preview-visual{
+  height:450px!important;
+  min-height:450px!important;
+ }
+ .detail-layout .viona-preview-visual .viona-rich-code pre{
+  font-size:13px!important;
+  line-height:1.85!important;
+  padding:20px 20px 75px!important;
+ }
+ .detail-layout .detail-info{
+  min-height:320px!important;
+  overflow:visible!important;
+  padding-bottom:24px!important;
+ }
+ .detail-layout>.viona-rich-details{
+  overflow:visible!important;
+  min-height:0!important;
+ }
+ .detail-layout>.viona-rich-details .viona-rich-description{
+  font-size:16px!important;
+  line-height:1.8!important;
+ }
+ .detail-layout>.viona-rich-details .viona-rich-features span{
+  font-size:13px!important;
+  padding:11px 14px!important;
+ }
+}
+@media(max-width:720px){
+ .v15-dialog:has(.detail-layout){
+  overflow-y:auto!important;
+  overscroll-behavior:contain;
+  scrollbar-width:thin;
+ }
+ .detail-layout .detail-visual.viona-preview-visual{
+  height:340px!important;
+  min-height:340px!important;
+ }
+ .detail-layout .viona-preview-visual .viona-rich-code pre{
+  max-height:none!important;
+  font-size:11px!important;
+  line-height:1.7!important;
+ }
+}
