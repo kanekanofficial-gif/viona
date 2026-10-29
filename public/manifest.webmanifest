@@ -1,0 +1,25 @@
+{
+  "id": "/",
+  "name": "VIONA — Digital Market",
+  "short_name": "VIONA",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#101018",
+  "theme_color": "#101018",
+  "description": "Цифровой маркетплейс VIONA",
+  "icons": [
+    {
+      "src": "/viona-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/favicon.png",
+      "sizes": "32x32",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}
