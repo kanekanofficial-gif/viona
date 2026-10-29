@@ -49,3 +49,28 @@ $("#panelBody").addEventListener("click",e=>{const b=e.target.closest("[data-rem
 $("#requestForm").addEventListener("submit",async e=>{e.preventDefault();const form=e.currentTarget,button=form.querySelector("button[type=submit]");if(!form.reportValidity())return;button.disabled=true;$("#formStatus").textContent="…";try{const data=Object.fromEntries(new FormData(form));const res=await fetch("/api/request",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(data)});if(!res.ok)throw Error();const result=await res.json().catch(()=>({}));if(res.status===202){$("#formStatus").textContent=lang==="en"?"Demo mode: request was not saved.":lang==="de"?"Demo-Modus: Anfrage nicht gespeichert.":lang==="ja"?"デモモード：保存されませんでした。":"Демо-режим: заявка не сохранена. Нужна база данных.";return}form.reset();$("#formStatus").textContent=t.sent}catch{$("#formStatus").textContent=t.error}finally{button.disabled=false}});
 async function load(){try{const res=await fetch("/api/products");if(!res.ok)throw Error("API");const json=await res.json();products=Array.isArray(json)?json:Array.isArray(json.products)?json.products:[];products=products.map(p=>({...p,price:Number(p.price)||0}));render();renderPanel()}catch{$("#products").innerHTML='<div class="empty">'+safe(t.error)+'</div>';$("#resultCount").textContent="00"}}
 localize();updateCounters();load();
+
+/* Compositor-first motion: no animation libraries, no scroll-layout thrashing. */
+(function initMotion(){
+ const reduced=matchMedia("(prefers-reduced-motion: reduce)").matches;
+ const progress=document.getElementById("scrollProgress");
+ let frame=0;
+ function updateProgress(){frame=0;const max=document.documentElement.scrollHeight-innerHeight;progress.style.transform="scaleX("+(max>0?Math.min(1,Math.max(0,scrollY/max)):0)+")"}
+ addEventListener("scroll",()=>{if(!frame)frame=requestAnimationFrame(updateProgress)},{passive:true});
+ addEventListener("resize",()=>{if(!frame)frame=requestAnimationFrame(updateProgress)},{passive:true});
+ updateProgress();
+ if(reduced||!("IntersectionObserver" in window))return;
+ document.documentElement.classList.add("js-motion");
+ const io=new IntersectionObserver(entries=>{for(const entry of entries){if(entry.isIntersecting){entry.target.classList.add("is-visible");io.unobserve(entry.target)}}},{threshold:.08,rootMargin:"0px 0px 40px 0px"});
+ const mark=root=>{const targets=root.querySelectorAll?.(".section-top, .studio-grid article, .contact-copy, .contact form, .product");if(!targets)return;for(const el of targets){if(el.classList.contains("reveal"))continue;el.classList.add("reveal");io.observe(el)}};
+ mark(document);
+ const productsRoot=document.getElementById("products");
+ if(productsRoot){const mo=new MutationObserver(()=>mark(productsRoot));mo.observe(productsRoot,{childList:true})}
+ if(matchMedia("(hover:hover) and (pointer:fine)").matches){
+  const art=document.querySelector(".art-frame");
+  let pointerFrame=0,x=50,y=25;
+  art?.addEventListener("pointermove",e=>{const rect=art.getBoundingClientRect();x=(e.clientX-rect.left)/rect.width*100;y=(e.clientY-rect.top)/rect.height*100;if(pointerFrame)return;pointerFrame=requestAnimationFrame(()=>{art.style.setProperty("--mx",x+"%");art.style.setProperty("--my",y+"%");pointerFrame=0})},{passive:true});
+  art?.addEventListener("pointerleave",()=>{art.style.setProperty("--mx","50%");art.style.setProperty("--my","25%")});
+  productsRoot?.addEventListener("pointermove",e=>{const card=e.target.closest(".product");if(!card)return;const rect=card.getBoundingClientRect();card.style.setProperty("--card-x",(e.clientX-rect.left)+"px");card.style.setProperty("--card-y",(e.clientY-rect.top)+"px")},{passive:true});
+ }
+})();
