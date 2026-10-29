@@ -2,9 +2,11 @@ const express = require("express");
 const path = require("path");
 const { Pool } = require("pg");
 const app = express();
+const {register:registerTelegramAuth}=require("./telegram-auth");
 const PORT = process.env.PORT || 3000;
 app.use(express.json({limit:"1mb"}));
 app.use(express.static(path.join(__dirname,"public")));
+registerTelegramAuth(app);
 let pool = null;
 if (process.env.DATABASE_URL) pool = new Pool({connectionString:process.env.DATABASE_URL, ssl:{rejectUnauthorized:false}});
 const demo = [
@@ -13,11 +15,12 @@ const demo = [
 {id:3,title:"Discord Utility Bot",category:"Боты",description:"Основа Discord-бота с командами и настройками.",price:690,icon:"✳",tag:"Node.js"},
 {id:4,title:"Game Mod Toolkit",category:"Игры",description:"Инструменты для разрешённых модификаций одиночных игр.",price:390,icon:"⬡",tag:"Инструменты"},
 {id:5,title:"Landing Page Pack",category:"Шаблоны",description:"Набор адаптивных страниц для небольших проектов.",price:350,icon:"▧",tag:"HTML/CSS"},
-{id:6,title:"Custom Development",category:"Услуги",description:"Опиши задачу и найди разработчика для своего проекта.",price:0,icon:"↗",tag:"Заказ"}
+{id:6,title:"Custom Development",category:"Услуги",description:"Опиши задачу и найди разработчика для своего проекта.",price:0,icon:"↗",tag:"Заказ"},
+{id:7,title:"MAX Bot Starter",category:"Боты",description:"Стартовый шаблон чат-бота для мессенджера MAX: обработка сообщений, команды и структура проекта. Концепт товара, не готовый подключённый бот.",price:0,icon:"✦",tag:"MAX / Шаблон"}
 ];
 app.get("/api/health",(_req,res)=>res.json({ok:true,app:"VIONA"}));
 app.get("/api/products",async(_req,res)=>{
- if(pool){try{const r=await pool.query("SELECT id,title,category,description,price,icon,tag FROM products ORDER BY id");return res.json({products:r.rows,source:"database"});}catch(e){console.error(e.message);}}
+ if(pool){try{const r=await pool.query("SELECT id,title,category,description,price,icon,tag FROM products ORDER BY id");return res.json({products:r.rows.some(p=>String(p.title).toLowerCase().includes("max bot"))?r.rows:[...r.rows,demo[6]],source:"database"});}catch(e){console.error(e.message);}}
  res.json({products:demo,source:"demo"});
 });
 app.post("/api/request",async(req,res)=>{
