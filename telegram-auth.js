@@ -1,33 +1,24 @@
 "use strict";
 const crypto=require("node:crypto");
-const ISSUER="https://oauth.telegram.org";
-const JWKS_URL=ISSUER+"/.well-known/jwks.json";
-const CLIENT_ID=process.env.TELEGRAM_CLIENT_ID||"";
-const CLIENT_SECRET=process.env.TELEGRAM_CLIENT_SECRET||"";
+const BOT_TOKEN=process.env.TELEGRAM_BOT_TOKEN||"";
 const SESSION_SECRET=process.env.SESSION_SECRET||"";
+const BOT_USERNAME=(process.env.TELEGRAM_BOT_USERNAME||"viona_appbot").replace(/^@/,"");
 const BASE=(process.env.PUBLIC_BASE_URL||"https://viona.space").replace(/\/$/,"");
-const configured=Boolean(CLIENT_ID&&CLIENT_SECRET&&SESSION_SECRET);
-const callbackUrl=BASE+"/auth/telegram/callback";
-const b64=v=>Buffer.from(v).toString("base64url");
-const hmac=s=>crypto.createHmac("sha256",SESSION_SECRET).update(s).digest("base64url");
-function sign(value){const data=b64(JSON.stringify(value));return data+"."+hmac(data)}
-function verify(value){if(!configured||typeof value!=="string")return null;const [data,mac]=value.split(".");if(!data||!mac)return null;const expected=hmac(data);const a=Buffer.from(mac),b=Buffer.from(expected);if(a.length!==b.length||!crypto.timingSafeEqual(a,b))return null;try{return JSON.parse(Buffer.from(data,"base64url").toString("utf8"))}catch{return null}}
-function cookies(req){return Object.fromEntries((req.headers.cookie||"").split(";").map(x=>{const i=x.indexOf("=");return i<0?["",""]:[x.slice(0,i).trim(),x.slice(i+1).trim()]}).filter(x=>x[0]))}
+const enabled=Boolean(BOT_TOKEN&&SESSION_SECRET.length>=32&&/^[a-zA-Z0-9_]{5,32}$/.test(BOT_USERNAME));
 const secure=BASE.startsWith("https:")?"; Secure":"";
-function setCookie(res,name,value,maxAge){res.append("Set-Cookie",name+"="+value+"; Path=/; HttpOnly; SameSite=Lax"+secure+"; Max-Age="+maxAge)}
-function clearCookie(res,name){setCookie(res,name,"",0)}
-const random=()=>crypto.randomBytes(32).toString("base64url");
+function cookie(res,name,value,maxAge){res.append("Set-Cookie",name+"="+value+"; Path=/; HttpOnly; SameSite=Lax"+secure+"; Max-Age="+maxAge)}
+function cookies(req){const out={};for(const part of (req.headers.cookie||"").split(";")){const pos=part.indexOf("=");if(pos>0)out[part.slice(0,pos).trim()]=part.slice(pos+1).trim()}return out}
+function sign(data){const value=Buffer.from(JSON.stringify(data)).toString("base64url");const mac=crypto.createHmac("sha256",SESSION_SECRET).update(value).digest("base64url");return value+"."+mac}
+function verify(raw){if(!enabled||typeof raw!=="string"||raw.length>3000)return null;const parts=raw.split(".");if(parts.length!==2)return null;const expected=crypto.createHmac("sha256",SESSION_SECRET).update(parts[0]).digest();let actual;try{actual=Buffer.from(parts[1],"base64url")}catch{return null}if(actual.length!==expected.length||!crypto.timingSafeEqual(actual,expected))return null;try{const data=JSON.parse(Buffer.from(parts[0],"base64url").toString("utf8"));return data&&typeof data==="object"?data:null}catch{return null}}
+function validateTelegram(query){if(!enabled)return null;const hash=query.hash;if(typeof hash!=="string"||!/^[0-9a-f]{64}$/i.test(hash))return null;const allowed=["id","first_name","last_name","username","photo_url","auth_date"];const pairs=[];for(const [key,val] of Object.entries(query)){if(key==="hash")continue;if(!allowed.includes(key)||typeof val!=="string"||val.length>500)return null;pairs.push(key+"="+val)}for(const key of ["id","first_name","auth_date"])if(typeof query[key]!=="string")return null;
+const authTime=Number(query.auth_date),now=Math.floor(Date.now()/1000);if(!Number.isSafeInteger(authTime)||authTime>now+60||now-authTime>300)return null;if(!/^\d{1,20}$/.test(query.id))return null;
+const secret=crypto.createHash("sha256").update(BOT_TOKEN).digest();const check=crypto.createHmac("sha256",secret).update(pairs.sort().join("\n")).digest("hex");const a=Buffer.from(hash,"hex"),b=Buffer.from(check,"hex");if(a.length!==b.length||!crypto.timingSafeEqual(a,b))return null;
+return {id:query.id,name:[query.first_name,query.last_name||""].join(" ").trim().slice(0,100),username:(query.username||"").slice(0,100),picture:(query.photo_url||"").startsWith("https://")?query.photo_url.slice(0,500):null,exp:Date.now()+7*86400000}}
 function register(app){
-app.get("/api/auth/config",(_req,res)=>res.json({telegram:configured}));
-app.get("/api/auth/me",(req,res)=>{const user=verify(cookies(req).viona_session);if(!user||user.exp<Date.now())return res.json({user:null});res.set("Cache-Control","no-store");res.json({user:{id:user.id,name:user.name,username:user.username,picture:user.picture||null}})});
-app.get("/auth/telegram/start",(_req,res)=>{if(!configured)return res.status(503).send("Telegram login is not configured.");const state=random(),verifier=random(),nonce=random();const challenge=crypto.createHash("sha256").update(verifier).digest("base64url");setCookie(res,"viona_oauth",sign({state,verifier,nonce,exp:Date.now()+10*60*1000}),600);const params=new URLSearchParams({client_id:CLIENT_ID,redirect_uri:callbackUrl,response_type:"code",scope:"openid profile",state,nonce,code_challenge:challenge,code_challenge_method:"S256"});res.redirect(302,ISSUER+"/auth?"+params)});
-app.get("/auth/telegram/callback",async(req,res)=>{const flow=verify(cookies(req).viona_oauth);clearCookie(res,"viona_oauth");if(!configured||!flow||flow.exp<Date.now()||typeof req.query.state!=="string"||req.query.state!==flow.state||typeof req.query.code!=="string")return res.redirect(302,"/?auth=failed");try{
-const response=await fetch(ISSUER+"/token",{method:"POST",headers:{"Content-Type":"application/x-www-form-urlencoded","Authorization":"Basic "+Buffer.from(CLIENT_ID+":"+CLIENT_SECRET).toString("base64")},body:new URLSearchParams({grant_type:"authorization_code",code:req.query.code,redirect_uri:callbackUrl,code_verifier:flow.verifier}),signal:AbortSignal.timeout(10000)});
-if(!response.ok)throw Error("token exchange failed");const token=await response.json();if(!token.id_token)throw Error("missing ID token");const parts=token.id_token.split(".");if(parts.length!==3)throw Error("invalid JWT");const header=JSON.parse(Buffer.from(parts[0],"base64url"));const claims=JSON.parse(Buffer.from(parts[1],"base64url"));if(header.alg!=="RS256"||typeof header.kid!=="string")throw Error("unsupported JWT algorithm");
-const keysResponse=await fetch(JWKS_URL,{signal:AbortSignal.timeout(10000)});if(!keysResponse.ok)throw Error("JWKS unavailable");const jwks=await keysResponse.json();const jwk=jwks.keys.find(k=>k.kid===header.kid&&k.kty==="RSA");if(!jwk)throw Error("unknown signing key");const key=crypto.createPublicKey({key:jwk,format:"jwk"});if(!crypto.verify("RSA-SHA256",Buffer.from(parts[0]+"."+parts[1]),key,Buffer.from(parts[2],"base64url")))throw Error("bad signature");
-const now=Math.floor(Date.now()/1000);if(claims.iss!==ISSUER||!(claims.aud===CLIENT_ID||(Array.isArray(claims.aud)&&claims.aud.includes(CLIENT_ID)))||!Number.isFinite(claims.exp)||claims.exp<=now||!Number.isFinite(claims.iat)||claims.iat>now+60||claims.nonce!==flow.nonce||!claims.sub)throw Error("invalid claims");
-const user={id:String(claims.sub).slice(0,80),name:String(claims.name||claims.preferred_username||"Telegram user").slice(0,100),username:String(claims.preferred_username||"").slice(0,100),picture:typeof claims.picture==="string"&&claims.picture.startsWith("https://")?claims.picture.slice(0,500):null,exp:Date.now()+7*24*3600*1000};setCookie(res,"viona_session",sign(user),7*24*3600);res.redirect(302,"/?auth=success");
-}catch(e){console.error("Telegram login:",e.message);res.redirect(302,"/?auth=failed")}});
-app.post("/api/auth/logout",(_req,res)=>{clearCookie(res,"viona_session");res.json({ok:true})});
+app.get("/api/auth/config",(_req,res)=>{res.set("Cache-Control","no-store");res.json({telegram:enabled,mode:"widget",botUsername:enabled?BOT_USERNAME:null})});
+app.get("/api/auth/me",(req,res)=>{res.set("Cache-Control","no-store");const session=verify(cookies(req).viona_session);if(!session||typeof session.exp!=="number"||session.exp<Date.now())return res.json({user:null});res.json({user:{id:session.id,name:session.name,username:session.username,picture:session.picture||null}})});
+app.get("/auth/telegram/widget",(req,res)=>{res.set("Cache-Control","no-store");const data=validateTelegram(req.query);if(!data)return res.redirect(303,"/?auth=failed");cookie(res,"viona_session",sign(data),7*86400);res.redirect(303,"/?auth=success")});
+app.get("/auth/telegram/start",(_req,res)=>res.redirect(302,"/#contact"));
+app.post("/api/auth/logout",(_req,res)=>{cookie(res,"viona_session","",0);res.json({ok:true})});
 }
 module.exports={register};
