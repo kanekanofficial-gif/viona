@@ -144,3 +144,49 @@ html[data-world="femboy"] .world-motif{font-size:100px}
 html[data-world="femboy"] .ghost{opacity:.35}html[data-world="femboy"] .pumpkin{opacity:.15}
 html[data-world="femboy"] .world-shape{border-radius:42% 58% 56% 44%;border-color:#ffd0f1}
 @media(prefers-reduced-motion:reduce){.world-shape,.world-art{animation:none!important}}
+
+/* Unified navigation polish */
+.top{border-radius:23px;padding:12px 16px;gap:14px;box-shadow:inset 0 1px 1px #ffffff5a,0 14px 36px #0006}
+.top nav{align-items:center;gap:6px;padding:5px;border:1px solid #ffffff21;background:#ffffff0a;border-radius:18px}
+.top nav a{padding:10px 13px;border-radius:12px;transition:background .2s,color .2s}
+.top nav a:hover,.top nav a:focus-visible{background:#ffffff1b;color:var(--amber)}
+.world-select-wrap{border-radius:16px;padding:3px 10px;min-height:43px;background:linear-gradient(135deg,#ffffff25,#ffffff06);box-shadow:inset 0 1px #ffffff66}
+.world-select-wrap select{min-width:110px;max-width:145px;color:var(--text);appearance:none;-webkit-appearance:none;padding:10px 19px 10px 4px;background:transparent url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='m1 1 5 5 5-5' fill='none' stroke='%23ffca92' stroke-width='1.6'/%3E%3C/svg%3E") no-repeat right center;cursor:pointer}
+.toolbar select{appearance:none;-webkit-appearance:none;padding:12px 34px 12px 14px;border:1px solid #ffffff42;border-radius:14px;background:#241b22 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='m1 1 5 5 5-5' fill='none' stroke='%23ffca92' stroke-width='1.6'/%3E%3C/svg%3E") no-repeat right 12px center}
+.filters{border-radius:16px;padding:3px;background:#00000017}.filters button{border-radius:12px;transition:background .22s,color .22s,transform .22s}
+.icon-button,.profile{border-radius:15px;min-height:41px;transition:background .2s,transform .2s}.icon-button:hover,.profile:hover{background:#ffffff24}
+.drawer{background:linear-gradient(145deg,#ffffff1d,#ffffff06 35%,#ffae6410),#1c141de8;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-left:1px solid #ffffff60;border-radius:30px 0 0 30px;box-shadow:-25px 0 85px #0008;max-width:100vw}
+.drawer-head{position:relative;flex-shrink:0;border-bottom:1px solid #ffffff29;padding-bottom:18px}.drawer-head h2{margin:0;font-size:23px}
+.drawer-content{padding:18px 2px;overscroll-behavior:contain}.drawer-row{border:1px solid #ffffff25;background:#ffffff0b;border-radius:17px;margin:0 0 10px;padding:15px;transition:border-color .2s}.drawer-row:hover{border-color:#ffbb7a6b}
+.drawer-footer{flex-shrink:0}.drawer-footer .note{line-height:1.6}
+.backdrop{background:#08060b9e;backdrop-filter:blur(3px)}
+.mobile-nav{border-radius:23px;box-shadow:inset 0 1px #ffffff70,0 8px 25px #0008}
+.mobile-nav a,.mobile-nav button{border-radius:13px;padding:4px 8px;transition:background .2s}
+.mobile-nav a:active,.mobile-nav button:active{background:#ffffff25}
+@media(max-width:650px){.top{gap:8px}.world-select-wrap select{max-width:105px;min-width:0}.drawer{border-radius:24px 24px 0 0;top:auto;bottom:0;height:min(86dvh,760px);width:100%;transform:translateY(105%);border:1px solid #ffffff60}.drawer.open{transform:translateY(0)}}
+/* German Gothic — Cologne Cathedral and Rhine at night */
+html[data-world="de"]{--bg:#080a0e;--surface:#c7cbd309;--text:#f0edf0;--muted:#b0a8a6;--orange:#d5a16b;--amber:#f1c18b;--line:#c6a58c40}
+html[data-world="de"] body{background:#080a0e;font-family:Georgia,Manrope,serif}
+html[data-world="de"] .ambient{background:radial-gradient(ellipse at 72% 12%,#51445558,transparent 38%),radial-gradient(ellipse at 22% 90%,#6a3e2e35,transparent 40%),linear-gradient(160deg,#14151c,#07090d 72%)}
+html[data-world="de"] .moon{background:radial-gradient(circle at 40% 30%,#f8e7c9,#b8a6a1 65%,#554d60);box-shadow:0 0 110px 32px #d7b1a82a;opacity:.45}
+html[data-world="de"] .brand b,html[data-world="de"] .primary{background:linear-gradient(135deg,#e8c7a4,#a87552);color:#1a1010}
+html[data-world="de"] h1,html[data-world="de"] h2{font-family:Georgia,"Times New Roman",serif;text-transform:none;font-weight:700;letter-spacing:-2px}
+html[data-world="de"] h1 span,html[data-world="de"] h2 span{background:linear-gradient(120deg,#fff1db,#d7a473);background-clip:text}
+html[data-world="de"] .glass{border-radius:14px;border-color:#c9ac9850;background:linear-gradient(130deg,#ffffff19,#ffffff03 50%,#b47b4810),#0e101644;box-shadow:inset 0 1px #fff3,0 12px 40px #0007}
+html[data-world="de"] .product-card{border-radius:8px 22px 8px 22px;border-top:1px solid #d2b49a70}
+html[data-world="de"] .btn,html[data-world="de"] .icon-button,html[data-world="de"] .small-btn,html[data-world="de"] .search-wrap,html[data-world="de"] .filters button{border-radius:10px}
+html[data-world="de"] .hero-art .orb{border-radius:19px;transform:rotate(-2deg);width:225px;height:305px;opacity:.75;z-index:2}
+html[data-world="de"] .world-art-de{display:block;color:#f1c18b;z-index:3}
+html[data-world="de"] .world-art-ru{display:none}
+html[data-world="de"] .world-art-de .world-art-caption{font-size:9px;right:4%;bottom:2%;letter-spacing:2px}
+html[data-world="de"] .ghost,html[data-world="de"] .pumpkin{display:none}
+html[data-world="de"] .world-shape{border-radius:0;transform:rotate(0);border-color:#c9aa95}
+html[data-world="de"] .eyebrow{font-family:Manrope,sans-serif;letter-spacing:2px}
+html[data-world="de"] .de-cathedral{position:absolute;inset:-30px -30px -5px -20px;z-index:4;display:flex;align-items:center;justify-content:center;pointer-events:none;filter:drop-shadow(0 16px 25px #000b)}
+html[data-world="de"] .de-cathedral svg{height:100%;width:100%;max-width:540px;opacity:.97}
+html[data-world="de"] .cathedral-label{position:absolute;left:50%;bottom:3%;transform:translateX(-50%);white-space:nowrap;letter-spacing:3px;font:800 10px Manrope,sans-serif;color:#f5d5ac;text-shadow:0 2px 9px #000}
+html[data-world="de"] .cathedral-label i{font-style:normal;color:#b58967}
+html[data-world="de"] .orb-letter{opacity:.14}
+html[data-world="de"] .ring-one,html[data-world="de"] .ring-two{border-color:#d2bda735}
+html[data-world="de"] .art-ring{opacity:.6}
+@media(max-width:650px){html[data-world="de"] .de-cathedral{inset:-20px -40px -5px -40px}html[data-world="de"] .cathedral-label{font-size:8px;letter-spacing:1.5px}html[data-world="de"] .hero-art .orb{width:200px;height:270px}}
