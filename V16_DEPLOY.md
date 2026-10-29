@@ -11,10 +11,10 @@
 
 ## Required deployment steps
 1. Deploy a PostgreSQL database and set **DATABASE_URL** privately in Render (the original site already supports this variable). Do not send credentials to chat or GitHub.
-2. Run `migrations/016_viona_platform.sql` against that PostgreSQL database using a trusted database client or Render console. **The application does not auto-run migrations.**
+2. **Automatic setup:** on service startup, `db-init.js` creates the legacy product/request tables and the V16 user/order/notification schema transactionally. No SQL console or manual migration is required. The SQL source is `migrations/016_viona_platform.sql`. Check Render Logs for `VIONA: PostgreSQL schema ready`.
 3. Ensure existing Telegram environment variables are present: `TELEGRAM_BOT_TOKEN`, `SESSION_SECRET` (32+ chars), `PUBLIC_BASE_URL=https://viona.space`.
 4. Merge PR to main, let Render deploy, and test `/api/v16/profile`, `/api/v16/orders`, `/api/v16/notifications` with a Telegram session.
-5. Without a database/migration, these endpoints return errors. The site still shows its existing catalog, Telegram login, cart and contact form.
+5. Without a working database, these endpoints return errors. The site still shows its existing catalog, Telegram login, cart and contact form.
 
 ## Security and scope
 - V16 routes require a valid signed Telegram session; users can only see/update their own profile, orders and notifications.
@@ -32,3 +32,4 @@
 6. Profile nickname update persists after reload; Telegram username remains separate.
 7. PWA installs and offline public shell loads; private endpoints never load from cache.
 8. Product permalink opens catalog detail; verify mobile and all five themes.
+\n## Security note\nThe Render PostgreSQL inbound IP rule should not remain `0.0.0.0/0` if external database access is not needed. Restrict external access in Render networking settings. Rotate exposed database credentials and update `DATABASE_URL` in the web service, then redeploy. Free database expires November 28, 2026; do not store irreplaceable orders there without a backup and a durable plan.\n
