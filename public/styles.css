@@ -52,3 +52,27 @@ body{background:#0c080b}
 @keyframes enterSoft{from{opacity:0;transform:translateY(24px) scale(.98)}to{opacity:1;transform:none}}
 @media(max-width:650px){.ghost-one{right:0;top:-10px;width:90px}.pumpkin-one{left:0;bottom:0;width:125px}.hero-art{margin:-10px -12px;transform:scale(.9)}.product-card{min-height:265px}.glass{backdrop-filter:blur(10px) saturate(155%);-webkit-backdrop-filter:blur(10px) saturate(155%)}}
 @media(prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none}.aurora,.ghost,.pumpkin,.glass-caustic,.sparkle,.primary:after,.product-card:before,.orb:before{animation:none!important}.product-card:hover{transform:none}}
+
+/* Performance and usability patch: remove GPU-expensive infinite filters and sweeps */
+.aurora{filter:none;opacity:.22;animation:none}
+.aurora-a,.aurora-b{animation:none}
+.fog{filter:blur(45px);opacity:.065;animation:none}
+.embers{animation:none;opacity:.12}
+.glass-caustic{animation:none;filter:none;opacity:.17}
+.product-card:before,.orb:before,.primary:after{animation:none!important}
+.glass{backdrop-filter:blur(8px) saturate(125%);-webkit-backdrop-filter:blur(8px) saturate(125%)}
+.top,.mobile-nav,.drawer{backdrop-filter:blur(12px) saturate(125%);-webkit-backdrop-filter:blur(12px) saturate(125%)}
+.product-card{transform-style:flat;contain:layout style;transition:transform .26s ease,box-shadow .26s ease,border-color .26s ease}
+.product-card:hover{transform:translateY(-4px);box-shadow:inset 0 1px 1px #ffffff75,0 16px 34px #0007}
+.product-card:after{background:linear-gradient(155deg,#ffffff28,transparent 28%,transparent 75%,#ff975014)}
+.orb{backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px)}
+.ghost{filter:drop-shadow(0 0 9px #ffdccb55);animation-duration:9s}
+.pumpkin{filter:drop-shadow(0 0 12px #ff7d2c66);animation-duration:11s}
+.moon{box-shadow:0 0 55px 20px #ff7d2629}
+.reveal{transition:opacity .42s ease,transform .42s ease}
+.drawer{visibility:hidden;pointer-events:none;transition:transform .3s ease,visibility 0s linear .3s}
+.drawer.open{visibility:visible;pointer-events:auto;transition:transform .3s ease,visibility 0s}
+.drawer-row{min-width:0}.drawer-row>div{min-width:0;overflow-wrap:anywhere}
+.drawer-footer .btn:disabled{opacity:.6;cursor:not-allowed}
+@media(max-width:650px){.glass{backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px)}.aurora{display:none}.fog{display:none}.product-card:hover{transform:none}}
+@media(prefers-reduced-motion:reduce){.hero-copy,.hero-art,.orb,.moon,.ghost,.pumpkin,.sparkle{animation:none!important}}
