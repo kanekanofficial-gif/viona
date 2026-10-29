@@ -5,6 +5,7 @@ const app = express();
 const {register:registerTelegramAuth}=require("./telegram-auth");
 const {registerV16}=require("./v16-api");
 const {initializeDatabase}=require("./db-init");
+const {registerTestPayments}=require("./tbank-demo");
 const PORT = process.env.PORT || 3000;
 app.use(express.json({limit:"1mb"}));
 app.use(express.static(path.join(__dirname,"public")));
@@ -23,7 +24,9 @@ const demo = [
 const start=async()=>{
 const ready=await initializeDatabase(pool);
 if(pool&&!ready){console.error("VIONA: database schema unavailable; persistent APIs disabled");await pool.end().catch(()=>{});pool=null}
-registerV16(app,pool,async()=>{if(pool){try{const r=await pool.query("SELECT id,title,category,description,price,icon,tag FROM products ORDER BY id");return r.rows.some(p=>String(p.title).toLowerCase().includes("max bot"))?r.rows:[...r.rows,demo[6]]}catch(e){console.error("Catalog fallback:",e.message)}}return demo});
+const getCatalog=async()=>{if(pool){try{const r=await pool.query("SELECT id,title,category,description,price,icon,tag FROM products ORDER BY id");return r.rows.some(p=>String(p.title).toLowerCase().includes("max bot"))?r.rows:[...r.rows,demo[6]]}catch(e){console.error("Catalog fallback:",e.message)}}return demo};
+registerV16(app,pool,getCatalog);
+registerTestPayments(app,pool,getCatalog);
 app.get("/api/health",(_req,res)=>res.json({ok:true,app:"VIONA"}));
 app.get("/api/products",async(_req,res)=>{
  if(pool){try{const r=await pool.query("SELECT id,title,category,description,price,icon,tag FROM products ORDER BY id");return res.json({products:r.rows.some(p=>String(p.title).toLowerCase().includes("max bot"))?r.rows:[...r.rows,demo[6]],source:"database"});}catch(e){console.error(e.message);}}
