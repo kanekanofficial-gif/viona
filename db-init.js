@@ -28,6 +28,7 @@ async function initializeDatabase(pool){
   await client.query("SELECT setval(pg_get_serial_sequence('products','id'),GREATEST((SELECT COALESCE(MAX(id),1) FROM products),1),true)");
   const sql=fs.readFileSync(path.join(__dirname,"migrations","016_viona_platform.sql"),"utf8");
   await client.query(sql);
+  await client.query(fs.readFileSync(path.join(__dirname,"migrations","017_tbank_demo.sql"),"utf8"));
   await client.query("COMMIT");
   console.log("VIONA: PostgreSQL schema ready");
   return true;
