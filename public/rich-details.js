@@ -63,8 +63,7 @@ def load_config(path: str):
 }
 
 /* Остальные стили скрыты… */`},
- {match:/custom development/i,heading:"Разработка под твою идею",description:"Расскажи, какой проект нужен: игровая механика, бот, сайт или собственный инструмент. Ниже — иллюстративный фрагмент C++-контроллера персонажа для Unity.",features:["Индивидуальное техническое задание","Проектирование механик","Разработка и доработка под задачу"],file:"PlayerController.cpp",language:"C++ · Unity native plugin example",code:`// Демонстрационный фрагмент C++ для Unity-плагина.
-// Unity обычно использует C# для контроллеров персонажа.
+ {match:/custom development/i,heading:"Разработка под твою идею",description:"Расскажи, какой проект нужен: игровая механика, бот, сайт или собственный инструмент. Ниже — пример C++-логики управления персонажем: направление, скорость и обработка движения.",features:["Индивидуальное техническое задание","Проектирование механик","Разработка и доработка под задачу"],file:"PlayerController.cpp",language:"C++",code:`// Player movement logic
 #include <cmath>
 
 struct PlayerInput {
@@ -109,7 +108,7 @@ void UpdateMovement(PlayerMotion& player,
    const section=document.createElement("section");
    section.className="viona-rich-details";
    section.innerHTML='<div class="viona-rich-kicker">VIONA / INSIDE THE PRODUCT</div><h3>'+esc(item.heading)+'</h3><p class="viona-rich-description">'+esc(item.description)+'</p><div class="viona-rich-features">'+item.features.map(x=>'<span>✦ '+esc(x)+'</span>').join("")+'</div><div class="viona-rich-code"><div class="viona-rich-code-head"><span class="viona-rich-code-dots">● ● ●</span><span>'+esc(item.file)+'</span><small>'+esc(item.language)+'</small></div><pre><code>'+esc(item.code)+'</code></pre><div class="viona-rich-fade" aria-hidden="true"></div><div class="viona-rich-code-label">ФРАГМЕНТ КОДА · ПРИМЕР</div></div><p class="viona-rich-disclaimer">Это демонстрационный пример, а не исходный код продаваемого продукта. Полный состав и готовность уточняются при заказе.</p>';
-   const info=layout.querySelector(".detail-info"); const description=info?.querySelector("p"); layout.append(section);
+   const visual=layout.querySelector(".detail-visual"); const code=section.querySelector(".viona-rich-code"); if(visual&&code){visual.replaceChildren(code);visual.classList.add("viona-preview-visual");} layout.append(section);
  });
  observer.observe(content,{childList:true,subtree:true});
 })();

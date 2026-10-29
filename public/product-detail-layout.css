@@ -43,3 +43,22 @@
  .detail-layout .detail-info h2{font-size:25px}
  .detail-layout>.viona-rich-details .viona-rich-features{display:none}
 }
+
+/* Code belongs in the LEFT preview panel, detailed service information on the RIGHT. */
+@media(min-width:721px){
+.detail-layout .detail-visual.viona-preview-visual{display:flex;align-items:stretch;justify-content:stretch;padding:0;background:#12131e;border-color:#d5a88e44}
+.detail-layout .viona-preview-visual .viona-rich-code{width:100%;height:100%;display:flex;flex-direction:column;border:0;border-radius:18px;box-shadow:none}
+.detail-layout .viona-preview-visual .viona-rich-code pre{flex:1;min-height:0;max-height:none;overflow:hidden;padding:14px 14px 60px;font-size:clamp(9px,1.4vh,12px);line-height:1.6}
+.detail-layout .viona-preview-visual .viona-rich-fade{height:90px}
+.detail-layout .viona-preview-visual .viona-rich-code-label{bottom:12px}
+.detail-layout>.viona-rich-details{justify-content:flex-start}
+.detail-layout>.viona-rich-details .viona-rich-description{font-size:clamp(13px,1.9vh,17px);line-height:1.7}
+.detail-layout>.viona-rich-details .viona-rich-features{display:flex;flex-direction:column;align-items:flex-start;gap:10px;margin-top:18px}
+.detail-layout>.viona-rich-details .viona-rich-features span{font-size:12px;padding:9px 12px}
+.detail-layout>.viona-rich-details .viona-rich-disclaimer{margin-top:18px;font-size:11px;line-height:1.6}
+}
+@media(max-width:720px){
+.detail-layout .detail-visual.viona-preview-visual{height:260px;min-height:260px!important;display:block;padding:0}
+.detail-layout .viona-preview-visual .viona-rich-code{height:100%;border:0}
+.detail-layout .viona-preview-visual .viona-rich-code pre{max-height:220px;overflow:hidden;font-size:10px}
+}
