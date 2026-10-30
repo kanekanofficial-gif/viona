@@ -70,7 +70,7 @@ function registerTestPayments(app,pool,getCatalog){
    const initFields={Amount:amount,OrderId:orderId,Description:"VIONA DEMO: "+selected.map(p=>String(p.title)).join(", ").slice(0,128),NotificationURL:(process.env.PUBLIC_BASE_URL||"https://viona.space").replace(new RegExp("/$"),"")+"/api/payments/test/notification"};
    if(method==="card"){
     initFields.CustomerKey="viona-"+user.id;
-    if(saveCard)initFields.Recurrent="Y";
+    if(saveCard){initFields.Recurrent="Y";initFields.OperationInitiatorType="1";}
    }
    const result=await bank("Init",initFields);
    if(result.Success!==true||!result.PaymentId||(method==="card"&&!trustedPaymentUrl(result.PaymentURL))){
@@ -102,11 +102,49 @@ function registerTestPayments(app,pool,getCatalog){
   res.set("Cache-Control","no-store");
   const user=getUser(req);
   if(!user)return res.status(401).json({error:"Требуется вход через Telegram."});
-  if(!configured()||!pool)return res.json({cards:[],mode:"demo"});
+  if(!configured()||!pool)return res.status(503).json({error:"Тестовое хранилище карт недоступно."});
   try{
-   const r=await pool.query("SELECT id,last4,created_at FROM viona_demo_saved_cards WHERE telegram_id=$1 ORDER BY created_at DESC LIMIT 20",[user.id]);
-   res.json({cards:r.rows.map(c=>({id:c.id,last4:c.last4})),mode:"demo"});
-  }catch(e){console.error("Demo saved cards:",e.message);res.status(503).json({error:"Не удалось загрузить сохранённые карты."})}
+   // A bank-hosted payment may save a card before its notification reaches us.
+   // GetCardList is scoped to this authenticated customer's bank CustomerKey.
+   const local=await pool.query("SELECT last4 FROM viona_demo_saved_cards WHERE telegram_id=$1 ORDER BY created_at DESC LIMIT 20",[user.id]);
+   const cards=[],seen=new Set();
+   let bankAvailable=false;
+   try{
+    const result=await bank("GetCardList",{CustomerKey:"viona-"+user.id,SavedCard:true});
+    // The acquiring API can return an array directly or an object with Cards.
+    const rows=Array.isArray(result)?result:Array.isArray(result?.Cards)?result.Cards:Array.isArray(result?.CardInfo)?result.CardInfo:[];
+    if(Array.isArray(result)||result?.Success===true){
+     bankAvailable=true;
+     for(const item of rows.slice(0,50)){
+      if(!item||typeof item!=="object")continue;
+      const status=String(item.Status??"A").toUpperCase();
+      if(!["A","ACTIVE"].includes(status))continue; // Ignore deleted/expired bank cards.
+      const pan=String(item.Pan??"");
+      const last4=pan.match(/([0-9]{4})$/)?.[1];
+      if(!last4)continue;
+      const cardId=String(item.CardId??"");
+      const fingerprint="bank:"+ (cardId||last4);
+      if(seen.has(fingerprint))continue;
+      seen.add(fingerprint);
+      cards.push({last4,source:"bank"});
+     }
+    }else{
+     console.warn("Demo GetCardList rejected:",String(result?.ErrorCode??"unknown").slice(0,24));
+    }
+   }catch(e){
+    console.warn("Demo GetCardList unavailable:",safeNetworkError(e));
+   }
+   // Fallback for a successful, signed payment notification even if GetCardList is unavailable.
+   for(const row of (bankAvailable?[]:local.rows)){
+    const last4=String(row.last4||"");
+    if(!/^[0-9]{4}$/.test(last4)||cards.some(card=>card.last4===last4))continue;
+    cards.push({last4,source:"verified"});
+   }
+   res.json({cards:cards.slice(0,20),mode:"demo",bankAvailable});
+  }catch(e){
+   console.error("Demo saved cards:",e.message);
+   res.status(503).json({error:"Не удалось загрузить сохранённые карты."});
+  }
  });
  app.post("/api/payments/test/notification",async(req,res)=>{
   if(!configured()||!pool)return res.sendStatus(503);
@@ -120,13 +158,15 @@ function registerTestPayments(app,pool,getCatalog){
 
    const updated=await pool.query("UPDATE viona_demo_payments SET status=$2,updated_at=NOW() WHERE order_id=$1 AND amount_kopecks=$3 AND payment_id=$4 RETURNING telegram_id,method,save_card_requested",[String(body.OrderId),status,Number(body.Amount),String(body.PaymentId||"")]);
    // Store only a bank-issued payment token and the last four digits. Never PAN/CVV/expiry.
+   const rebill=typeof body.RebillId==="string"||typeof body.RebillId==="number"?String(body.RebillId):"";
+   const pan=typeof body.Pan==="string"?body.Pan:"";
    if(updated.rowCount && updated.rows[0].method==="card" && updated.rows[0].save_card_requested &&
       (status==="AUTHORIZED"||status==="CONFIRMED") && body.Success===true &&
-      typeof body.RebillId==="string" && /^[0-9]{1,64}$/.test(body.RebillId) &&
-      typeof body.Pan==="string" && /^[0-9*]{8,24}$/.test(body.Pan) &&
-      body.Pan.includes("*") && /[0-9]{4}$/.test(body.Pan)){
+      (!body.CustomerKey || body.CustomerKey==="viona-"+updated.rows[0].telegram_id) &&
+      /^[0-9]{1,64}$/.test(rebill) && /^[0-9*]{8,24}$/.test(pan) &&
+      pan.includes("*") && /[0-9]{4}$/.test(pan)){
     await pool.query("INSERT INTO viona_demo_saved_cards(telegram_id,rebill_id,last4) VALUES($1,$2,$3) ON CONFLICT(telegram_id,rebill_id) DO NOTHING",
-      [updated.rows[0].telegram_id,body.RebillId,body.Pan.slice(-4)]);
+      [updated.rows[0].telegram_id,rebill,pan.slice(-4)]);
    }
    res.type("text/plain").send("OK");
   }catch(e){console.error("Demo payment notification:",e.message);res.sendStatus(503)}
