@@ -135,7 +135,7 @@ function registerTestPayments(app,pool,getCatalog){
     console.warn("Demo GetCardList unavailable:",safeNetworkError(e));
    }
    // Fallback for a successful, signed payment notification even if GetCardList is unavailable.
-   for(const row of local.rows){
+   for(const row of (bankAvailable?[]:local.rows)){
     const last4=String(row.last4||"");
     if(!/^[0-9]{4}$/.test(last4)||cards.some(card=>card.last4===last4))continue;
     cards.push({last4,source:"verified"});
