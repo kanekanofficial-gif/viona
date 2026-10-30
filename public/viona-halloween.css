@@ -404,27 +404,134 @@ body{background:#090a08!important;color:#fff3e5}
 .panel-top>div:first-child{min-width:0}
 .v16-workspace-inner>h2,.v16-workspace h2{margin-right:58px!important}
 
-/* FIX: brand SVG/photo atlas was heavily padded, zoom inside sprite cell. */
-.product-icon:has(.viona-brand-game),
-.product-icon:has(.viona-brand-max){width:120px;height:120px;flex-basis:120px;overflow:visible!important}
-.product-icon .viona-brand-game,
-.product-icon .viona-brand-max{width:142px!important;height:142px!important;flex:none;transform:scale(1.02);filter:drop-shadow(0 9px 14px #0006)}
-/* Atlas 4 columns × 2 rows; zoom around each cell centre, not adjacent logos. */
-.product-icon .viona-brand-max{background-size:480% 240%;background-position:65.79% 7.14%}
-.product-icon .viona-brand-game{background-size:480% 240%;background-position:97.37% 7.14%}
-.detail-glyph .viona-brand-max,.detail-glyph .viona-brand-game{width:min(245px,38vw)!important;height:min(245px,38vw)!important}
-.vx-mini-card-icon{position:relative!important;display:grid!important;place-items:center!important;flex:0 0 104px!important;width:104px!important;height:70px!important;overflow:visible!important;background:none!important}
-.vx-mini-card-icon .viona-brand-card{position:absolute;left:50%;top:50%;width:126px!important;height:126px!important;transform:translate(-50%,-50%);background-size:600% 300%;background-position:5% 87.5%;filter:drop-shadow(0 5px 9px #0004)}
-.vx-card-method .vx-method-icon{width:68px!important;height:68px!important;flex:0 0 68px!important;overflow:visible!important}
-.vx-card-method .vx-method-icon .viona-brand-card{width:89px!important;height:89px!important;background-size:600% 300%;background-position:5% 87.5%}
+/* VIONA 20 — optical logo alignment. The original 4x2 atlas is only a fallback.
+ * viona-logo-fit.js splits transparent artwork into 8 correctly cropped images.
+ * All logos live INSIDE their own layout box; never expand outside the card.
+ */
+.viona-brand{
+ display:block!important;position:relative!important;inset:auto!important;left:auto!important;top:auto!important;
+ width:100%;height:100%;min-width:0;min-height:0;flex:none;
+ padding:0;margin:0;box-sizing:border-box;overflow:hidden;
+ transform:none!important;filter:none!important;
+ background-repeat:no-repeat!important;
+}
+.viona-logos-separated .viona-brand{
+ background-size:contain!important;background-position:center!important;
+}
+.product-icon:has(.viona-brand-max),.product-icon:has(.viona-brand-game){
+ display:grid!important;place-items:center!important;
+ width:100px!important;height:100px!important;min-width:100px!important;flex:0 0 100px!important;
+ padding:0!important;overflow:hidden!important;border-radius:23px!important;
+ transform:none;
+}
+.product-icon .viona-brand-max{
+ width:76px!important;height:76px!important;
+ background-size:400% 200%;background-position:66.666% 0%;
+}
+.product-icon .viona-brand-game{
+ width:78px!important;height:64px!important;
+ background-size:400% 200%;background-position:100% 0%;
+}
+/* Black gamepad needs a bright surface for legibility, not a gigantic image. */
+.product-icon:has(.viona-brand-game){
+ background:linear-gradient(155deg,#ebbc82,#bb8652)!important;
+ border:1px solid #ffdb9b8c!important;
+}
+.product-icon:has(.viona-brand-max){
+ background:linear-gradient(155deg,#453028,#241b19)!important;
+}
+.product:hover .product-icon:has(.viona-brand-game),
+.product:hover .product-icon:has(.viona-brand-max){
+ transform:translateY(-2px)!important;
+}
+.detail-glyph .viona-brand-max,
+.detail-glyph .viona-brand-game{
+ width:130px!important;height:116px!important;
+ background-size:400% 200%;
+}
+.viona-detail-icon-overlay .viona-brand{width:40px!important;height:40px!important}
+
+/* Payment methods: consistent icon columns, no overlap with titles. */
+.vx-payment-method-list .vx-method{
+ display:flex!important;align-items:center!important;gap:13px!important;
+ padding:12px 14px!important;min-height:78px!important;
+ overflow:hidden;box-sizing:border-box;
+}
+.vx-payment-method-list .vx-method-icon,
+.vx-payment-method-list .vx-sber-method .vx-method-icon{
+ position:relative;inset:auto;flex:0 0 52px!important;
+ display:grid!important;place-items:center!important;
+ width:52px!important;height:52px!important;min-width:52px!important;
+ padding:0!important;margin:0!important;
+ overflow:hidden!important;border-radius:14px!important;
+ background:#2e241b!important;
+ box-shadow:none!important;
+}
+.vx-payment-method-list .vx-method-icon .viona-brand{
+ width:43px!important;height:43px!important;max-width:43px!important;max-height:43px!important;
+ transform:none!important;filter:none!important;
+}
+.vx-payment-method-list .vx-method-icon .viona-brand-card{
+ width:43px!important;height:26px!important;
+ background-size:400% 200%;background-position:0% 100%;
+}
+.vx-payment-method-list .vx-method-icon .viona-brand-sbp{
+ width:40px!important;height:40px!important;
+ background-size:400% 200%;background-position:33.333% 100%;
+}
+.vx-payment-method-list .vx-method-icon .viona-brand-sber{
+ width:47px!important;height:26px!important;max-width:47px!important;
+ background-size:400% 200%;background-position:66.666% 100%;
+}
+.vx-payment-method-list .vx-method-copy{flex:1 1 0;min-width:0!important;overflow-wrap:anywhere}
+.vx-payment-method-list .vx-method-arrow{flex:0 0 24px;margin-left:auto}
+.vx-bank-brand .viona-brand{width:22px!important;height:22px!important;background-size:400% 200%;background-position:100% 100%}
+.v18-pay-brand{width:34px!important;height:30px!important;flex:0 0 34px!important}
+
+/* Saved MIR card: compact, centered and aligned with card ending. */
+.vx-card-list .vx-saved-card{
+ display:flex!important;align-items:center!important;gap:12px!important;
+ min-height:69px!important;padding:12px!important;overflow:hidden!important;
+ box-sizing:border-box;
+}
+.vx-card-list .vx-mini-card-icon{
+ position:relative!important;inset:auto!important;
+ display:grid!important;place-items:center!important;
+ flex:0 0 52px!important;width:52px!important;height:40px!important;
+ min-width:52px!important;min-height:40px!important;
+ margin:0!important;padding:0!important;overflow:hidden!important;
+ border-radius:9px!important;background:#4c342118!important;
+}
+.vx-card-list .vx-mini-card-icon .viona-brand-card{
+ display:block!important;position:relative!important;
+ width:46px!important;height:25px!important;min-width:0!important;
+ left:auto!important;top:auto!important;
+ transform:none!important;filter:none!important;
+ background-size:400% 200%;background-position:0% 100%;
+}
+.vx-card-list .vx-saved-card>span:nth-child(2){flex:1 1 0;min-width:0;display:flex;flex-direction:column;gap:4px}
+.vx-card-list .vx-saved-card .vx-card-check{flex:0 0 22px;margin-left:auto}
+.v18-panel-item-icon .viona-brand{width:39px!important;height:39px!important;transform:none!important}
+.vx-product-glyph .viona-brand{width:29px!important;height:29px!important;transform:none!important}
+.v18-method-receipt .viona-brand-card{width:36px!important;height:20px!important}
+.v18-method-receipt .viona-brand-sber{width:38px!important;height:21px!important}
+
+/* Avoid overflow from inherited old scale/zoom declarations on narrow screens. */
 @media(max-width:600px){
  :is(.v15-close,.panel-close,.v16-close){width:40px!important;height:40px!important;min-width:40px!important}
  .v15-close,.v16-close{top:13px!important;right:13px!important}
  .panel-close{flex-basis:40px!important}
  .v15-dialog #v15Title,.v15-dialog .vx-title{padding-right:43px}
- .product-icon:has(.viona-brand-game),.product-icon:has(.viona-brand-max){width:110px;height:110px;flex-basis:110px}
- .product-icon .viona-brand-game,.product-icon .viona-brand-max{width:130px!important;height:130px!important}
- .vx-mini-card-icon{flex-basis:74px!important;width:74px!important;height:60px!important}
- .vx-mini-card-icon .viona-brand-card{width:102px!important;height:102px!important}
- .vx-card-list .vx-saved-card{gap:10px;padding:12px;min-height:88px}
+ .product-icon:has(.viona-brand-game),.product-icon:has(.viona-brand-max){
+  width:92px!important;height:92px!important;min-width:92px!important;flex-basis:92px!important
+ }
+ .product-icon .viona-brand-game{width:70px!important;height:56px!important}
+ .product-icon .viona-brand-max{width:70px!important;height:70px!important}
+ .vx-payment-method-list .vx-method{gap:10px!important;padding:10px 11px!important}
+ .vx-payment-method-list .vx-method-icon,.vx-payment-method-list .vx-sber-method .vx-method-icon{
+  flex-basis:48px!important;width:48px!important;height:48px!important;min-width:48px!important
+ }
+ .vx-card-list .vx-saved-card{gap:9px!important}
+ .vx-card-list .vx-mini-card-icon{width:46px!important;min-width:46px!important;flex-basis:46px!important}
+ .vx-card-list .vx-mini-card-icon .viona-brand-card{width:42px!important;height:23px!important}
 }
