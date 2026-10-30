@@ -1,12 +1,12 @@
 {
   "id": "/",
-  "name": "VIONA — Digital Marketplace",
+  "name": "VIONA — Halloween Night Market",
   "short_name": "VIONA",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
-  "background_color": "#08101d",
-  "theme_color": "#08101d",
+  "background_color": "#080611",
+  "theme_color": "#080611",
   "description": "Цифровой маркетплейс VIONA",
   "icons": [
     {
