@@ -197,6 +197,7 @@ content.addEventListener("click",e=>{if(e.target.closest("#vionaRefreshCards"))l
 content.addEventListener("click",async e=>{
  const button=e.target.closest("#vionaDemoPay");
  if(!button)return;
+ stopQrPolling();stopSberPolling();
  const status=content.querySelector("#checkoutStatus");
  const ids=state.cart.map(Number);
  button.disabled=true;status.textContent="Создаём тестовый платёж…";
@@ -209,6 +210,7 @@ function stopQrPolling(){if(vionaQrTimer){clearInterval(vionaQrTimer);vionaQrTim
 content.addEventListener("click",async e=>{
  const button=e.target.closest("#vionaSbpPay");
  if(!button)return;
+ stopSberPolling();const sberPane=content.querySelector("#vionaSberPanel");if(sberPane)sberPane.hidden=true;
  const status=content.querySelector("#checkoutStatus"),ids=state.cart.map(Number);
  stopQrPolling();button.disabled=true;status.textContent="Создаём тестовый QR СБП…";
  const panel=content.querySelector("#vionaQrPanel");if(panel)panel.hidden=true;
@@ -271,6 +273,7 @@ content.addEventListener("click",async e=>{
  if(!button)return;
  const panel=content.querySelector("#vionaSberPanel"),status=content.querySelector("#vionaSberStatus");
  if(!panel||!status)return;
+ stopQrPolling();const qrPanel=content.querySelector("#vionaQrPanel");if(qrPanel)qrPanel.hidden=true;
  const mobile=isSberMobile(),phoneWrap=content.querySelector("#vionaSberPhoneWrap");
  panel.hidden=false;
  if(phoneWrap)phoneWrap.hidden=mobile;
