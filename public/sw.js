@@ -26,7 +26,7 @@ self.addEventListener("fetch",event=>{
   event.respondWith(fetch(r).catch(()=>caches.match("/")));
   return;
  }
- if(!/\.(?:css|js|png|svg|webmanifest)$/.test(url.pathname))return;
+ if(!/\.(?:css|js|png|webp|svg|webmanifest)$/.test(url.pathname))return;
  event.respondWith(fetch(r).then(response=>{
   if(response.ok){const clone=response.clone();caches.open(CACHE).then(c=>c.put(r,clone))}
   return response;
