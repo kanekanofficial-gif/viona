@@ -65,7 +65,7 @@ test("catalog illustration picks a specific Telegram SVG for Telegram product",(
  const discord=ctx.window.VionaIcons.product({id:3,title:"Discord Utility Bot",category:"Боты"});
  const max=ctx.window.VionaIcons.product({id:7,title:"MAX Bot Starter",category:"Боты"});
  assert.match(telegram,/role="img" aria-label="Telegram"/);
- assert.match(telegram,/<svg/);
+ assert.match(telegram,/class="viona-brand viona-brand-telegram"/);
  assert.notEqual(discord,telegram);
  assert.notEqual(max,telegram);
 });

@@ -37,7 +37,7 @@ async function refreshV16Cards(){
   if(!response.ok)throw Error(cardsResult.error||"Не удалось получить карты");
   if(!by("v16SavedCards")||by("v16SavedCards")!==target)return;
   const cards=Array.isArray(cardsResult.cards)?cardsResult.cards.filter(c=>c&&/^[0-9]{4}$/.test(String(c.last4))):[];
-  target.innerHTML=cards.length?cards.slice(0,12).map(c=>'<div class="vx-saved-card"><span class="vx-mini-card-icon" aria-hidden="true">▤</span><span><strong>Карта ···· '+escape(c.last4)+'</strong><small>Привязана через Т-Банк</small></span><span class="vx-card-check" aria-label="Сохранена">✓</span></div>').join(""):'<p class="vx-card-state">Пока нет сохранённых карт. Отметь сохранение при следующей тестовой оплате.</p>';
+  target.innerHTML=cards.length?cards.slice(0,12).map(c=>'<div class="vx-saved-card"><span class="vx-mini-card-icon" aria-hidden="true"><span class="viona-brand viona-brand-card"></span></span><span><strong>Карта ···· '+escape(c.last4)+'</strong><small>Привязана через Т-Банк</small></span><span class="vx-card-check" aria-label="Сохранена">✓</span></div>').join(""):'<p class="vx-card-state">Пока нет сохранённых карт. Отметь сохранение при следующей тестовой оплате.</p>';
  }catch{
   if(by("v16SavedCards")===target)target.innerHTML='<p class="vx-card-state">Не удалось загрузить список карт. Он доступен в окне оплаты.</p>';
  }
