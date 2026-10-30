@@ -29,6 +29,7 @@ async function initializeDatabase(pool){
   const sql=fs.readFileSync(path.join(__dirname,"migrations","016_viona_platform.sql"),"utf8");
   await client.query(sql);
   await client.query(fs.readFileSync(path.join(__dirname,"migrations","017_tbank_demo.sql"),"utf8"));
+  await client.query(fs.readFileSync(path.join(__dirname,"migrations","018_tbank_methods.sql"),"utf8"));
   await client.query("COMMIT");
   console.log("VIONA: PostgreSQL schema ready");
   return true;
