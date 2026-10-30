@@ -1,8 +1,8 @@
 "use strict";
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const dict={
-ru:{navCatalog:"Каталог",navStudio:"Студия",navContact:"Связаться",edition:"DIGITAL GOODS / 2026",status:"Открыты для новых идей",eyebrow:"НЕ ПРОСТО МАРКЕТПЛЕЙС",hero:'Создавай<br><em>за гранью</em><br> обычного<span class="period">.</span>',desc:"Код, инструменты и цифровые продукты для тех, кто придумывает своё. Добро пожаловать в VIONA.",explore:"Смотреть каталог",request:"Предложить проект",scroll:"ЛИСТАЙ НИЖЕ ↓",catalogTitle:"Выбирай. <em>Создавай.</em>",catalogDesc:"Цифровые решения для твоих проектов.",studioTitle:"Идея → <em>результат.</em>",step1:"Найди своё",step1desc:"Исследуй коллекцию цифровых решений.",step2:"Сохрани идеи",step2desc:"Избранное и корзина всегда под рукой.",step3:"Начни проект",step3desc:"Расскажи, что хочешь создать.",contactTitle:"Есть идея?<br><em>Погнали.</em>",contactDesc:"Опиши свой проект — обсудим возможности.",nameLabel:"Как тебя зовут?",contactLabel:"Как с тобой связаться?",detailsLabel:"Что создаём?",submit:"Отправить заявку",footer:"Делаем цифровое необычным.",mobileHome:"Главная",mobileCatalog:"Каталог",mobileFav:"Избранное",mobileCart:"Корзина",search:"Поиск по каталогу...",sort:["По умолчанию","Сначала дешевле","Сначала дороже","По названию"],cats:["Все","Боты","Шаблоны","Игры","Услуги"],empty:"Ничего не найдено",add:"В корзину",added:"Добавлено",remove:"Удалить",requestPrice:"По запросу",total:"Итого",demo:"Тестовая оплата картой и СБП доступна в корзине.",checkout:"Оплата пока недоступна",saved:"Сохранено",removed:"Удалено",error:"Не удалось выполнить запрос",sent:"Заявка отправлена!",cartEmpty:"Корзина пока пуста",favEmpty:"Избранное пока пусто"},
-en:{navCatalog:"Catalog",navStudio:"Studio",navContact:"Contact",edition:"DIGITAL GOODS / 2026",status:"Open for new ideas",eyebrow:"BEYOND AN ORDINARY MARKET",hero:'Make it<br><em>different</em><br> with VIONA<span class="period">.</span>',desc:"Code, tools and digital products for people building something new.",explore:"Explore the market",request:"Start a project",scroll:"SCROLL TO EXPLORE ↓",catalogTitle:"Find it. <em>Build it.</em>",catalogDesc:"Digital essentials for your next idea.",studioTitle:"From idea <em>to impact.</em>",step1:"Discover",step1desc:"Explore curated digital products.",step2:"Save",step2desc:"Keep favorites and cart close.",step3:"Create",step3desc:"Tell us what you want to build.",contactTitle:"Have an idea?<br><em>Let's build.</em>",contactDesc:"Tell us about your project.",nameLabel:"Your name",contactLabel:"Contact details",detailsLabel:"Project brief",submit:"Send request",footer:"Making digital different.",mobileHome:"Home",mobileCatalog:"Catalog",mobileFav:"Favorites",mobileCart:"Cart",search:"Search products...",sort:["Featured","Price: low to high","Price: high to low","Name"],cats:["All","Bots","Templates","Games","Services"],empty:"Nothing found",add:"Add to cart",added:"Added",remove:"Remove",requestPrice:"On request",total:"Total",demo:"Demo card and QR payments are available at checkout.",checkout:"Checkout unavailable",saved:"Saved",removed:"Removed",error:"Request failed",sent:"Request sent!",cartEmpty:"Your cart is empty",favEmpty:"No favorites yet"},
+ru:{navCatalog:"Каталог",navStudio:"Студия",navContact:"Связаться",edition:"DIGITAL GOODS / 2026",status:"Открыты для новых идей",eyebrow:"НЕ ПРОСТО МАРКЕТПЛЕЙС",hero:'Цифровое,<br><em>которое работает.</em><br>С VIONA<span class="period">.</span>',desc:"Шаблоны, боты, код и инструменты для твоих идей. Выбирай, оплачивай и отслеживай выполнение в одном месте.",explore:"Смотреть каталог",request:"Предложить проект",scroll:"ЛИСТАЙ НИЖЕ ↓",catalogTitle:"Выбирай. <em>Создавай.</em>",catalogDesc:"Цифровые решения для твоих проектов.",studioTitle:"Идея → <em>результат.</em>",step1:"Найди своё",step1desc:"Исследуй коллекцию цифровых решений.",step2:"Сохрани идеи",step2desc:"Избранное и корзина всегда под рукой.",step3:"Начни проект",step3desc:"Расскажи, что хочешь создать.",contactTitle:"Есть идея?<br><em>Погнали.</em>",contactDesc:"Опиши свой проект — обсудим возможности.",nameLabel:"Как тебя зовут?",contactLabel:"Как с тобой связаться?",detailsLabel:"Что создаём?",submit:"Отправить заявку",footer:"Делаем цифровое необычным.",mobileHome:"Главная",mobileCatalog:"Каталог",mobileFav:"Избранное",mobileCart:"Корзина",search:"Поиск по каталогу...",sort:["По умолчанию","Сначала дешевле","Сначала дороже","По названию"],cats:["Все","Боты","Шаблоны","Игры","Услуги"],empty:"Ничего не найдено",add:"В корзину",added:"Добавлено",remove:"Удалить",requestPrice:"По запросу",total:"Итого",demo:"Тестовая оплата картой и СБП доступна в корзине.",checkout:"Оплата пока недоступна",saved:"Сохранено",removed:"Удалено",error:"Не удалось выполнить запрос",sent:"Заявка отправлена!",cartEmpty:"Корзина пока пуста",favEmpty:"Избранное пока пусто"},
+en:{navCatalog:"Catalog",navStudio:"Studio",navContact:"Contact",edition:"DIGITAL GOODS / 2026",status:"Open for new ideas",eyebrow:"BEYOND AN ORDINARY MARKET",hero:'Ideas into<br><em>something real.</em><br>With VIONA<span class="period">.</span>',desc:"Code, tools and digital products for people building something new.",explore:"Explore the market",request:"Start a project",scroll:"SCROLL TO EXPLORE ↓",catalogTitle:"Find it. <em>Build it.</em>",catalogDesc:"Digital essentials for your next idea.",studioTitle:"From idea <em>to impact.</em>",step1:"Discover",step1desc:"Explore curated digital products.",step2:"Save",step2desc:"Keep favorites and cart close.",step3:"Create",step3desc:"Tell us what you want to build.",contactTitle:"Have an idea?<br><em>Let's build.</em>",contactDesc:"Tell us about your project.",nameLabel:"Your name",contactLabel:"Contact details",detailsLabel:"Project brief",submit:"Send request",footer:"Making digital different.",mobileHome:"Home",mobileCatalog:"Catalog",mobileFav:"Favorites",mobileCart:"Cart",search:"Search products...",sort:["Featured","Price: low to high","Price: high to low","Name"],cats:["All","Bots","Templates","Games","Services"],empty:"Nothing found",add:"Add to cart",added:"Added",remove:"Remove",requestPrice:"On request",total:"Total",demo:"Demo card and QR payments are available at checkout.",checkout:"Checkout unavailable",saved:"Saved",removed:"Removed",error:"Request failed",sent:"Request sent!",cartEmpty:"Your cart is empty",favEmpty:"No favorites yet"},
 ja:{navCatalog:"商品一覧",navStudio:"スタジオ",navContact:"お問い合わせ",edition:"デジタル / 2026",status:"新しいアイデアを募集中",eyebrow:"デジタルのその先へ",hero:'アイデアを<br><em>もっと自由に</em><br>VIONA<span class="period">.</span>',desc:"新しいものを作る人のためのコード、ツール、デジタル製品。",explore:"商品を見る",request:"相談する",scroll:"スクロール ↓",catalogTitle:"探して、<em>創ろう。</em>",catalogDesc:"次のプロジェクトに必要なツール。",studioTitle:"アイデアを<em>形に。</em>",step1:"見つける",step1desc:"デジタル製品を探す。",step2:"保存する",step2desc:"お気に入りとカートに保存。",step3:"作る",step3desc:"プロジェクトについて教えてください。",contactTitle:"アイデアがある？<br><em>始めよう。</em>",contactDesc:"作りたいものを教えてください。",nameLabel:"お名前",contactLabel:"連絡先",detailsLabel:"プロジェクト",submit:"送信",footer:"デジタルをもっと自由に。",mobileHome:"ホーム",mobileCatalog:"商品",mobileFav:"お気に入り",mobileCart:"カート",search:"商品を検索...",sort:["おすすめ","価格が安い順","価格が高い順","名前順"],cats:["すべて","ボット","テンプレート","ゲーム","サービス"],empty:"見つかりません",add:"カートに追加",added:"追加済み",remove:"削除",requestPrice:"要相談",total:"合計",demo:"テスト決済はカートからご利用いただけます。",checkout:"決済は利用できません",saved:"保存しました",removed:"削除しました",error:"送信できませんでした",sent:"送信しました！",cartEmpty:"カートは空です",favEmpty:"お気に入りはありません"},
 de:{navCatalog:"Katalog",navStudio:"Studio",navContact:"Kontakt",edition:"DIGITALE WERKZEUGE / 2026",status:"Offen für neue Ideen",eyebrow:"MEHR ALS EIN MARKTPLATZ",hero:'Ideen aus<br><em>der Dunkelheit</em><br>erschaffen<span class="period">.</span>',desc:"Code, Werkzeuge und digitale Produkte für deine nächsten Projekte.",explore:"Katalog ansehen",request:"Projekt anfragen",scroll:"WEITER ENTDECKEN ↓",catalogTitle:"Entdecken. <em>Erschaffen.</em>",catalogDesc:"Digitale Werkzeuge für dein nächstes Projekt.",studioTitle:"Von der Idee <em>zum Werk.</em>",step1:"Entdecken",step1desc:"Finde digitale Werkzeuge.",step2:"Merken",step2desc:"Favoriten und Warenkorb speichern.",step3:"Erschaffen",step3desc:"Beschreibe dein Projekt.",contactTitle:"Eine Idee?<br><em>Los geht's.</em>",contactDesc:"Erzähl uns von deinem Projekt.",nameLabel:"Dein Name",contactLabel:"Kontakt",detailsLabel:"Dein Projekt",submit:"Anfrage senden",footer:"Digitales neu gedacht.",mobileHome:"Start",mobileCatalog:"Katalog",mobileFav:"Favoriten",mobileCart:"Warenkorb",search:"Produkte suchen...",sort:["Standard","Preis aufsteigend","Preis absteigend","Name"],cats:["Alle","Bots","Vorlagen","Spiele","Dienste"],empty:"Keine Ergebnisse",add:"In den Warenkorb",added:"Hinzugefügt",remove:"Entfernen",requestPrice:"Auf Anfrage",total:"Gesamt",demo:"Testzahlungen per Karte und QR sind im Warenkorb verfügbar.",checkout:"Kasse nicht verfügbar",saved:"Gespeichert",removed:"Entfernt",error:"Anfrage fehlgeschlagen",sent:"Anfrage gesendet!",cartEmpty:"Warenkorb ist leer",favEmpty:"Keine Favoriten"},
 femboy:{navCatalog:"Каталог ♡",navStudio:"Студия ✧",navContact:"Написать ♡",edition:"SOFT DIGITAL / 2026",status:"Мечты приветствуются ♡",eyebrow:"ТВОЯ МАЛЕНЬКАЯ ВСЕЛЕННАЯ",hero:'Мечтай.<br><em>Твори.</em><br>Сияй<span class="period">♡</span>',desc:"Уютные цифровые инструменты для самых смелых и милых идей.",explore:"Смотреть красоту ♡",request:"Моя идея ✧",scroll:"ЛИСТАЙ НИЖЕ ♡",catalogTitle:"Выбирай <em>с любовью.</em>",catalogDesc:"Маленькие инструменты для больших мечтаний.",studioTitle:"Мечта → <em>реальность.</em>",step1:"Исследуй ♡",step1desc:"Найди что-нибудь особенное.",step2:"Сохрани ✧",step2desc:"Собери любимое в коллекцию.",step3:"Создай ♡",step3desc:"Расскажи о своей задумке.",contactTitle:"Есть мечта?<br><em>Воплотим ♡</em>",contactDesc:"Расскажи, что хочется создать.",nameLabel:"Как тебя зовут? ♡",contactLabel:"Как связаться?",detailsLabel:"Твоя мечта",submit:"Отправить ♡",footer:"Твоя цифровая сказка ♡",mobileHome:"Домой",mobileCatalog:"Каталог",mobileFav:"Любимое",mobileCart:"Корзина",search:"Найти что-то милое...",sort:["По умолчанию","Сначала дешевле","Сначала дороже","По названию"],cats:["Все","Ботики","Шаблоны","Игры","Услуги"],empty:"Ничего не нашлось ♡",add:"Добавить ♡",added:"Добавлено ♡",remove:"Убрать",requestPrice:"По запросу",total:"Итого",demo:"Тестовая оплата картой и СБП доступна в корзине ♡",checkout:"Оплата пока недоступна",saved:"Сохранено ♡",removed:"Убрано",error:"Не получилось отправить",sent:"Отправлено ♡",cartEmpty:"Корзина пока пустая ♡",favEmpty:"Пока нет любимого ♡"}
@@ -17,6 +17,8 @@ const currencies={ru:["RUB",1,"ru-RU"],en:["USD",.012,"en-US"],ja:["JPY",1.85,"j
 const cats=["Все","Боты","Шаблоны","Игры","Услуги"],sorts=["default","price-asc","price-desc","name"];
 const safe=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const getStorage=(key,fallback)=>{try{return JSON.parse(localStorage.getItem(key))??fallback}catch{return fallback}};
+// One-time visual preset reset for VIONA 17. Keep cart, favorites and account intact.
+try{if(localStorage.getItem("viona-design-v17")!=="1"){localStorage.removeItem("viona-world");localStorage.setItem("viona-design-v17","1")}}catch{}
 let lang=getStorage("viona-world","ru");if(!dict[lang])lang="ru";const t=dict[lang];document.documentElement.dataset.world=lang;document.documentElement.lang=lang==="femboy"?"ru":lang;
 let products=[],category="Все",sort="default",mode="cart",active=false,returnFocus=null,toastTimer;
 const storageKey="viona-halloween-v1",old=getStorage(storageKey,{}),ids=a=>Array.isArray(a)?[...new Set(a.map(String))]:[];
@@ -27,7 +29,7 @@ function money(n){if(!(Number(n)>0))return t.requestPrice;const [currency,rate,l
 function toast(message){const el=$("#toast");el.textContent=message;el.classList.add("show");clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove("show"),2400)}
 function localize(){for(const el of $$("[data-i]")){const key=el.dataset.i;if(t[key])el.textContent=t[key]}$("#heroTitle").innerHTML=t.hero;$("#heroDesc").textContent=t.desc;$$(".section-top h2").forEach((el,i)=>el.innerHTML=i===0?t.catalogTitle:t.studioTitle);$(".contact h2").innerHTML=t.contactTitle;$("#search").placeholder=t.search;$("#langLabel").textContent={ru:"RU",en:"EN",ja:"JP",de:"DE",femboy:"♡"}[lang];$$("[data-lang]").forEach(b=>b.classList.toggle("selected",b.dataset.lang===lang));$("#currencyNote").textContent=lang==="en"?"Approximate conversion from RUB. Checkout remains in RUB.":lang==="de"?"Ungefähre Umrechnung aus RUB. Abrechnung in RUB.":lang==="ja"?"参考換算価格です。決済通貨はルーブルです。":"";$$("[data-sort]").forEach((b,i)=>b.textContent=t.sort[i]);$("#sortLabel").textContent=t.sort[sorts.indexOf(sort)];$$("[data-category]").forEach((b,i)=>b.textContent=t.cats[i]);$(".demo-note").textContent=t.demo;document.title="VIONA — "+({ru:"Digital Market",en:"Midnight Market",ja:"デジタルマーケット",de:"Digitalwerk",femboy:"Soft Universe"}[lang])}
 function visible(){const q=$("#search").value.trim().toLocaleLowerCase();const arr=products.filter(p=>(category==="Все"||p.category===category)&&[p.title,p.description,p.category,p.tag,localized(p).title,localized(p).description].join(" ").toLocaleLowerCase().includes(q));if(sort==="price-asc")arr.sort((a,b)=>a.price-b.price);if(sort==="price-desc")arr.sort((a,b)=>b.price-a.price);if(sort==="name")arr.sort((a,b)=>a.title.localeCompare(b.title));return arr}
-function render(){const list=visible();$("#resultCount").textContent=String(list.length).padStart(2,"0");$("#products").innerHTML=list.length?list.map(p=>{p=localized(p);const id=String(p.id),fav=state.favorites.includes(id),cart=state.cart.includes(id);return '<article class="product"><div class="product-head"><div class="product-icon">'+safe(p.icon)+'</div><span class="product-tag">'+safe(p.tag)+'</span></div><h3>'+safe(p.title)+'</h3><p>'+safe(p.description)+'</p><button type="button" class="product-view" data-view="'+safe(id)+'">'+safe(({ru:'Подробнее',en:'Quick view',ja:'詳細を見る',de:'Details ansehen',femboy:'Посмотреть ♡'})[lang])+' <span aria-hidden="true">↗</span></button><div class="product-foot"><strong class="price">'+money(p.price)+'</strong><div class="product-actions"><button type="button" class="heart '+(fav?"active":"")+'" data-action="favorites" data-id="'+safe(id)+'" aria-pressed="'+fav+'" aria-label="'+safe(t.mobileFav)+'">'+(fav?"♥":"♡")+'</button><button type="button" class="'+(cart?"active":"")+'" data-action="cart" data-id="'+safe(id)+'" aria-pressed="'+cart+'">'+safe(cart?t.added:t.add)+'</button></div></div></article>'}).join(""):'<div class="empty">'+safe(t.empty)+'</div>'}
+function render(){const list=visible();$("#resultCount").textContent=String(list.length).padStart(2,"0");$("#products").innerHTML=list.length?list.map(p=>{p=localized(p);const id=String(p.id),fav=state.favorites.includes(id),cart=state.cart.includes(id);return '<article class="product"><div class="product-head"><div class="product-icon">'+(window.VionaIcons?.product(p)||safe(p.icon))+'</div><span class="product-tag">'+safe(p.tag)+'</span></div><h3>'+safe(p.title)+'</h3><p>'+safe(p.description)+'</p><button type="button" class="product-view" data-view="'+safe(id)+'">'+safe(({ru:'Подробнее',en:'Quick view',ja:'詳細を見る',de:'Details ansehen',femboy:'Посмотреть ♡'})[lang])+' <span aria-hidden="true">↗</span></button><div class="product-foot"><strong class="price">'+money(p.price)+'</strong><div class="product-actions"><button type="button" class="heart '+(fav?"active":"")+'" data-action="favorites" data-id="'+safe(id)+'" aria-pressed="'+fav+'" aria-label="'+safe(t.mobileFav)+'">'+(fav?"♥":"♡")+'</button><button type="button" class="'+(cart?"active":"")+'" data-action="cart" data-id="'+safe(id)+'" aria-pressed="'+cart+'">'+safe(cart?t.added:t.add)+'</button></div></div></article>'}).join(""):'<div class="empty">'+safe(t.empty)+'</div>'}
 function toggle(kind,id){if(!["favorites","cart"].includes(kind)||!products.some(p=>String(p.id)===id))return;const arr=state[kind],index=arr.indexOf(id);if(index<0)arr.push(id);else arr.splice(index,1);save();render();if(active)renderPanel();toast(index<0?t.saved:t.removed)}
 $("#products").addEventListener("click",e=>{const b=e.target.closest("[data-action]");if(b)toggle(b.dataset.action,b.dataset.id)});
 $("#search").addEventListener("input",render);
@@ -79,7 +81,7 @@ function open(type,markup){if(active)closePanel();if(!isOpen)priorFocus=document
 function close(){if(!isOpen)return;isOpen=false;dialog.classList.remove("open");dialog.setAttribute("aria-hidden","true");overlay.hidden=true;document.body.style.overflow=scrollLockPrevious;content.innerHTML="";modalProduct=null;if(priorFocus?.isConnected)priorFocus.focus({preventScroll:true})}
 closeBtn.addEventListener("click",close);overlay.addEventListener("click",close);
 document.addEventListener("keydown",e=>{if(!isOpen)return;if(e.key==="Escape"){e.preventDefault();close()}if(e.key==="Tab"){const els=[...dialog.querySelectorAll('button:not([disabled]),input:not([disabled]),textarea:not([disabled]),a[href]')].filter(x=>x.getClientRects().length);if(!els.length)return;const first=els[0],last=els[els.length-1];if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus()}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus()}}});
-function productDetail(id){const p=products.find(x=>String(x.id)===String(id));if(!p)return;modalProduct=String(p.id);const v=localized(p);const fav=state.favorites.includes(modalProduct),inCart=state.cart.includes(modalProduct);open("product",'<div class="v15-kicker">VIONA SELECT / '+safe(v.tag)+'</div><div class="detail-layout"><div class="detail-visual"><span class="detail-orbit">✦</span><span class="detail-glyph">'+safe(v.icon)+'</span><span class="detail-index">V / '+safe(modalProduct.padStart(3,"0"))+'</span></div><div class="detail-info"><span class="section-kicker">'+safe(tr.details)+'</span><h2 id="v15Title">'+safe(v.title)+'</h2><p>'+safe(v.description)+'</p><div class="detail-meta"><span>'+safe(tr.category)+'</span><strong>'+safe(v.category)+'</strong></div><div class="detail-price">'+money(v.price)+'</div><div class="detail-actions"><button type="button" class="action-primary" data-v15-add="'+safe(modalProduct)+'">'+safe(inCart?t.added:t.add)+' ↗</button><button type="button" class="detail-fav" data-v15-fav="'+safe(modalProduct)+'" aria-pressed="'+fav+'">'+(fav?"♥ ":"♡ ")+safe(tr.favorite)+'</button></div><p class="detail-note">'+safe(t.demo)+'</p></div></div>')}
+function productDetail(id){const p=products.find(x=>String(x.id)===String(id));if(!p)return;modalProduct=String(p.id);const v=localized(p);const fav=state.favorites.includes(modalProduct),inCart=state.cart.includes(modalProduct);open("product",'<div class="v15-kicker">VIONA SELECT / '+safe(v.tag)+'</div><div class="detail-layout"><div class="detail-visual"><span class="detail-orbit">✦</span><span class="detail-glyph">'+(window.VionaIcons?.product(p)||safe(v.icon))+'</span><span class="detail-index">V / '+safe(modalProduct.padStart(3,"0"))+'</span></div><div class="detail-info"><span class="section-kicker">'+safe(tr.details)+'</span><h2 id="v15Title">'+safe(v.title)+'</h2><p>'+safe(v.description)+'</p><div class="detail-meta"><span>'+safe(tr.category)+'</span><strong>'+safe(v.category)+'</strong></div><div class="detail-price">'+money(v.price)+'</div><div class="detail-actions"><button type="button" class="action-primary" data-v15-add="'+safe(modalProduct)+'">'+safe(inCart?t.added:t.add)+' ↗</button><button type="button" class="detail-fav" data-v15-fav="'+safe(modalProduct)+'" aria-pressed="'+fav+'">'+(fav?"♥ ":"♡ ")+safe(tr.favorite)+'</button></div><p class="detail-note">'+safe(t.demo)+'</p></div></div>')}
 document.getElementById("products").addEventListener("click",e=>{const b=e.target.closest("[data-view]");if(b)productDetail(b.dataset.view)});
 content.addEventListener("click",e=>{const add=e.target.closest("[data-v15-add]"),fav=e.target.closest("[data-v15-fav]");if(add||fav){const id=add?add.dataset.v15Add:fav.dataset.v15Fav;toggle(add?"cart":"favorites",id);productDetail(id)}});
 const profileKey="viona-id-local-v15";let profile=getStorage(profileKey,{nick:""});
@@ -96,8 +98,9 @@ function openCheckout(){
  const selected=state.cart.map(id=>products.find(p=>String(p.id)===id)).filter(Boolean);
  if(!selected.length){toast(tr.checkoutEmpty);return}
  stopQrPolling();
+ stopSberPolling();
  const total=selected.reduce((n,p)=>n+Number(p.price||0),0);
- const items=selected.map(p=>'<li class="vx-line"><span class="vx-product-glyph">'+safe(p.icon||"✦")+'</span><span class="vx-product-name">'+safe(localized(p).title)+'</span><strong>'+money(p.price)+'</strong></li>').join("");
+ const items=selected.map(p=>'<li class="vx-line"><span class="vx-product-glyph">'+(window.VionaIcons?.product(p)||safe(p.icon||"✦"))+'</span><span class="vx-product-name">'+safe(localized(p).title)+'</span><strong>'+money(p.price)+'</strong></li>').join("");
  open("checkout",[
   '<div class="vx-checkout">',
   '<div class="vx-overline"><span class="vx-spark">✦</span> VIONA / CHECKOUT <span class="vx-demo-dot"></span> ТЕСТОВЫЙ РЕЖИМ</div>',
@@ -118,6 +121,11 @@ function openCheckout(){
          '<span class="vx-method-copy"><strong>СБП по QR-коду</strong><small>Оплата через приложение любого поддерживаемого банка</small></span>',
          '<span class="vx-method-arrow" aria-hidden="true">↗</span>',
         '</button>',
+        '<button type="button" id="vionaSberPay" class="vx-method vx-sber-method">',
+         '<span class="vx-method-icon vx-sber-symbol" aria-hidden="true">S</span>',
+         '<span class="vx-method-copy"><strong>SberPay</strong><small>Оплата через СберБанк Онлайн · без реквизитов карты</small></span>',
+         '<span class="vx-method-arrow" aria-hidden="true">↗</span>',
+        '</button>',
       '</div>',
       '<div class="vx-wallet">',
        '<div class="vx-wallet-heading"><span class="vx-wallet-symbol" aria-hidden="true">▣</span><div><strong>Сохранённые карты</strong><small>Привязаны к твоему VIONA ID</small></div><button type="button" class="vx-wallet-refresh" id="vionaRefreshCards" title="Обновить список сохранённых карт">↻ <span>Обновить</span></button></div>',
@@ -126,6 +134,14 @@ function openCheckout(){
       '</div>',
       '<label class="vx-consent" for="vionaSaveCard"><input type="checkbox" id="vionaSaveCard"><span class="vx-checkbox-art" aria-hidden="true">✓</span><span><strong>Сохранить новую карту</strong><small>По желанию. Банк сохранит данные для будущих покупок.</small></span></label>',
       '<p class="vx-safety"><span aria-hidden="true">◇</span> Данные карты и CVV вводятся только у Т-Банка — не на сайте VIONA.</p>',
+     '</section>',
+     '<section id="vionaSberPanel" class="vx-sber-panel" hidden>',
+      '<div class="vx-section-title"><span class="vx-section-number vx-sber-label">S</span><h3>Оплата SberPay</h3></div>',
+      '<p class="vx-sber-guide">На компьютере Сбер отправит подтверждение в приложение по номеру телефона. На смартфоне откроем СберБанк Онлайн, если это поддерживается.</p>',
+      '<label id="vionaSberPhoneWrap" class="vx-sber-phone">Номер телефона, привязанный к СберБанк Онлайн<input type="tel" id="vionaSberPhone" inputmode="tel" autocomplete="tel" placeholder="+79990000000" maxlength="16" aria-label="Номер телефона для SberPay"></label>',
+      '<button type="button" id="vionaSberSubmit" class="vx-sber-start">Продолжить через SberPay ↗</button>',
+      '<p id="vionaSberStatus" class="vx-sber-status" role="status"></p>',
+      '<a id="vionaSberFallback" class="vx-sber-fallback" hidden target="_self" rel="noopener">Перейти на форму Т-Банка и выбрать SberPay ↗</a>',
      '</section>',
      '<div id="checkoutStatus" class="vx-status" role="status" aria-live="polite"></div>',
      '<section id="vionaQrPanel" class="vx-qr-panel" hidden>',
@@ -155,6 +171,11 @@ function openCheckout(){
  ].join(""));
  loadSavedCards();
 }
+// The return page clears only the matching purchased items, after verified bank confirmation.
+function rememberPendingPayment(result,items){
+ if(!result?.orderId)return;
+ try{sessionStorage.setItem("viona-checkout-pending",JSON.stringify({orderId:result.orderId,items:[...items]}))}catch{}
+}
 let vionaCardsRequest=0;
 async function loadSavedCards(){
  const target=content.querySelector("#vionaCardsList");if(!target)return;
@@ -183,10 +204,11 @@ content.addEventListener("click",e=>{if(e.target.closest("#vionaRefreshCards"))l
 content.addEventListener("click",async e=>{
  const button=e.target.closest("#vionaDemoPay");
  if(!button)return;
+ stopQrPolling();stopSberPolling();
  const status=content.querySelector("#checkoutStatus");
  const ids=state.cart.map(Number);
  button.disabled=true;status.textContent="Создаём тестовый платёж…";
- try{const r=await fetch("/api/payments/test/init",{method:"POST",headers:{"Content-Type":"application/json"},credentials:"same-origin",body:JSON.stringify({items:ids,saveCard:content.querySelector("#vionaSaveCard")?.checked===true})});const data=await r.json();if(!r.ok)throw Error(data.error||"Ошибка оплаты");window.location.assign(data.paymentUrl)}
+ try{const r=await fetch("/api/payments/test/init",{method:"POST",headers:{"Content-Type":"application/json"},credentials:"same-origin",body:JSON.stringify({items:ids,saveCard:content.querySelector("#vionaSaveCard")?.checked===true})});const data=await r.json();if(!r.ok)throw Error(data.error||"Ошибка оплаты");rememberPendingPayment(data,ids);window.location.assign(data.paymentUrl)}
  catch(err){status.textContent=err.message;button.disabled=false}
 });
 
@@ -195,6 +217,7 @@ function stopQrPolling(){if(vionaQrTimer){clearInterval(vionaQrTimer);vionaQrTim
 content.addEventListener("click",async e=>{
  const button=e.target.closest("#vionaSbpPay");
  if(!button)return;
+ stopSberPolling();const sberPane=content.querySelector("#vionaSberPanel");if(sberPane)sberPane.hidden=true;
  const status=content.querySelector("#checkoutStatus"),ids=state.cart.map(Number);
  stopQrPolling();button.disabled=true;status.textContent="Создаём тестовый QR СБП…";
  const panel=content.querySelector("#vionaQrPanel");if(panel)panel.hidden=true;
@@ -202,6 +225,7 @@ content.addEventListener("click",async e=>{
   const r=await fetch("/api/payments/test/qr",{method:"POST",headers:{"Content-Type":"application/json"},credentials:"same-origin",body:JSON.stringify({items:ids})});
   const data=await r.json();if(!r.ok)throw Error(data.error||"Ошибка СБП");
   if(!data.qrImage||!data.qrLink||!data.orderId)throw Error("Банк не вернул QR");
+  rememberPendingPayment(data,ids);
   content.querySelector("#vionaQrImage").src=data.qrImage;
   content.querySelector("#vionaQrLink").href=data.qrLink;
   panel.hidden=false;status.textContent="Откройте ссылку или отсканируйте QR-код банковским приложением.";
@@ -210,12 +234,100 @@ content.addEventListener("click",async e=>{
    const label=content.querySelector("#vionaQrState");
    if(!label||++ticks>36){stopQrPolling();return}
    try{const resp=await fetch("/api/payments/test/status/"+encodeURIComponent(data.orderId),{credentials:"same-origin",cache:"no-store"});if(!resp.ok)return;const state=await resp.json();
-    if(["AUTHORIZED","CONFIRMED"].includes(state.status)){label.textContent="Тестовая оплата подтверждена ✓";stopQrPolling()}
+    if(state.status==="CONFIRMED"){label.textContent="Тестовая оплата подтверждена ✓";stopQrPolling();window.location.assign("/payment/success?orderId="+encodeURIComponent(data.orderId))}else if(state.status==="AUTHORIZED"){label.textContent="Банк авторизовал платёж. Ожидаем подтверждения списания…"}
     else if(["REJECTED","DEADLINE_EXPIRED","CANCELED","REVERSED"].includes(state.status)){label.textContent="Оплата не прошла";stopQrPolling()}
    }catch{}
   },5000);
  }catch(err){status.textContent=err.message}
  finally{button.disabled=false}
+});
+
+let vionaSberTimer=null;
+function stopSberPolling(){if(vionaSberTimer){clearInterval(vionaSberTimer);vionaSberTimer=null}}
+function isSberMobile(){return /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent)}
+function trustedSberCheckoutLink(value){
+ if(typeof value!=="string")return false;
+ try{
+  const u=new URL(value),h=u.hostname.toLowerCase();
+  return u.protocol==="https:"&&!u.username&&!u.password&&!u.port &&
+   ["sberbank.ru","sber.ru","sberbank.com","sberpay.ru","sberbankonline.ru"].some(d=>h===d||h.endsWith("."+d));
+ }catch{return false}
+}
+function trustedSberHostedFallback(value){
+ if(typeof value!=="string")return false;
+ try{
+  const u=new URL(value),h=u.hostname.toLowerCase();
+  return u.protocol==="https:"&&!u.username&&!u.password&&!u.port &&
+   (h==="pay.tbank-online.com"||["tinkoff.ru","tbank.ru"].some(d=>h===d||h.endsWith("."+d)));
+ }catch{return false}
+}
+function watchSberStatus(orderId){
+ stopSberPolling();
+ let checks=0;
+ vionaSberTimer=setInterval(async()=>{
+  const label=content.querySelector("#vionaSberStatus");
+  if(!label||++checks>36){stopSberPolling();return}
+  try{
+   const r=await fetch("/api/payments/test/status/"+encodeURIComponent(orderId),{credentials:"same-origin",cache:"no-store"});
+   if(!r.ok)return;
+   const data=await r.json();
+   if(data.status==="CONFIRMED"){label.textContent="Тестовая оплата подтверждена ✓";stopSberPolling();window.location.assign("/payment/success?orderId="+encodeURIComponent(orderId))}else if(data.status==="AUTHORIZED"){label.textContent="Банк авторизовал платёж. Ожидаем окончательного подтверждения…"}
+   else if(["AUTH_FAIL","REJECTED","CANCELED","DEADLINE_EXPIRED"].includes(data.status)){label.textContent="Банк сообщил об отказе. Попробуй другой способ оплаты.";stopSberPolling()}
+  }catch{}
+ },5000);
+}
+content.addEventListener("click",async e=>{
+ const button=e.target.closest("#vionaSberPay, #vionaSberSubmit");
+ if(!button)return;
+ const panel=content.querySelector("#vionaSberPanel"),status=content.querySelector("#vionaSberStatus");
+ if(!panel||!status)return;
+ stopQrPolling();const qrPanel=content.querySelector("#vionaQrPanel");if(qrPanel)qrPanel.hidden=true;
+ const mobile=isSberMobile(),phoneWrap=content.querySelector("#vionaSberPhoneWrap");
+ panel.hidden=false;
+ if(phoneWrap)phoneWrap.hidden=mobile;
+ if(button.id==="vionaSberPay"&&!mobile){
+  status.textContent="Укажи номер телефона, привязанный к СберБанк Онлайн. Номер не сохраняется на VIONA.";
+  content.querySelector("#vionaSberPhone")?.focus();
+  return;
+ }
+ const raw=String(content.querySelector("#vionaSberPhone")?.value||"");
+ const phone=mobile?"":raw.replace(/[()\s-]/g,"");
+ if(!mobile&&!/^\+[1-9][0-9]{6,14}$/.test(phone)){
+  status.textContent="Введи номер в международном формате, например +79990000000.";
+  return;
+ }
+ const action=content.querySelector("#vionaSberSubmit");
+ if(action)action.disabled=true;
+ const mainButton=content.querySelector("#vionaSberPay");
+ if(mainButton)mainButton.disabled=true;
+ const fallback=content.querySelector("#vionaSberFallback");
+ if(fallback)fallback.hidden=true;
+ stopSberPolling();
+ status.textContent="Создаём тестовый платёж SberPay…";
+ try{
+  const res=await fetch("/api/payments/test/sberpay",{method:"POST",headers:{"Content-Type":"application/json"},credentials:"same-origin",body:JSON.stringify({items:state.cart.map(Number),device:mobile?"mobile":"desktop",phone})});
+  const result=await res.json().catch(()=>({}));
+  if(!res.ok)throw Error(result.error||"Не удалось запустить SberPay.");
+  rememberPendingPayment(result,state.cart);
+  if(result.flow==="direct"){
+   if(!trustedSberCheckoutLink(result.redirectUrl))throw Error("Банк вернул неизвестный адрес SberPay.");
+   status.textContent="Переходим к оплате в СберБанк Онлайн…";
+   window.location.assign(result.redirectUrl);return;
+  }
+  if(result.flow==="push"){
+   status.textContent="Запрос отправлен в СберБанк Онлайн. Открой приложение и подтверди тестовый платёж.";
+   if(result.orderId)watchSberStatus(result.orderId);
+   return;
+  }
+  if(result.flow==="hosted"&&trustedSberHostedFallback(result.paymentUrl)){
+   status.textContent="В тестовом терминале прямая ссылка SberPay недоступна. Продолжи оплату на странице Т-Банка и выбери SberPay, если он предлагается.";
+   fallback.href=result.paymentUrl;
+   fallback.hidden=false;
+   return;
+  }
+  throw Error("Не удалось получить безопасную ссылку SberPay.");
+ }catch(err){status.textContent=err.message}
+ finally{if(action)action.disabled=false;if(mainButton)mainButton.disabled=false}
 });
 fetch("/api/payments/test/config").then(r=>r.json()).then(d=>{const show=()=>{const b=content.querySelector("#vionaPaymentOptions");if(b)b.hidden=!d.enabled};const obs=new MutationObserver(show);obs.observe(content,{childList:true,subtree:false});show()}).catch(()=>{});
 document.getElementById("panelBottom").addEventListener("click",e=>{if(e.target.closest("#checkoutOpen"))openCheckout()});

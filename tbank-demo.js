@@ -1,6 +1,7 @@
 "use strict";
 const crypto=require("node:crypto");
 const {getUser}=require("./telegram-auth");
+const {registerPaymentOrders}=require("./payment-order");
 const BASE="https://securepay.tinkoff.ru/v2";
 // Only log network error codes, never request bodies, terminal credentials or payment tokens.
 function safeNetworkError(err){const cause=err?.cause;const code=typeof cause?.code==="string"?cause.code:"unknown";const syscall=typeof cause?.syscall==="string"?cause.syscall:"unknown";const name=typeof err?.name==="string"?err.name:"Error";return {name,code,syscall,aborted:name==="AbortError"||name==="TimeoutError"};}
@@ -22,6 +23,14 @@ function trustedPaymentUrl(value){
    hostname==="pay.tbank-online.com";
   return url.protocol==="https:" && !url.username && !url.password &&
    !url.port && bankHost;
+ }catch{return false}
+}
+function trustedSberPayUrl(value){
+ if(typeof value!=="string"||value.length>4096)return false;
+ try{
+  const url=new URL(value),host=url.hostname.toLowerCase();
+  const owned=["sberbank.ru","sber.ru","sberbank.com","sberpay.ru","sberbankonline.ru"].some(domain=>host===domain||host.endsWith("."+domain));
+  return url.protocol==="https:"&&!url.username&&!url.password&&!url.port&&owned;
  }catch{return false}
 }
 // Never record PaymentURL paths, queries, credentials or payment identifiers in logs.
@@ -59,6 +68,12 @@ function registerTestPayments(app,pool,getCatalog){
   const ids=req.body?.items;
   if(!Array.isArray(ids)||ids.length<1||ids.length>20||!ids.every(id=>Number.isSafeInteger(id)&&id>0)||new Set(ids).size!==ids.length)return res.status(400).json({error:"Некорректная корзина."});
   const saveCard=method==="card"&&req.body?.saveCard===true;
+  const sberDesktop=method==="sberpay"&&req.body?.device==="desktop";
+  const sberMobile=method==="sberpay"&&req.body?.device==="mobile";
+  if(method==="sberpay"&&!sberDesktop&&!sberMobile)return res.status(400).json({error:"Укажите тип устройства для SberPay."});
+  const sberPhone=method==="sberpay"?String(req.body?.phone||"").trim():"";
+  if(method==="sberpay"&&((sberDesktop&&!sberPhone)||(sberPhone&&!/^\+[1-9][0-9]{6,14}$/.test(sberPhone))))
+   return res.status(400).json({error:"Для SberPay на компьютере нужен номер телефона в формате +79990000000."});
   try{
    const catalog=await getCatalog(),selected=ids.map(id=>catalog.find(p=>Number(p.id)===id));
    if(selected.some(p=>!p||!Number.isSafeInteger(Number(p.price))||Number(p.price)<=0))return res.status(400).json({error:"Товары без фиксированной цены нельзя оплатить."});
@@ -66,20 +81,49 @@ function registerTestPayments(app,pool,getCatalog){
    const minimum=method==="sbp"?1000:100;
    if(!Number.isSafeInteger(amount)||amount<minimum||amount>1000000000)return res.status(400).json({error:method==="sbp"?"Для СБП минимальная сумма 10 ₽.":"Некорректная сумма."});
    const orderId=crypto.randomUUID();
-   await pool.query("INSERT INTO viona_demo_payments(order_id,telegram_id,amount_kopecks,status,method,save_card_requested) VALUES($1,$2,$3,'NEW',$4,$5)",[orderId,user.id,amount,method,saveCard]);
-   const initFields={Amount:amount,OrderId:orderId,Description:"VIONA DEMO: "+selected.map(p=>String(p.title)).join(", ").slice(0,128),NotificationURL:(process.env.PUBLIC_BASE_URL||"https://viona.space").replace(new RegExp("/$"),"")+"/api/payments/test/notification"};
+   const snapshot=selected.map(p=>({id:Number(p.id),title:String(p.title||"").slice(0,160),description:String(p.description||"").slice(0,1000),category:String(p.category||"").slice(0,70),tag:String(p.tag||"").slice(0,70),price:Number(p.price)}));
+   await pool.query("INSERT INTO viona_demo_payments(order_id,telegram_id,amount_kopecks,status,method,save_card_requested,items) VALUES($1,$2,$3,'NEW',$4,$5,$6::jsonb)",[orderId,user.id,amount,method,saveCard,JSON.stringify(snapshot)]);
+   const base=(process.env.PUBLIC_BASE_URL||"https://viona.space").replace(new RegExp("/$"),"");
+   // Browser redirects are UX only; an authenticated GetState verification decides payment success.
+   const initFields={
+    Amount:amount,OrderId:orderId,
+    Description:"VIONA DEMO: "+selected.map(p=>String(p.title)).join(", ").slice(0,128),
+    NotificationURL:base+"/api/payments/test/notification",
+    SuccessURL:base+"/payment/success?orderId="+encodeURIComponent(orderId),
+    FailURL:base+"/payment/fail?orderId="+encodeURIComponent(orderId)
+   };
    if(method==="card"){
     initFields.CustomerKey="viona-"+user.id;
     if(saveCard){initFields.Recurrent="Y";initFields.OperationInitiatorType="1";}
    }
+   if(method==="sberpay")initFields.DATA={SberPayWeb:"true",Device:sberDesktop?"Desktop":"Mobile"};
    const result=await bank("Init",initFields);
-   if(result.Success!==true||!result.PaymentId||(method==="card"&&!trustedPaymentUrl(result.PaymentURL))){
+   if(result.Success!==true||!result.PaymentId||((method==="card"||method==="sberpay")&&!trustedPaymentUrl(result.PaymentURL))){
     console.warn("Demo payment Init bank response:",safeBankFailure(result));
     return res.status(502).json({error:"Банк не создал тестовый платёж."});
    }
    const paymentId=String(result.PaymentId);
    await pool.query("UPDATE viona_demo_payments SET payment_id=$2,status='INITIATED' WHERE order_id=$1",[orderId,paymentId]);
    if(method==="card")return res.json({paymentUrl:result.PaymentURL,orderId,mode:"demo"});
+   if(method==="sberpay"){
+    // The SberPay/link/get endpoint is marked production-only in T-Bank docs.
+    // Fall back safely to the DEMO bank payment page when unsupported.
+    try{
+     const fields={PaymentId:paymentId};
+     if(sberPhone)fields.Phone=sberPhone;
+     const link=await bank("SberPay/link/get",fields);
+     if(link.Success===true){
+      const direct=link.Params?.RedirectUrl;
+      if(trustedSberPayUrl(direct))
+       return res.json({mode:"demo",orderId,flow:"direct",redirectUrl:direct});
+      if(typeof direct==="string")
+       console.warn("Demo SberPay unrecognized link host:",paymentHostForLog(direct));
+      if(sberDesktop&&!direct)
+       return res.json({mode:"demo",orderId,flow:"push"});
+     }else console.warn("Demo SberPay link rejected:",{errorCode:String(link?.ErrorCode??"unknown").slice(0,24)});
+    }catch(err){console.warn("Demo SberPay link unavailable:",safeNetworkError(err))}
+    return res.json({mode:"demo",orderId,flow:"hosted",paymentUrl:result.PaymentURL});
+   }
    const qr=await bank("GetQr",{PaymentId:paymentId,DataType:"PAYLOAD",PaymentMethod:"SBP"});
    if(qr.Success!==true||typeof qr.Data!=="string"){
     console.warn("Demo SBP GetQr rejected:",{success:qr.Success===true,errorCode:String(qr.ErrorCode||"unknown").slice(0,32)});
@@ -98,6 +142,7 @@ function registerTestPayments(app,pool,getCatalog){
  }
  app.post("/api/payments/test/init",(req,res)=>createCheckout(req,res,"card"));
  app.post("/api/payments/test/qr",(req,res)=>createCheckout(req,res,"sbp"));
+ app.post("/api/payments/test/sberpay",(req,res)=>createCheckout(req,res,"sberpay"));
  app.get("/api/payments/test/cards",async(req,res)=>{
   res.set("Cache-Control","no-store");
   const user=getUser(req);
@@ -154,9 +199,18 @@ function registerTestPayments(app,pool,getCatalog){
   if(!/^[0-9a-f]{64}$/i.test(token)||!crypto.timingSafeEqual(Buffer.from(token.toLowerCase(),"hex"),Buffer.from(expected,"hex")))return res.sendStatus(403);
   try{
    const status=String(body.Status||"");
-   if(!["NEW","FORM_SHOWED","AUTHORIZING","AUTHORIZED","CONFIRMED","REJECTED","REVERSED","REFUNDED","CANCELED","DEADLINE_EXPIRED"].includes(status))return res.status(200).type("text/plain").send("OK");
+   if(status==="CONFIRMED" && body.Success!==true)return res.sendStatus(403);
+   if(!["NEW","FORM_SHOWED","AUTHORIZING","AUTHORIZED","CONFIRMED","REJECTED","REVERSED","REFUNDED","CANCELED","DEADLINE_EXPIRED","AUTH_FAIL","CONFIRMING"].includes(status))return res.status(200).type("text/plain").send("OK");
 
-   const updated=await pool.query("UPDATE viona_demo_payments SET status=$2,updated_at=NOW() WHERE order_id=$1 AND amount_kopecks=$3 AND payment_id=$4 RETURNING telegram_id,method,save_card_requested",[String(body.OrderId),status,Number(body.Amount),String(body.PaymentId||"")]);
+   const updated=await pool.query(
+    "UPDATE viona_demo_payments SET " +
+    "status=CASE WHEN $2 IN ('REFUNDED','REVERSED') THEN $2 WHEN status IN ('CONFIRMED','REFUNDED','REVERSED') THEN status ELSE $2 END,"+
+    "paid_at=CASE WHEN $2='CONFIRMED' THEN COALESCE(paid_at,NOW()) ELSE paid_at END,"+
+    "fulfillment_status=CASE WHEN $2='CONFIRMED' AND fulfillment_status='awaiting_payment' THEN 'queued' ELSE fulfillment_status END,"+
+    "stage_updated_at=CASE WHEN $2='CONFIRMED' AND fulfillment_status='awaiting_payment' THEN NOW() ELSE stage_updated_at END,"+
+    "updated_at=NOW() WHERE order_id=$1 AND amount_kopecks=$3 AND payment_id=$4 RETURNING telegram_id,method,save_card_requested",
+    [String(body.OrderId),status,Number(body.Amount),String(body.PaymentId||"")]
+   );
    // Store only a bank-issued payment token and the last four digits. Never PAN/CVV/expiry.
    const rebill=typeof body.RebillId==="string"||typeof body.RebillId==="number"?String(body.RebillId):"";
    const pan=typeof body.Pan==="string"?body.Pan:"";
@@ -180,14 +234,21 @@ function registerTestPayments(app,pool,getCatalog){
    if(!r.rowCount)return res.sendStatus(404);
    const payment=r.rows[0];
    // A DEMO SBP notification might be delayed; verify status with the bank.
-   if(payment.method==="sbp" && payment.payment_id && ["INITIATED","QR_CREATED","AUTHORIZED"].includes(payment.status)){
+   if(["sbp","sberpay"].includes(payment.method) && payment.payment_id && ["INITIATED","QR_CREATED","AUTHORIZED","AUTHORIZING","FORM_SHOWED"].includes(payment.status)){
     try{
      const remote=await bank("GetState",{PaymentId:payment.payment_id});
      const valid=remote.Success===true && String(remote.PaymentId)===String(payment.payment_id) &&
        String(remote.OrderId)===String(req.params.id) && Number(remote.Amount)===Number(payment.amount_kopecks);
      const next=String(remote.Status||"");
-     if(valid && ["AUTHORIZED","CONFIRMED","REJECTED","DEADLINE_EXPIRED","REVERSED","CANCELED"].includes(next)){
-      await pool.query("UPDATE viona_demo_payments SET status=$2,updated_at=NOW() WHERE order_id=$1 AND telegram_id=$3 AND payment_id=$4",[req.params.id,next,user.id,payment.payment_id]);
+     if(valid && ["AUTHORIZED","CONFIRMED","REJECTED","DEADLINE_EXPIRED","REVERSED","CANCELED","AUTH_FAIL"].includes(next)){
+      await pool.query(
+       "UPDATE viona_demo_payments SET status=CASE WHEN status IN ('REFUNDED','REVERSED') THEN status ELSE $2 END,"+
+       "paid_at=CASE WHEN $2='CONFIRMED' THEN COALESCE(paid_at,NOW()) ELSE paid_at END,"+
+       "fulfillment_status=CASE WHEN $2='CONFIRMED' AND fulfillment_status='awaiting_payment' THEN 'queued' ELSE fulfillment_status END,"+
+       "stage_updated_at=CASE WHEN $2='CONFIRMED' AND fulfillment_status='awaiting_payment' THEN NOW() ELSE stage_updated_at END,"+
+       "updated_at=NOW() WHERE order_id=$1 AND telegram_id=$3 AND payment_id=$4",
+       [req.params.id,next,user.id,payment.payment_id]
+      );
       payment.status=next;
      }
     }catch(e){console.error("Demo SBP state check:",safeNetworkError(e))}
@@ -195,5 +256,6 @@ function registerTestPayments(app,pool,getCatalog){
    res.json({mode:"demo",status:payment.status,amount_kopecks:payment.amount_kopecks});
   }catch(e){console.error("Demo payment status:",e.message);res.sendStatus(503)}
  });
+ registerPaymentOrders(app,pool,bank,configured);
 }
 module.exports={registerTestPayments};
