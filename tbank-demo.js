@@ -49,25 +49,64 @@ async function bank(method,fields){
 }
 function registerTestPayments(app,pool,getCatalog){
  app.get("/api/payments/test/config",(_req,res)=>res.json({enabled:configured()&&Boolean(pool),mode:"demo"}));
- app.post("/api/payments/test/init",async(req,res)=>{
+
+ async function createCheckout(req,res,method){
   res.set("Cache-Control","no-store");
   if(!configured()||!pool)return res.status(503).json({error:"Тестовый эквайринг пока не настроен."});
-  if(req.get("origin")!==(process.env.PUBLIC_BASE_URL||"https://viona.space").replace(/\/$/,""))return res.status(403).json({error:"Недопустимый источник запроса."});
-  const user=getUser(req);if(!user)return res.status(401).json({error:"Войдите через Telegram для тестовой оплаты."});
+  if(req.get("origin")!==(process.env.PUBLIC_BASE_URL||"https://viona.space").replace(/\\/$/,""))return res.status(403).json({error:"Недопустимый источник запроса."});
+  const user=getUser(req);
+  if(!user)return res.status(401).json({error:"Войдите через Telegram для тестовой оплаты."});
   const ids=req.body?.items;
   if(!Array.isArray(ids)||ids.length<1||ids.length>20||!ids.every(id=>Number.isSafeInteger(id)&&id>0)||new Set(ids).size!==ids.length)return res.status(400).json({error:"Некорректная корзина."});
+  const saveCard=method==="card"&&req.body?.saveCard===true;
   try{
    const catalog=await getCatalog(),selected=ids.map(id=>catalog.find(p=>Number(p.id)===id));
    if(selected.some(p=>!p||!Number.isSafeInteger(Number(p.price))||Number(p.price)<=0))return res.status(400).json({error:"Товары без фиксированной цены нельзя оплатить."});
    const amount=selected.reduce((sum,p)=>sum+Number(p.price)*100,0);
-   if(!Number.isSafeInteger(amount)||amount<100||amount>1000000000)return res.status(400).json({error:"Некорректная сумма."});
+   const minimum=method==="sbp"?1000:100;
+   if(!Number.isSafeInteger(amount)||amount<minimum||amount>1000000000)return res.status(400).json({error:method==="sbp"?"Для СБП минимальная сумма 10 ₽.":"Некорректная сумма."});
    const orderId=crypto.randomUUID();
-   await pool.query("INSERT INTO viona_demo_payments(order_id,telegram_id,amount_kopecks,status) VALUES($1,$2,$3,'NEW')",[orderId,user.id,amount]);
-   const result=await bank("Init",{Amount:amount,OrderId:orderId,Description:"VIONA DEMO: "+selected.map(p=>String(p.title)).join(", ").slice(0,140),NotificationURL:(process.env.PUBLIC_BASE_URL||"https://viona.space").replace(/\/$/,"")+"/api/payments/test/notification"});
-   if(result.Success!==true||!trustedPaymentUrl(result.PaymentURL)){console.warn("Demo payment Init bank response:",safeBankFailure(result));return res.status(502).json({error:"Банк не создал тестовый платёж."})}
-   await pool.query("UPDATE viona_demo_payments SET payment_id=$2,status='INITIATED' WHERE order_id=$1",[orderId,String(result.PaymentId)]);
-   res.json({paymentUrl:result.PaymentURL,orderId,mode:"demo"});
-  }catch(e){console.error("Demo payment Init:",e.message,"network:",safeNetworkError(e));res.status(503).json({error:"Не удалось создать тестовый платёж."})}
+   await pool.query("INSERT INTO viona_demo_payments(order_id,telegram_id,amount_kopecks,status,method,save_card_requested) VALUES($1,$2,$3,'NEW',$4,$5)",[orderId,user.id,amount,method,saveCard]);
+   const initFields={Amount:amount,OrderId:orderId,Description:"VIONA DEMO: "+selected.map(p=>String(p.title)).join(", ").slice(0,128),NotificationURL:(process.env.PUBLIC_BASE_URL||"https://viona.space").replace(/\\/$/,"")+"/api/payments/test/notification"};
+   if(method==="card"){
+    initFields.CustomerKey="viona-"+user.id;
+    if(saveCard)initFields.Recurrent="Y";
+   }
+   const result=await bank("Init",initFields);
+   if(result.Success!==true||!result.PaymentId||(method==="card"&&!trustedPaymentUrl(result.PaymentURL))){
+    console.warn("Demo payment Init bank response:",safeBankFailure(result));
+    return res.status(502).json({error:"Банк не создал тестовый платёж."});
+   }
+   const paymentId=String(result.PaymentId);
+   await pool.query("UPDATE viona_demo_payments SET payment_id=$2,status='INITIATED' WHERE order_id=$1",[orderId,paymentId]);
+   if(method==="card")return res.json({paymentUrl:result.PaymentURL,orderId,mode:"demo"});
+   const qr=await bank("GetQr",{PaymentId:paymentId,DataType:"PAYLOAD",PaymentMethod:"SBP"});
+   if(qr.Success!==true||typeof qr.Data!=="string"){
+    console.warn("Demo SBP GetQr rejected:",{success:qr.Success===true,errorCode:String(qr.ErrorCode||"unknown").slice(0,32)});
+    return res.status(502).json({error:"Т-Банк не сформировал QR. Проверьте, включена ли СБП у терминала."});
+   }
+   let qrLink;
+   try{const url=new URL(qr.Data);if(url.protocol!=="https:"||url.hostname!=="qr.nspk.ru"||url.username||url.password)throw Error("Invalid QR host");qrLink=url.toString()}catch{return res.status(502).json({error:"Банк вернул неожиданный адрес СБП."})}
+   const QRCode=require("qrcode");
+   const qrImage=await QRCode.toDataURL(qrLink,{errorCorrectionLevel:"M",width:320,margin:2});
+   await pool.query("UPDATE viona_demo_payments SET status='QR_CREATED',updated_at=NOW() WHERE order_id=$1",[orderId]);
+   res.json({qrImage,qrLink,orderId,mode:"demo"});
+  }catch(e){
+   console.error("Demo payment "+method+":",e.message,"network:",safeNetworkError(e));
+   res.status(503).json({error:"Не удалось создать тестовый платёж."});
+  }
+ }
+ app.post("/api/payments/test/init",(req,res)=>createCheckout(req,res,"card"));
+ app.post("/api/payments/test/qr",(req,res)=>createCheckout(req,res,"sbp"));
+ app.get("/api/payments/test/cards",async(req,res)=>{
+  res.set("Cache-Control","no-store");
+  const user=getUser(req);
+  if(!user)return res.status(401).json({error:"Требуется вход через Telegram."});
+  if(!configured()||!pool)return res.json({cards:[],mode:"demo"});
+  try{
+   const r=await pool.query("SELECT id,last4,created_at FROM viona_demo_saved_cards WHERE telegram_id=$1 ORDER BY created_at DESC LIMIT 20",[user.id]);
+   res.json({cards:r.rows.map(c=>({id:c.id,last4:c.last4})),mode:"demo"});
+  }catch(e){console.error("Demo saved cards:",e.message);res.status(503).json({error:"Не удалось загрузить сохранённые карты."})}
  });
  app.post("/api/payments/test/notification",async(req,res)=>{
   if(!configured()||!pool)return res.sendStatus(503);
@@ -78,7 +117,17 @@ function registerTestPayments(app,pool,getCatalog){
   try{
    const status=String(body.Status||"");
    if(!["NEW","FORM_SHOWED","AUTHORIZING","AUTHORIZED","CONFIRMED","REJECTED","REVERSED","REFUNDED","CANCELED","DEADLINE_EXPIRED"].includes(status))return res.status(200).type("text/plain").send("OK");
-   await pool.query("UPDATE viona_demo_payments SET status=$2,updated_at=NOW() WHERE order_id=$1 AND amount_kopecks=$3 AND (payment_id IS NULL OR payment_id=$4)",[String(body.OrderId),status,Number(body.Amount),String(body.PaymentId||"")]);
+
+   const updated=await pool.query("UPDATE viona_demo_payments SET status=$2,updated_at=NOW() WHERE order_id=$1 AND amount_kopecks=$3 AND payment_id=$4 RETURNING telegram_id,method,save_card_requested",[String(body.OrderId),status,Number(body.Amount),String(body.PaymentId||"")]);
+   // Store only a bank-issued payment token and the last four digits. Never PAN/CVV/expiry.
+   if(updated.rowCount && updated.rows[0].method==="card" && updated.rows[0].save_card_requested &&
+      (status==="AUTHORIZED"||status==="CONFIRMED") && body.Success===true &&
+      typeof body.RebillId==="string" && /^\\d{1,64}$/.test(body.RebillId) &&
+      typeof body.Pan==="string" && /^[0-9*]{8,24}$/.test(body.Pan) &&
+      body.Pan.includes("*") && /\\d{4}$/.test(body.Pan)){
+    await pool.query("INSERT INTO viona_demo_saved_cards(telegram_id,rebill_id,last4) VALUES($1,$2,$3) ON CONFLICT(telegram_id,rebill_id) DO NOTHING",
+      [updated.rows[0].telegram_id,body.RebillId,body.Pan.slice(-4)]);
+   }
    res.type("text/plain").send("OK");
   }catch(e){console.error("Demo payment notification:",e.message);res.sendStatus(503)}
  });
