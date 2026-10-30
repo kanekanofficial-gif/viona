@@ -22,8 +22,14 @@ async function reconcile(row,pool,bank){
  if(!row.payment_id || FINISHED.has(row.status))return row;
  const last=Number(new Date(row.last_bank_check_at||0));
  if(Number.isFinite(last)&&Date.now()-last<9000)return row;
- // Bank response—not the URL query, the browser or a client-supplied flag—sets paid state.
+ // A database-level lease prevents simultaneous page refreshes from flooding GetState.
  try{
+  const lease=await pool.query(
+   "UPDATE viona_demo_payments SET last_bank_check_at=NOW() "+
+   "WHERE order_id=$1 AND payment_id=$2 AND (last_bank_check_at IS NULL OR last_bank_check_at < NOW()-INTERVAL '9 seconds') RETURNING order_id",
+   [row.order_id,row.payment_id]
+  );
+  if(!lease.rowCount)return row;
   const remote=await bank("GetState",{PaymentId:row.payment_id});
   if(!bankMatches(remote,row)){
    console.warn("VIONA order bank state mismatch:",row.order_id);
