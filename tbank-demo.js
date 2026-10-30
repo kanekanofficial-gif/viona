@@ -1,6 +1,7 @@
 "use strict";
 const crypto=require("node:crypto");
 const {getUser}=require("./telegram-auth");
+const {registerPaymentOrders}=require("./payment-order");
 const BASE="https://securepay.tinkoff.ru/v2";
 // Only log network error codes, never request bodies, terminal credentials or payment tokens.
 function safeNetworkError(err){const cause=err?.cause;const code=typeof cause?.code==="string"?cause.code:"unknown";const syscall=typeof cause?.syscall==="string"?cause.syscall:"unknown";const name=typeof err?.name==="string"?err.name:"Error";return {name,code,syscall,aborted:name==="AbortError"||name==="TimeoutError"};}
@@ -80,8 +81,17 @@ function registerTestPayments(app,pool,getCatalog){
    const minimum=method==="sbp"?1000:100;
    if(!Number.isSafeInteger(amount)||amount<minimum||amount>1000000000)return res.status(400).json({error:method==="sbp"?"Для СБП минимальная сумма 10 ₽.":"Некорректная сумма."});
    const orderId=crypto.randomUUID();
-   await pool.query("INSERT INTO viona_demo_payments(order_id,telegram_id,amount_kopecks,status,method,save_card_requested) VALUES($1,$2,$3,'NEW',$4,$5)",[orderId,user.id,amount,method,saveCard]);
-   const initFields={Amount:amount,OrderId:orderId,Description:"VIONA DEMO: "+selected.map(p=>String(p.title)).join(", ").slice(0,128),NotificationURL:(process.env.PUBLIC_BASE_URL||"https://viona.space").replace(new RegExp("/$"),"")+"/api/payments/test/notification"};
+   const snapshot=selected.map(p=>({id:Number(p.id),title:String(p.title||"").slice(0,160),description:String(p.description||"").slice(0,1000),category:String(p.category||"").slice(0,70),tag:String(p.tag||"").slice(0,70),price:Number(p.price)}));
+   await pool.query("INSERT INTO viona_demo_payments(order_id,telegram_id,amount_kopecks,status,method,save_card_requested,items) VALUES($1,$2,$3,'NEW',$4,$5,$6::jsonb)",[orderId,user.id,amount,method,saveCard,JSON.stringify(snapshot)]);
+   const base=(process.env.PUBLIC_BASE_URL||"https://viona.space").replace(new RegExp("/$"),"");
+   // Browser redirects are UX only; an authenticated GetState verification decides payment success.
+   const initFields={
+    Amount:amount,OrderId:orderId,
+    Description:"VIONA DEMO: "+selected.map(p=>String(p.title)).join(", ").slice(0,128),
+    NotificationURL:base+"/api/payments/test/notification",
+    SuccessURL:base+"/payment/success?orderId="+encodeURIComponent(orderId),
+    FailURL:base+"/payment/fail?orderId="+encodeURIComponent(orderId)
+   };
    if(method==="card"){
     initFields.CustomerKey="viona-"+user.id;
     if(saveCard){initFields.Recurrent="Y";initFields.OperationInitiatorType="1";}
@@ -191,7 +201,15 @@ function registerTestPayments(app,pool,getCatalog){
    const status=String(body.Status||"");
    if(!["NEW","FORM_SHOWED","AUTHORIZING","AUTHORIZED","CONFIRMED","REJECTED","REVERSED","REFUNDED","CANCELED","DEADLINE_EXPIRED","AUTH_FAIL","CONFIRMING"].includes(status))return res.status(200).type("text/plain").send("OK");
 
-   const updated=await pool.query("UPDATE viona_demo_payments SET status=$2,updated_at=NOW() WHERE order_id=$1 AND amount_kopecks=$3 AND payment_id=$4 RETURNING telegram_id,method,save_card_requested",[String(body.OrderId),status,Number(body.Amount),String(body.PaymentId||"")]);
+   const updated=await pool.query(
+    "UPDATE viona_demo_payments SET " +
+    "status=CASE WHEN $2 IN ('REFUNDED','REVERSED') THEN $2 WHEN status IN ('CONFIRMED','REFUNDED','REVERSED') THEN status ELSE $2 END,"+
+    "paid_at=CASE WHEN $2='CONFIRMED' THEN COALESCE(paid_at,NOW()) ELSE paid_at END,"+
+    "fulfillment_status=CASE WHEN $2='CONFIRMED' AND fulfillment_status='awaiting_payment' THEN 'queued' ELSE fulfillment_status END,"+
+    "stage_updated_at=CASE WHEN $2='CONFIRMED' AND fulfillment_status='awaiting_payment' THEN NOW() ELSE stage_updated_at END,"+
+    "updated_at=NOW() WHERE order_id=$1 AND amount_kopecks=$3 AND payment_id=$4 RETURNING telegram_id,method,save_card_requested",
+    [String(body.OrderId),status,Number(body.Amount),String(body.PaymentId||"")]
+   );
    // Store only a bank-issued payment token and the last four digits. Never PAN/CVV/expiry.
    const rebill=typeof body.RebillId==="string"||typeof body.RebillId==="number"?String(body.RebillId):"";
    const pan=typeof body.Pan==="string"?body.Pan:"";
@@ -230,5 +248,6 @@ function registerTestPayments(app,pool,getCatalog){
    res.json({mode:"demo",status:payment.status,amount_kopecks:payment.amount_kopecks});
   }catch(e){console.error("Demo payment status:",e.message);res.sendStatus(503)}
  });
+ registerPaymentOrders(app,pool,bank,configured);
 }
 module.exports={registerTestPayments};
