@@ -96,3 +96,6 @@
 @media(max-width:780px){.vx-layout{grid-template-columns:minmax(0,1fr)}.vx-summary{position:static;order:-1}.vx-payment-column{order:2}}
 @media(max-width:590px){.v15-dialog:has(.vx-checkout){width:calc(100vw - 16px);max-height:94dvh;padding:20px 17px}.v15-dialog .vx-title{font-size:36px;margin-right:36px}.vx-lead{font-size:12px;margin-bottom:18px}.vx-summary{padding:17px}.vx-wallet{padding:13px}.vx-wallet-heading{flex-wrap:wrap}.vx-wallet-refresh{margin-left:auto}.vx-wallet-refresh span{display:none}.vx-method{min-height:75px;padding:11px;gap:10px}.vx-method-icon{width:40px;height:40px;flex-basis:40px;font-size:22px}.vx-method-copy strong{font-size:12px}.vx-method-copy small{font-size:9.5px}.vx-section-caption{display:none}.vx-contact-fold{padding:0 12px}.vx-consent small{font-size:9.5px}.vx-overline{font-size:9px}}
 @media(prefers-reduced-motion:reduce){.vx-method,.vx-wallet-refresh,.vx-qr-action{transition:none}}
+
+/* Checkout is available in demo mode: do not visually disable its entry point. */
+.panel-bottom .action-primary{opacity:1}
