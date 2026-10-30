@@ -108,7 +108,7 @@ void UpdateMovement(PlayerMotion& player,
    const section=document.createElement("section");
    section.className="viona-rich-details";
    section.innerHTML='<div class="viona-rich-kicker">VIONA / INSIDE THE PRODUCT</div><h3>'+esc(item.heading)+'</h3><p class="viona-rich-description">'+esc(item.description)+'</p><div class="viona-rich-features">'+item.features.map(x=>'<span>✦ '+esc(x)+'</span>').join("")+'</div><div class="viona-rich-code"><div class="viona-rich-code-head"><span class="viona-rich-code-dots">● ● ●</span><span>'+esc(item.file)+'</span><small>'+esc(item.language)+'</small></div><pre><code>'+esc(item.code)+'</code></pre><div class="viona-rich-fade" aria-hidden="true"></div><div class="viona-rich-code-label">ФРАГМЕНТ КОДА · ПРИМЕР</div></div><p class="viona-rich-disclaimer">Это демонстрационный пример, а не исходный код продаваемого продукта. Полный состав и готовность уточняются при заказе.</p>';
-   const visual=layout.querySelector(".detail-visual"); const code=section.querySelector(".viona-rich-code"); if(visual&&code){visual.replaceChildren(code);visual.classList.add("viona-preview-visual");} layout.append(section);
+   const visual=layout.querySelector(".detail-visual"); const code=section.querySelector(".viona-rich-code"); if(visual&&code){const glyph=visual.querySelector(".detail-glyph");const badge=document.createElement("span");badge.className="viona-detail-icon-overlay";badge.setAttribute("aria-hidden","true");if(glyph){badge.append(...[...glyph.childNodes].map(n=>n.cloneNode(true)))}visual.replaceChildren(code,badge);visual.classList.add("viona-preview-visual");} layout.append(section);
  });
  observer.observe(content,{childList:true,subtree:true});
 })();
