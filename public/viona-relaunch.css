@@ -104,3 +104,18 @@ footer{border-color:#b5c9ed1c;color:#9badc8}
 @media(max-width:700px){.site-header{height:68px;padding-inline:14px}.masthead{padding:24px 19px}.masthead-copy h1{font-size:clamp(48px,10vw,76px)}.feature-art.v17-hero-scene{min-height:400px}.v17-dashboard{width:min(395px,92%)}.v17-floating-badge{right:0;top:7%;padding:10px 11px}.v17-floating-tag{left:1%;bottom:6%}.v17-dashboard-body{padding:20px}.v17-dashboard-cell{min-height:90px}.section{padding:70px 18px}.products{grid-template-columns:repeat(auto-fit,minmax(245px,1fr));gap:14px}.product{min-height:330px;padding:21px}.product h3{font-size:23px}}
 @media(max-width:490px){.masthead-copy h1{font-size:clamp(44px,11vw,59px)}.masthead-copy>p{font-size:13px}.feature-art.v17-hero-scene{min-height:350px}.v17-dashboard-head{padding:15px 19px}.v17-dashboard-body h2{font-size:31px}.v17-dashboard-visual{gap:8px;margin:16px 0}.v17-dashboard-cell{min-height:78px}.v17-dashboard-body p{font-size:11px}.v17-floating-badge{transform:scale(.85);transform-origin:top right}.v17-floating-tag{bottom:0;left:0}.products{grid-template-columns:1fr}.product{min-height:315px}.product-icon{width:85px;height:85px}.v15-dialog{border-radius:21px}.v15-dialog .vx-title{font-size:34px}.mobile-bar{background:#132238f5;border-color:#b5d4ec40}}
 @media(prefers-reduced-motion:reduce){.atmo-moon,.v17-dashboard,.v17-floating-badge,.v17-floating-tag,.reveal.visible{animation:none!important}.product,.product-icon,.vx-method{transition:none!important}.product:hover{transform:none}.product:hover .product-icon{transform:none}}
+
+
+/* Purchased orders are clearly separated from non-payment requests in VIONA ID. */
+.v17-purchase-list{margin-top:22px;display:grid;gap:10px}
+.v17-purchase-list h3{font-size:15px;line-height:1.3;letter-spacing:-.03em;color:#c5e9f3;margin-bottom:4px}
+.v17-purchase-row{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:16px;border:1px solid #a4c2e93f;border-radius:14px;background:linear-gradient(140deg,#a1c2ff0f,#ffffff04);transition:border-color .2s,background .2s,transform .2s}
+.v17-purchase-row:hover,.v17-purchase-row:focus-visible{border-color:#a7e7ed9b;background:#b2d6fa1c;transform:translateY(-2px)}
+.v17-purchase-row>div:first-child{display:flex;flex-direction:column;gap:7px}
+.v17-purchase-row strong{font-size:13px;color:#f1f8ff}
+.v17-purchase-row small{color:#9cafcc;font-size:10px}
+.v17-purchase-meta{display:flex;flex-direction:column;align-items:flex-end;gap:4px;text-align:right}
+.v17-purchase-meta span{color:#a6eee0;font-size:11px;font-weight:800}
+.v17-purchase-meta b{font-size:14px;color:#d9e9ff}
+.v17-purchase-meta small{color:#a1cbf0}
+@media(max-width:530px){.v17-purchase-row{align-items:flex-start;padding:12px}.v17-purchase-meta span{font-size:10px}}
