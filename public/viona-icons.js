@@ -20,8 +20,11 @@
   bot:svg("bot","Бот и автоматизация",
    '<rect x="13" y="18" width="46" height="40" rx="12" fill="#8bc9c6"/><path d="M36 18v-7" stroke="#e9faf7" stroke-width="4" stroke-linecap="round"/><circle cx="36" cy="10" r="4" fill="#e9faf7"/><circle cx="26" cy="35" r="5" fill="#223b4c"/><circle cx="46" cy="35" r="5" fill="#223b4c"/><path d="M27 47c5 5 13 5 18 0" stroke="#223b4c" stroke-width="3" fill="none" stroke-linecap="round"/>')
  };
+ const uploaded={1:"telegram",3:"discord",4:"game",7:"max"};
+ const brandedIcon=(name,label)=>'<span class="viona-brand viona-brand-'+name+'" role="img" aria-label="'+label+'"></span>';
  function productIcon(item){
   const id=Number(item?.id);
+  if(uploaded[id])return brandedIcon(uploaded[id],({1:"Telegram",3:"Discord",4:"Game Mod Toolkit",7:"MAX"})[id]);
   const byId={1:"telegram",2:"portfolio",3:"discord",4:"game",5:"landing",6:"code",7:"max"};
   let kind=byId[id];
   if(!kind){
@@ -32,5 +35,5 @@
   }
   return assets[kind]||assets.portfolio;
  }
- window.VionaIcons=Object.freeze({product:productIcon,kind:name=>assets[name]||assets.portfolio});
+ window.VionaIcons=Object.freeze({product:productIcon,kind:name=>assets[name]||assets.portfolio,brand:brandedIcon});
 })();
