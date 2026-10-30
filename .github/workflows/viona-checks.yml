@@ -1,0 +1,26 @@
+name: VIONA checks
+on:
+  pull_request:
+  push:
+    branches: [main]
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check JavaScript syntax
+        run: |
+          node --check server.js
+          node --check tbank-demo.js
+          node --check payment-order.js
+          node --check public/v15.js
+          node --check public/v16.js
+          node --check public/viona-icons.js
+          node --check public/payment-result.js
+          node --check public/rich-details.js
+          node --check public/sw.js
+      - name: Run payment verification and visual tests
+        run: npm test
