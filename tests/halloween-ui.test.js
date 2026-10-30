@@ -91,7 +91,7 @@ test("checkout stays wired to original TEST-only payment endpoints",()=>{
  for(const endpoint of ["/api/payments/test/init","/api/payments/test/qr","/api/payments/test/sberpay"])
   assert.ok(app.includes(endpoint));
  assert.ok(app.includes("rememberPendingPayment"));
- assert.ok(checkout.includes("vionaQrPanel"));
+ assert.ok(app.includes("vionaQrPanel"));
 });
 
 test("HTML is properly nested and has no duplicated IDs",()=>{
