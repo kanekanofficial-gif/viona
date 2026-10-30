@@ -111,10 +111,12 @@ function openCheckout(){
  const total=selected.reduce((n,p)=>n+Number(p.price||0),0);
  const items=selected.map(p=>'<li class="vx-line"><span class="vx-product-glyph">'+(window.VionaIcons?.product(p)||safe(p.icon||"✦"))+'</span><span class="vx-product-name">'+safe(localized(p).title)+'</span><strong>'+money(p.price)+'</strong></li>').join("");
  open("checkout",[
-  '<div class="vx-checkout">',
-  '<div class="vx-overline"><span class="vx-spark">✦</span> VIONA / CHECKOUT <span class="vx-demo-dot"></span> ТЕСТОВЫЙ РЕЖИМ</div>',
-  '<h2 id="v15Title" class="vx-title">Оформление <em>заказа.</em></h2>',
-  '<p class="vx-lead">Выбери удобный способ оплаты — всё остальное сделаем мы.</p>',
+  '<div class="vx-checkout v18-night-checkout">',
+  '<div class="vx-night-symbol" aria-hidden="true">✷</div>',
+  '<div class="vx-overline"><span class="vx-spark">✦</span> VIONA / NIGHT CHECKOUT <span class="vx-demo-dot"></span> DEMO</div>',
+  '<h2 id="v15Title" class="vx-title">Оформи <em>по-своему.</em></h2>',
+  '<p class="vx-lead">Выбери способ оплаты, а потом наблюдай за своим заказом в VIONA ID.</p>',
+  '<div class="vx-flow"><span class="vx-flow-active"><b>01</b> Способ оплаты</span><i></i><span><b>02</b> Банк</span><i></i><span><b>03</b> Результат</span></div>',
   '<div class="vx-layout">',
     '<main class="vx-payment-column">',
      '<section class="vx-methods" id="vionaPaymentOptions" hidden>',
