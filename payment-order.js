@@ -19,7 +19,15 @@ function bankMatches(remote,row){
   ALLOWED_BANK.has(String(remote.Status||""));
 }
 async function reconcile(row,pool,bank){
- if(!row.payment_id || FINISHED.has(row.status))return row;
+ if(!row.payment_id)return row;
+ // Repair legacy confirmed test orders that predate the fulfillment migration.
+ if(row.status==="CONFIRMED" && row.fulfillment_status==="awaiting_payment"){
+  try{
+   const recovered=await pool.query("UPDATE viona_demo_payments SET fulfillment_status='queued',paid_at=COALESCE(paid_at,NOW()),stage_updated_at=NOW() WHERE order_id=$1 AND status='CONFIRMED' AND fulfillment_status='awaiting_payment' RETURNING *",[row.order_id]);
+   return recovered.rows[0]||row;
+  }catch(e){console.warn("VIONA confirmed order transition unavailable:",e.message);return row}
+ }
+ if(FINISHED.has(row.status))return row;
  const last=Number(new Date(row.last_bank_check_at||0));
  if(Number.isFinite(last)&&Date.now()-last<9000)return row;
  // A database-level lease prevents simultaneous page refreshes from flooding GetState.
