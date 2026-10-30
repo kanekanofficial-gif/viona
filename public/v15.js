@@ -92,7 +92,94 @@ search.addEventListener("input",updateSuggestions);search.addEventListener("focu
 suggestions.addEventListener("keydown",e=>{const buttons=[...suggestions.querySelectorAll("button")],idx=buttons.indexOf(document.activeElement);if(e.key==="Escape"){hideSuggestions();search.focus()}if(e.key==="ArrowDown"){e.preventDefault();buttons[Math.min(idx+1,buttons.length-1)]?.focus()}if(e.key==="ArrowUp"){e.preventDefault();if(idx===0)search.focus();else buttons[idx-1]?.focus()}});
 suggestions.addEventListener("click",e=>{const b=e.target.closest("[data-suggest]");if(!b)return;hideSuggestions();productDetail(b.dataset.suggest)});
 document.addEventListener("pointerdown",e=>{if(!e.target.closest(".smart-search"))hideSuggestions()});
-function openCheckout(){const selected=state.cart.map(id=>products.find(p=>String(p.id)===id)).filter(Boolean);if(!selected.length){toast(tr.checkoutEmpty);return}const total=selected.reduce((n,p)=>n+Number(p.price||0),0);const lines=selected.map(p=>'<li><span>'+safe(localized(p).title)+'</span><strong>'+money(p.price)+'</strong></li>').join("");open("checkout",'<div class="v15-kicker">VIONA / ORDER REQUEST</div><h2 id="v15Title">'+safe(tr.order)+'</h2><p class="checkout-note">Выбери способ оплаты или отправь заявку.</p><ul class="checkout-lines">'+lines+'</ul><div class="checkout-total"><span>'+safe(t.total)+'</span><strong>'+money(total)+'</strong></div><p class="checkout-warning">Только тестовые платежи — реальные деньги не списываются.</p><form id="v15CheckoutForm" class="v15-form"><label>'+safe(t.nameLabel)+'<input name="name" maxlength="100" required autocomplete="name" value="'+safe(profile.nick||"")+'"></label><label>'+safe(t.contactLabel)+'<input name="contact" maxlength="200" required autocomplete="email" placeholder="Telegram / email"></label><label>'+safe(t.detailsLabel)+'<textarea name="details" minlength="10" maxlength="5000" rows="3" required></textarea></label><button type="submit" class="action-primary">'+safe(tr.orderSubmit)+' ↗</button><div id="vionaPaymentOptions" hidden style="margin-top:14px;border:1px solid #777;border-radius:12px;padding:12px"><strong>Тестовая оплата Т-Банк</strong><label style="display:flex;align-items:center;gap:8px;margin:12px 0"><input type="checkbox" id="vionaSaveCard" style="width:auto"> Сохранить карту для следующих покупок</label><div style="display:flex;gap:8px;flex-wrap:wrap"><button type="button" id="vionaDemoPay" class="action-primary">💳 Оплатить картой ↗</button><button type="button" id="vionaSbpPay" class="action-primary">▦ СБП · QR</button></div><p style="font-size:12px;margin-top:8px">Реквизиты карты вводятся только на странице Т-Банка. VIONA не хранит номер карты или CVV.</p></div><p id="checkoutStatus" role="status"></p><div id="vionaQrPanel" hidden style="text-align:center;margin-top:15px"><h3>Оплата СБП</h3><img id="vionaQrImage" alt="QR-код для оплаты СБП" width="280" height="280" style="max-width:100%;background:#fff;padding:10px;border-radius:12px;box-sizing:border-box"><p><a id="vionaQrLink" target="_blank" rel="noopener noreferrer">Открыть банковское приложение ↗</a></p><p id="vionaQrState" role="status">Ожидание подтверждения…</p></div></form>');const form=content.querySelector("#v15CheckoutForm"),pay=content.querySelector("#vionaPaymentOptions"),msg=content.querySelector("#checkoutStatus"),qr=content.querySelector("#vionaQrPanel");if(form&&pay&&msg&&qr)form.before(pay,msg,qr)}
+function openCheckout(){
+ const selected=state.cart.map(id=>products.find(p=>String(p.id)===id)).filter(Boolean);
+ if(!selected.length){toast(tr.checkoutEmpty);return}
+ stopQrPolling();
+ const total=selected.reduce((n,p)=>n+Number(p.price||0),0);
+ const items=selected.map(p=>'<li class="vx-line"><span class="vx-product-glyph">'+safe(p.icon||"✦")+'</span><span class="vx-product-name">'+safe(localized(p).title)+'</span><strong>'+money(p.price)+'</strong></li>').join("");
+ open("checkout",[
+  '<div class="vx-checkout">',
+  '<div class="vx-overline"><span class="vx-spark">✦</span> VIONA / CHECKOUT <span class="vx-demo-dot"></span> ТЕСТОВЫЙ РЕЖИМ</div>',
+  '<h2 id="v15Title" class="vx-title">Оформление <em>заказа.</em></h2>',
+  '<p class="vx-lead">Выбери удобный способ оплаты — всё остальное сделаем мы.</p>',
+  '<div class="vx-layout">',
+    '<main class="vx-payment-column">',
+     '<section class="vx-methods" id="vionaPaymentOptions" hidden>',
+      '<div class="vx-section-title"><span class="vx-section-number">01</span><h3>Способ оплаты</h3><span class="vx-section-caption">Т-Банк · DEMO</span></div>',
+      '<div class="vx-payment-method-list">',
+        '<button type="button" id="vionaDemoPay" class="vx-method vx-card-method">',
+         '<span class="vx-method-icon" aria-hidden="true">▤</span>',
+         '<span class="vx-method-copy"><strong>Банковская карта</strong><small>Visa, Mastercard, Мир · защищённая страница банка</small></span>',
+         '<span class="vx-method-arrow" aria-hidden="true">↗</span>',
+        '</button>',
+        '<button type="button" id="vionaSbpPay" class="vx-method vx-sbp-method">',
+         '<span class="vx-method-icon" aria-hidden="true">▦</span>',
+         '<span class="vx-method-copy"><strong>СБП по QR-коду</strong><small>Оплата через приложение любого поддерживаемого банка</small></span>',
+         '<span class="vx-method-arrow" aria-hidden="true">↗</span>',
+        '</button>',
+      '</div>',
+      '<div class="vx-wallet">',
+       '<div class="vx-wallet-heading"><span class="vx-wallet-symbol" aria-hidden="true">▣</span><div><strong>Сохранённые карты</strong><small>Привязаны к твоему VIONA ID</small></div><button type="button" class="vx-wallet-refresh" id="vionaRefreshCards" title="Обновить список сохранённых карт">↻ <span>Обновить</span></button></div>',
+       '<div id="vionaCardsList" class="vx-card-list" role="status" aria-live="polite"><p class="vx-card-state">Загружаем карты…</p></div>',
+       '<p class="vx-wallet-footnote">Карты отображаются для удобства. Оплату в один клик подключим после тестирования.</p>',
+      '</div>',
+      '<label class="vx-consent" for="vionaSaveCard"><input type="checkbox" id="vionaSaveCard"><span class="vx-checkbox-art" aria-hidden="true">✓</span><span><strong>Сохранить новую карту</strong><small>По желанию. Банк сохранит данные для будущих покупок.</small></span></label>',
+      '<p class="vx-safety"><span aria-hidden="true">◇</span> Данные карты и CVV вводятся только у Т-Банка — не на сайте VIONA.</p>',
+     '</section>',
+     '<div id="checkoutStatus" class="vx-status" role="status" aria-live="polite"></div>',
+     '<section id="vionaQrPanel" class="vx-qr-panel" hidden>',
+      '<div class="vx-section-title"><span class="vx-section-number">QR</span><h3>Оплата через СБП</h3></div>',
+      '<div class="vx-qr-frame"><img id="vionaQrImage" alt="QR-код для тестовой оплаты через СБП" width="248" height="248"></div>',
+      '<a id="vionaQrLink" class="vx-qr-action" target="_blank" rel="noopener noreferrer">Открыть в приложении банка ↗</a>',
+      '<p id="vionaQrState" role="status" aria-live="polite">Ожидаем подтверждение оплаты…</p>',
+     '</section>',
+     '<details class="vx-contact-fold"><summary>Нужно обсудить заказ? <span>Оставить заявку ↗</span></summary>',
+       '<form id="v15CheckoutForm" class="v15-form vx-contact-form">',
+        '<label>'+safe(t.nameLabel)+'<input name="name" maxlength="100" required autocomplete="name" value="'+safe(profile.nick||"")+'"></label>',
+        '<label>'+safe(t.contactLabel)+'<input name="contact" maxlength="200" required autocomplete="email" placeholder="Telegram / email"></label>',
+        '<label>'+safe(t.detailsLabel)+'<textarea name="details" minlength="10" maxlength="5000" rows="3" required></textarea></label>',
+        '<button type="submit" class="action-primary">'+safe(tr.orderSubmit)+' ↗</button>',
+        '<p id="vionaRequestStatus" role="status" aria-live="polite"></p>',
+       '</form>',
+     '</details>',
+    '</main>',
+    '<aside class="vx-summary" aria-label="Ваш заказ">',
+      '<div class="vx-summary-heading"><span>ТВОЙ ЗАКАЗ</span><span>'+selected.length+' шт.</span></div>',
+      '<ul class="vx-summary-items">'+items+'</ul>',
+      '<div class="vx-summary-amount"><span>К оплате</span><strong>'+money(total)+'</strong></div>',
+      '<div class="vx-test-banner"><span class="vx-test-indicator"></span><div><strong>Тестовая оплата</strong><small>Реальные деньги не списываются</small></div></div>',
+    '</aside>',
+  '</div>',
+ '</div>'
+ ].join(""));
+ loadSavedCards();
+}
+let vionaCardsRequest=0;
+async function loadSavedCards(){
+ const target=content.querySelector("#vionaCardsList");if(!target)return;
+ const request=++vionaCardsRequest;
+ target.innerHTML='<p class="vx-card-state">Загружаем сохранённые карты…</p>';
+ try{
+  const response=await fetch("/api/payments/test/cards",{credentials:"same-origin",cache:"no-store"});
+  if(request!==vionaCardsRequest||!content.contains(target))return;
+  if(response.status===401){target.innerHTML='<p class="vx-card-state">Войди через Telegram, чтобы увидеть свои карты.</p>';return}
+  const data=await response.json().catch(()=>({}));
+  if(!response.ok)throw Error(data.error||"Не удалось получить список карт");
+  const cards=Array.isArray(data.cards)?data.cards.filter(c=>c&&/^[0-9]{4}$/.test(String(c.last4))):[];
+  if(!cards.length){
+   target.innerHTML='<p class="vx-card-state">'+(data.bankAvailable===false?'Карты пока не найдены. Если ты сохранил карту, обнови список после оплаты.':'Пока нет сохранённых карт. При оплате отметь «Сохранить новую карту».')+'</p>';
+   return;
+  }
+  target.innerHTML=cards.slice(0,12).map(card=>
+   '<div class="vx-saved-card"><span class="vx-mini-card-icon" aria-hidden="true">▤</span><span><strong>Карта ···· '+safe(card.last4)+'</strong><small>Сохранена через Т-Банк</small></span><span class="vx-card-check" aria-label="Сохранена">✓</span></div>'
+  ).join("");
+ }catch(e){
+  if(request!==vionaCardsRequest||!content.contains(target))return;
+  target.innerHTML='<p class="vx-card-state">Не удалось загрузить карты. Нажми «Обновить».</p>';
+ }
+}
+content.addEventListener("click",e=>{if(e.target.closest("#vionaRefreshCards"))loadSavedCards()});
 content.addEventListener("click",async e=>{
  if(e.target.id!=="vionaDemoPay")return;
  const button=e.target,status=content.querySelector("#checkoutStatus");
@@ -129,7 +216,7 @@ content.addEventListener("click",async e=>{
  }catch(err){status.textContent=err.message}
  finally{button.disabled=false}
 });
-fetch("/api/payments/test/config").then(r=>r.json()).then(d=>{if(!d.enabled)return;const show=()=>{const b=document.getElementById("vionaPaymentOptions");if(b)b.hidden=false};const obs=new MutationObserver(show);obs.observe(content,{childList:true,subtree:true});show()}).catch(()=>{});
+fetch("/api/payments/test/config").then(r=>r.json()).then(d=>{const show=()=>{const b=content.querySelector("#vionaPaymentOptions");if(b)b.hidden=!d.enabled};const obs=new MutationObserver(show);obs.observe(content,{childList:true,subtree:false});show()}).catch(()=>{});
 document.getElementById("panelBottom").addEventListener("click",e=>{if(e.target.closest("#checkoutOpen"))openCheckout()});
-content.addEventListener("submit",async e=>{if(e.target.id!=="v15CheckoutForm")return;e.preventDefault();const form=e.target;if(!form.reportValidity())return;const button=form.querySelector("button[type=submit]"),status=content.querySelector("#checkoutStatus");const selected=state.cart.map(id=>products.find(p=>String(p.id)===id)).filter(Boolean);if(!selected.length){status.textContent=tr.checkoutEmpty;return}const values=Object.fromEntries(new FormData(form));const orderLines=selected.map(p=>p.title+" (ID "+p.id+"): "+p.price+" RUB").join("; ");const details="VIONA order request: "+orderLines+"\nTotal: "+selected.reduce((n,p)=>n+Number(p.price||0),0)+" RUB\n"+values.details;button.disabled=true;status.textContent="…";try{const res=await fetch("/api/request",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({name:values.name,contact:values.contact,details:details.slice(0,5000)})});if(!res.ok)throw Error();if(res.status===202){status.textContent=tr.requestDemo;return}status.textContent=tr.requestSent;form.reset();toast(tr.requestSent)}catch{status.textContent=tr.requestFailed}finally{button.disabled=false}});
+content.addEventListener("submit",async e=>{if(e.target.id!=="v15CheckoutForm")return;e.preventDefault();const form=e.target;if(!form.reportValidity())return;const button=form.querySelector("button[type=submit]"),status=content.querySelector("#vionaRequestStatus");const selected=state.cart.map(id=>products.find(p=>String(p.id)===id)).filter(Boolean);if(!selected.length){status.textContent=tr.checkoutEmpty;return}const values=Object.fromEntries(new FormData(form));const orderLines=selected.map(p=>p.title+" (ID "+p.id+"): "+p.price+" RUB").join("; ");const details="VIONA order request: "+orderLines+"\nTotal: "+selected.reduce((n,p)=>n+Number(p.price||0),0)+" RUB\n"+values.details;button.disabled=true;status.textContent="…";try{const res=await fetch("/api/request",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({name:values.name,contact:values.contact,details:details.slice(0,5000)})});if(!res.ok)throw Error();if(res.status===202){status.textContent=tr.requestDemo;return}status.textContent=tr.requestSent;form.reset();toast(tr.requestSent)}catch{status.textContent=tr.requestFailed}finally{button.disabled=false}});
 })();
