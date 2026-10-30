@@ -71,7 +71,7 @@ function registerTestPayments(app,pool,getCatalog){
   const sberMobile=method==="sberpay"&&req.body?.device==="mobile";
   if(method==="sberpay"&&!sberDesktop&&!sberMobile)return res.status(400).json({error:"Укажите тип устройства для SberPay."});
   const sberPhone=method==="sberpay"?String(req.body?.phone||"").trim():"";
-  if(method==="sberpay"&&((sberDesktop&&!sberPhone)||(sberPhone&&!/^\\+[1-9][0-9]{6,14}$/.test(sberPhone))))
+  if(method==="sberpay"&&((sberDesktop&&!sberPhone)||(sberPhone&&!/^\+[1-9][0-9]{6,14}$/.test(sberPhone))))
    return res.status(400).json({error:"Для SberPay на компьютере нужен номер телефона в формате +79990000000."});
   try{
    const catalog=await getCatalog(),selected=ids.map(id=>catalog.find(p=>Number(p.id)===id));
