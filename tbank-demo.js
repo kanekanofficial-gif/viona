@@ -199,6 +199,7 @@ function registerTestPayments(app,pool,getCatalog){
   if(!/^[0-9a-f]{64}$/i.test(token)||!crypto.timingSafeEqual(Buffer.from(token.toLowerCase(),"hex"),Buffer.from(expected,"hex")))return res.sendStatus(403);
   try{
    const status=String(body.Status||"");
+   if(status==="CONFIRMED" && body.Success!==true)return res.sendStatus(403);
    if(!["NEW","FORM_SHOWED","AUTHORIZING","AUTHORIZED","CONFIRMED","REJECTED","REVERSED","REFUNDED","CANCELED","DEADLINE_EXPIRED","AUTH_FAIL","CONFIRMING"].includes(status))return res.status(200).type("text/plain").send("OK");
 
    const updated=await pool.query(
@@ -240,7 +241,14 @@ function registerTestPayments(app,pool,getCatalog){
        String(remote.OrderId)===String(req.params.id) && Number(remote.Amount)===Number(payment.amount_kopecks);
      const next=String(remote.Status||"");
      if(valid && ["AUTHORIZED","CONFIRMED","REJECTED","DEADLINE_EXPIRED","REVERSED","CANCELED","AUTH_FAIL"].includes(next)){
-      await pool.query("UPDATE viona_demo_payments SET status=$2,updated_at=NOW() WHERE order_id=$1 AND telegram_id=$3 AND payment_id=$4",[req.params.id,next,user.id,payment.payment_id]);
+      await pool.query(
+       "UPDATE viona_demo_payments SET status=CASE WHEN status IN ('REFUNDED','REVERSED') THEN status ELSE $2 END,"+
+       "paid_at=CASE WHEN $2='CONFIRMED' THEN COALESCE(paid_at,NOW()) ELSE paid_at END,"+
+       "fulfillment_status=CASE WHEN $2='CONFIRMED' AND fulfillment_status='awaiting_payment' THEN 'queued' ELSE fulfillment_status END,"+
+       "stage_updated_at=CASE WHEN $2='CONFIRMED' AND fulfillment_status='awaiting_payment' THEN NOW() ELSE stage_updated_at END,"+
+       "updated_at=NOW() WHERE order_id=$1 AND telegram_id=$3 AND payment_id=$4",
+       [req.params.id,next,user.id,payment.payment_id]
+      );
       payment.status=next;
      }
     }catch(e){console.error("Demo SBP state check:",safeNetworkError(e))}
