@@ -286,3 +286,24 @@ footer.v18-footer{display:grid;grid-template-columns:1fr 1fr auto;align-items:ce
  to{transform:translate3d(var(--v18-mouse-x,0px),calc(var(--v18-mouse-y,0px) - 14px),0) rotate(-1deg)}
 }
 @media(max-width:600px){.vx-bank-brand .viona-brand{width:22px;height:22px}.vx-sber-method .vx-method-icon{width:54px;flex-basis:54px}.vx-sber-method .vx-method-icon .viona-brand{width:54px;height:54px}}
+
+
+/* NIGHT CHECKOUT — a distinct glass purchasing journey. */
+.v15-dialog:has(.v18-night-checkout){background:radial-gradient(ellipse at 80% -10%,#b35b9c43,transparent 65%),linear-gradient(145deg,#38233d,#160d20 86%)!important}
+.v18-night-checkout{position:relative;isolation:isolate}
+.vx-night-symbol{position:absolute;top:-54px;right:43px;z-index:-1;font:750 125px var(--serif);color:#e6a1bd19;pointer-events:none;animation:v18-rotate 28s linear infinite}
+.v18-night-checkout .vx-title{font:750 clamp(30px,4.7vw,49px)/1.25 var(--display);letter-spacing:-.065em}
+.v18-night-checkout .vx-title em{font:italic 600 clamp(50px,6.7vw,79px)/.76 var(--serif);letter-spacing:-.055em;color:#ffd4a0!important}
+.vx-flow{display:flex;align-items:center;gap:10px;margin:0 0 27px;padding:13px 15px;border:1px solid #f3d1e54b;border-radius:18px;background:linear-gradient(135deg,#f1bfd21c,#a567ab0f);box-shadow:inset 0 1px #ffffff20}
+.vx-flow span{display:flex;align-items:center;gap:6px;white-space:nowrap;color:#c4b0ca;font:650 10px var(--body)}
+.vx-flow span b{font:700 9px var(--mono);color:#bea8c9}
+.vx-flow .vx-flow-active{color:#ffdab8}.vx-flow .vx-flow-active b{color:#ffb880}
+.vx-flow i{flex:1;height:1px;min-width:10px;background:linear-gradient(90deg,#ffb78a85,#b58ba52b)}
+.v18-night-checkout .vx-method{min-height:86px}
+.v18-night-checkout .vx-section-title h3{font:750 15px var(--display);letter-spacing:-.03em}
+.v18-night-checkout .vx-summary-heading{font:700 10px var(--mono);color:#f3bda6;letter-spacing:.07em}
+.v18-night-checkout .vx-summary-amount strong{color:#ffc69f}
+.v18-method-receipt{display:inline-flex;align-items:center;justify-content:flex-end;gap:8px}
+.v18-method-receipt .viona-brand{width:27px;height:27px;display:inline-block}
+@media(max-width:620px){.vx-flow{gap:5px;padding:11px 9px;margin-bottom:18px}.vx-flow span{font-size:9px;gap:3px}.vx-flow i{min-width:5px}.v18-night-checkout .vx-title{font-size:30px}.v18-night-checkout .vx-title em{font-size:49px}.vx-night-symbol{font-size:80px;top:-22px;right:0}}
+@media(max-width:380px){.vx-flow{gap:4px}.vx-flow span{font-size:8px}.vx-flow span b{font-size:8px}.vx-flow i{min-width:3px}}
