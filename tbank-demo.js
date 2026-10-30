@@ -53,7 +53,7 @@ function registerTestPayments(app,pool,getCatalog){
  async function createCheckout(req,res,method){
   res.set("Cache-Control","no-store");
   if(!configured()||!pool)return res.status(503).json({error:"Тестовый эквайринг пока не настроен."});
-  if(req.get("origin")!==(process.env.PUBLIC_BASE_URL||"https://viona.space").replace(/\\/$/,""))return res.status(403).json({error:"Недопустимый источник запроса."});
+  if(req.get("origin")!==(process.env.PUBLIC_BASE_URL||"https://viona.space").replace(new RegExp("/$"),""))return res.status(403).json({error:"Недопустимый источник запроса."});
   const user=getUser(req);
   if(!user)return res.status(401).json({error:"Войдите через Telegram для тестовой оплаты."});
   const ids=req.body?.items;
@@ -67,7 +67,7 @@ function registerTestPayments(app,pool,getCatalog){
    if(!Number.isSafeInteger(amount)||amount<minimum||amount>1000000000)return res.status(400).json({error:method==="sbp"?"Для СБП минимальная сумма 10 ₽.":"Некорректная сумма."});
    const orderId=crypto.randomUUID();
    await pool.query("INSERT INTO viona_demo_payments(order_id,telegram_id,amount_kopecks,status,method,save_card_requested) VALUES($1,$2,$3,'NEW',$4,$5)",[orderId,user.id,amount,method,saveCard]);
-   const initFields={Amount:amount,OrderId:orderId,Description:"VIONA DEMO: "+selected.map(p=>String(p.title)).join(", ").slice(0,128),NotificationURL:(process.env.PUBLIC_BASE_URL||"https://viona.space").replace(/\\/$/,"")+"/api/payments/test/notification"};
+   const initFields={Amount:amount,OrderId:orderId,Description:"VIONA DEMO: "+selected.map(p=>String(p.title)).join(", ").slice(0,128),NotificationURL:(process.env.PUBLIC_BASE_URL||"https://viona.space").replace(new RegExp("/$"),"")+"/api/payments/test/notification"};
    if(method==="card"){
     initFields.CustomerKey="viona-"+user.id;
     if(saveCard)initFields.Recurrent="Y";
@@ -122,9 +122,9 @@ function registerTestPayments(app,pool,getCatalog){
    // Store only a bank-issued payment token and the last four digits. Never PAN/CVV/expiry.
    if(updated.rowCount && updated.rows[0].method==="card" && updated.rows[0].save_card_requested &&
       (status==="AUTHORIZED"||status==="CONFIRMED") && body.Success===true &&
-      typeof body.RebillId==="string" && /^\\d{1,64}$/.test(body.RebillId) &&
+      typeof body.RebillId==="string" && /^[0-9]{1,64}$/.test(body.RebillId) &&
       typeof body.Pan==="string" && /^[0-9*]{8,24}$/.test(body.Pan) &&
-      body.Pan.includes("*") && /\\d{4}$/.test(body.Pan)){
+      body.Pan.includes("*") && /[0-9]{4}$/.test(body.Pan)){
     await pool.query("INSERT INTO viona_demo_saved_cards(telegram_id,rebill_id,last4) VALUES($1,$2,$3) ON CONFLICT(telegram_id,rebill_id) DO NOTHING",
       [updated.rows[0].telegram_id,body.RebillId,body.Pan.slice(-4)]);
    }
