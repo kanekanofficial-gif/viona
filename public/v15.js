@@ -96,6 +96,7 @@ function openCheckout(){
  const selected=state.cart.map(id=>products.find(p=>String(p.id)===id)).filter(Boolean);
  if(!selected.length){toast(tr.checkoutEmpty);return}
  stopQrPolling();
+ stopSberPolling();
  const total=selected.reduce((n,p)=>n+Number(p.price||0),0);
  const items=selected.map(p=>'<li class="vx-line"><span class="vx-product-glyph">'+safe(p.icon||"✦")+'</span><span class="vx-product-name">'+safe(localized(p).title)+'</span><strong>'+money(p.price)+'</strong></li>').join("");
  open("checkout",[
@@ -229,6 +230,92 @@ content.addEventListener("click",async e=>{
   },5000);
  }catch(err){status.textContent=err.message}
  finally{button.disabled=false}
+});
+
+let vionaSberTimer=null;
+function stopSberPolling(){if(vionaSberTimer){clearInterval(vionaSberTimer);vionaSberTimer=null}}
+function isSberMobile(){return /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent)}
+function trustedSberCheckoutLink(value){
+ if(typeof value!=="string")return false;
+ try{
+  const u=new URL(value),h=u.hostname.toLowerCase();
+  return u.protocol==="https:"&&!u.username&&!u.password&&!u.port &&
+   ["sberbank.ru","sber.ru","sberbank.com","sberpay.ru","sberbankonline.ru"].some(d=>h===d||h.endsWith("."+d));
+ }catch{return false}
+}
+function trustedSberHostedFallback(value){
+ if(typeof value!=="string")return false;
+ try{
+  const u=new URL(value),h=u.hostname.toLowerCase();
+  return u.protocol==="https:"&&!u.username&&!u.password&&!u.port &&
+   (h==="pay.tbank-online.com"||["tinkoff.ru","tbank.ru"].some(d=>h===d||h.endsWith("."+d)));
+ }catch{return false}
+}
+function watchSberStatus(orderId){
+ stopSberPolling();
+ let checks=0;
+ vionaSberTimer=setInterval(async()=>{
+  const label=content.querySelector("#vionaSberStatus");
+  if(!label||++checks>36){stopSberPolling();return}
+  try{
+   const r=await fetch("/api/payments/test/status/"+encodeURIComponent(orderId),{credentials:"same-origin",cache:"no-store"});
+   if(!r.ok)return;
+   const data=await r.json();
+   if(["AUTHORIZED","CONFIRMED"].includes(data.status)){label.textContent="Тестовая оплата SberPay подтверждена ✓";stopSberPolling()}
+   else if(["AUTH_FAIL","REJECTED","CANCELED","DEADLINE_EXPIRED"].includes(data.status)){label.textContent="Банк сообщил об отказе. Попробуй другой способ оплаты.";stopSberPolling()}
+  }catch{}
+ },5000);
+}
+content.addEventListener("click",async e=>{
+ const button=e.target.closest("#vionaSberPay, #vionaSberSubmit");
+ if(!button)return;
+ const panel=content.querySelector("#vionaSberPanel"),status=content.querySelector("#vionaSberStatus");
+ if(!panel||!status)return;
+ const mobile=isSberMobile(),phoneWrap=content.querySelector("#vionaSberPhoneWrap");
+ panel.hidden=false;
+ if(phoneWrap)phoneWrap.hidden=mobile;
+ if(button.id==="vionaSberPay"&&!mobile){
+  status.textContent="Укажи номер телефона, привязанный к СберБанк Онлайн. Номер не сохраняется на VIONA.";
+  content.querySelector("#vionaSberPhone")?.focus();
+  return;
+ }
+ const raw=String(content.querySelector("#vionaSberPhone")?.value||"");
+ const phone=mobile?"":raw.replace(/[()\s-]/g,"");
+ if(!mobile&&!/^\+[1-9][0-9]{6,14}$/.test(phone)){
+  status.textContent="Введи номер в международном формате, например +79990000000.";
+  return;
+ }
+ const action=content.querySelector("#vionaSberSubmit");
+ if(action)action.disabled=true;
+ const mainButton=content.querySelector("#vionaSberPay");
+ if(mainButton)mainButton.disabled=true;
+ const fallback=content.querySelector("#vionaSberFallback");
+ if(fallback)fallback.hidden=true;
+ stopSberPolling();
+ status.textContent="Создаём тестовый платёж SberPay…";
+ try{
+  const res=await fetch("/api/payments/test/sberpay",{method:"POST",headers:{"Content-Type":"application/json"},credentials:"same-origin",body:JSON.stringify({items:state.cart.map(Number),device:mobile?"mobile":"desktop",phone})});
+  const result=await res.json().catch(()=>({}));
+  if(!res.ok)throw Error(result.error||"Не удалось запустить SberPay.");
+  if(result.flow==="direct"){
+   if(!trustedSberCheckoutLink(result.redirectUrl))throw Error("Банк вернул неизвестный адрес SberPay.");
+   status.textContent="Переходим к оплате в СберБанк Онлайн…";
+   window.location.assign(result.redirectUrl);return;
+  }
+  if(result.flow==="push"){
+   status.textContent="Запрос отправлен в СберБанк Онлайн. Открой приложение и подтверди тестовый платёж.";
+   if(result.orderId)watchSberStatus(result.orderId);
+   return;
+  }
+  if(result.flow==="hosted"&&trustedSberHostedFallback(result.paymentUrl)){
+   status.textContent="В тестовом терминале прямая ссылка SberPay недоступна. Продолжи оплату на странице Т-Банка и выбери SberPay, если он предлагается.";
+   fallback.href=result.paymentUrl;
+   fallback.hidden=false;
+   return;
+  }
+  throw Error("Не удалось получить безопасную ссылку SberPay.");
+ }catch(err){status.textContent=err.message}
+ finally{if(action)action.disabled=false;if(mainButton)mainButton.disabled=false}
 });
 fetch("/api/payments/test/config").then(r=>r.json()).then(d=>{const show=()=>{const b=content.querySelector("#vionaPaymentOptions");if(b)b.hidden=!d.enabled};const obs=new MutationObserver(show);obs.observe(content,{childList:true,subtree:false});show()}).catch(()=>{});
 document.getElementById("panelBottom").addEventListener("click",e=>{if(e.target.closest("#checkoutOpen"))openCheckout()});
