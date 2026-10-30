@@ -40,32 +40,25 @@ test("Halloween palette is charcoal and pumpkin-orange, without saturated violet
  assert.deepEqual(violets,[],"unexpected saturated purple CSS colors: "+violets.slice(0,10).join(","));
 });
 
-test("MAX and game logos fit their catalog slots and keep correct atlas cells",()=>{
- assert.match(css,/\.product-icon:has\(> \.viona-brand-game\)/);
- assert.match(css,/width:106px;height:106px;flex:0 0 106px;/);
- assert.match(css,/\.product-icon > \.viona-brand-max\{background-position:66\.6667% 0%!important\}/);
- assert.match(css,/\.product-icon > \.viona-brand-game\{background-position:100% 0%!important\}/);
- assert.match(css,/width:98px!important;height:98px!important/);
- assert.match(css,/background-size:400% 200%!important/);
- assert.match(css,/overflow:hidden!important/);
- assert.doesNotMatch(css,/width:142px!important|width:130px!important/);
+test("MAX and game logos are zoomed without pulling neighboring atlas cells",()=>{
+ assert.match(css,/\.product-icon \.viona-brand-game,\s*\.product-icon \.viona-brand-max\{width:142px!important;height:142px!important/);
+ assert.match(css,/\.product-icon \.viona-brand-max\{background-size:480% 240%;background-position:65\.79% 7\.14%\}/);
+ assert.match(css,/\.product-icon \.viona-brand-game\{background-size:480% 240%;background-position:97\.37% 7\.14%\}/);
 });
 
-test("MIR logo is contained and centred in saved-card and checkout slots",()=>{
- assert.match(css,/\.vx-mini-card-icon\{[\s\S]*?flex:0 0 54px!important;width:54px!important;height:50px!important;/);
- assert.match(css,/\.vx-mini-card-icon \.viona-brand-card\{[\s\S]*?width:46px!important;height:46px!important;/);
- assert.match(css,/\.vx-card-method \.vx-method-icon\{[\s\S]*?width:58px!important;height:58px!important;/);
- assert.match(css,/\.vx-card-method \.vx-method-icon \.viona-brand-card\{[\s\S]*?width:50px!important;height:50px!important;/);
- assert.match(css,/background-position:0% 100%!important/);
- assert.doesNotMatch(css,/width:126px!important|width:102px!important|width:89px!important/);
+test("MIR sprite is larger in both saved cards and payment method",()=>{
+ assert.match(css,/\.vx-mini-card-icon \.viona-brand-card\{position:absolute;/);
+ assert.match(css,/width:126px!important;height:126px!important/);
+ assert.match(css,/background-size:600% 300%;background-position:5% 87\.5%/);
+ assert.match(css,/\.vx-card-method \.vx-method-icon \.viona-brand-card\{width:89px!important/);
  assert.match(v16,/viona-brand-card/);
 });
 
 test("new CSS and VIONA ID code are cache-busted together",()=>{
- assert.ok(html.includes("/viona-halloween.css?v=20"));
+ assert.ok(html.includes("/viona-halloween.css?v=19"));
  assert.ok(html.includes("/v16.js?v=19"));
- assert.ok(sw.includes('const CACHE="viona-shell-v20-1"'));
- assert.ok(sw.includes("/viona-halloween.css?v=20"));
+ assert.ok(sw.includes('const CACHE="viona-shell-v19-1"'));
+ assert.ok(sw.includes("/viona-halloween.css?v=19"));
  assert.ok(sw.includes("/v16.js?v=19"));
 });
 

@@ -404,65 +404,27 @@ body{background:#090a08!important;color:#fff3e5}
 .panel-top>div:first-child{min-width:0}
 .v16-workspace-inner>h2,.v16-workspace h2{margin-right:58px!important}
 
-/* VIONA 20: each brand is contained in its own layout slot.
-   Use the atlas's native 4x2 cell positions; never stretch or shift its cells.
-   This prevents MAX/game and MIR artwork from overlapping text or other logos. */
-.product-icon:has(> .viona-brand-game),
-.product-icon:has(> .viona-brand-max){
- display:grid;place-items:center;
- width:106px;height:106px;flex:0 0 106px;
- overflow:hidden!important;
-}
-.product-icon > .viona-brand-game,
-.product-icon > .viona-brand-max{
- display:block;width:98px!important;height:98px!important;
- max-width:calc(100% - 8px);max-height:calc(100% - 8px);
- flex:none;transform:none!important;
- background-size:400% 200%!important;
- filter:drop-shadow(0 5px 9px #0004);
-}
-.product-icon > .viona-brand-max{background-position:66.6667% 0%!important}
-.product-icon > .viona-brand-game{background-position:100% 0%!important}
-.detail-glyph .viona-brand-max,
-.detail-glyph .viona-brand-game{
- width:min(200px,28vw)!important;height:min(200px,28vw)!important;
- background-size:400% 200%!important;transform:none!important;
-}
-.vx-mini-card-icon{
- position:static!important;display:grid!important;place-items:center!important;
- flex:0 0 54px!important;width:54px!important;height:50px!important;
- overflow:hidden!important;background:transparent!important;
-}
-.vx-mini-card-icon .viona-brand-card{
- position:static!important;left:auto!important;top:auto!important;
- display:block;width:46px!important;height:46px!important;
- flex:none;transform:none!important;
- background-size:400% 200%!important;background-position:0% 100%!important;
- filter:drop-shadow(0 4px 6px #0004);
-}
-.vx-card-method .vx-method-icon{
- display:grid!important;place-items:center!important;
- width:58px!important;height:58px!important;flex:0 0 58px!important;
- overflow:hidden!important;
-}
-.vx-card-method .vx-method-icon .viona-brand-card{
- position:static!important;display:block;
- width:50px!important;height:50px!important;flex:none;
- transform:none!important;background-size:400% 200%!important;
- background-position:0% 100%!important;
-}
+/* FIX: brand SVG/photo atlas was heavily padded, zoom inside sprite cell. */
+.product-icon:has(.viona-brand-game),
+.product-icon:has(.viona-brand-max){width:120px;height:120px;flex-basis:120px;overflow:visible!important}
+.product-icon .viona-brand-game,
+.product-icon .viona-brand-max{width:142px!important;height:142px!important;flex:none;transform:scale(1.02);filter:drop-shadow(0 9px 14px #0006)}
+/* Atlas 4 columns × 2 rows; zoom around each cell centre, not adjacent logos. */
+.product-icon .viona-brand-max{background-size:480% 240%;background-position:65.79% 7.14%}
+.product-icon .viona-brand-game{background-size:480% 240%;background-position:97.37% 7.14%}
+.detail-glyph .viona-brand-max,.detail-glyph .viona-brand-game{width:min(245px,38vw)!important;height:min(245px,38vw)!important}
+.vx-mini-card-icon{position:relative!important;display:grid!important;place-items:center!important;flex:0 0 104px!important;width:104px!important;height:70px!important;overflow:visible!important;background:none!important}
+.vx-mini-card-icon .viona-brand-card{position:absolute;left:50%;top:50%;width:126px!important;height:126px!important;transform:translate(-50%,-50%);background-size:600% 300%;background-position:5% 87.5%;filter:drop-shadow(0 5px 9px #0004)}
+.vx-card-method .vx-method-icon{width:68px!important;height:68px!important;flex:0 0 68px!important;overflow:visible!important}
+.vx-card-method .vx-method-icon .viona-brand-card{width:89px!important;height:89px!important;background-size:600% 300%;background-position:5% 87.5%}
 @media(max-width:600px){
  :is(.v15-close,.panel-close,.v16-close){width:40px!important;height:40px!important;min-width:40px!important}
  .v15-close,.v16-close{top:13px!important;right:13px!important}
  .panel-close{flex-basis:40px!important}
  .v15-dialog #v15Title,.v15-dialog .vx-title{padding-right:43px}
- .product-icon:has(> .viona-brand-game),.product-icon:has(> .viona-brand-max){
-  width:106px;height:106px;flex-basis:106px;
- }
- .product-icon > .viona-brand-game,.product-icon > .viona-brand-max{
-  width:96px!important;height:96px!important;
- }
- .vx-mini-card-icon{flex-basis:50px!important;width:50px!important;height:48px!important}
- .vx-mini-card-icon .viona-brand-card{width:44px!important;height:44px!important}
+ .product-icon:has(.viona-brand-game),.product-icon:has(.viona-brand-max){width:110px;height:110px;flex-basis:110px}
+ .product-icon .viona-brand-game,.product-icon .viona-brand-max{width:130px!important;height:130px!important}
+ .vx-mini-card-icon{flex-basis:74px!important;width:74px!important;height:60px!important}
+ .vx-mini-card-icon .viona-brand-card{width:102px!important;height:102px!important}
  .vx-card-list .vx-saved-card{gap:10px;padding:12px;min-height:88px}
 }
