@@ -1,9 +1,9 @@
 /* VIONA 17 — fresh visual shell. Payment/API/session responses never cached. */
-const CACHE="viona-shell-v19-1";
+const CACHE="viona-shell-v20-1";
 const SHELL=[
  "/","/favicon.png",
  "/v14.css?v=1","/v15.css?v=1","/v16.css?v=1",
- "/viona-checkout.css?v=3","/viona-relaunch.css?v=17","/payment-result.css?v=17","/viona-halloween.css?v=19","/assets/viona-user-logos.webp?v=18",
+ "/viona-checkout.css?v=3","/viona-relaunch.css?v=17","/payment-result.css?v=17","/viona-halloween.css?v=20","/assets/viona-user-logos.webp?v=18",
  "/viona-icons.js?v=18","/v15.js?v=18","/v16.js?v=19","/payment-result.js?v=17","/viona-halloween.js?v=18"
 ];
 self.addEventListener("install",event=>{
