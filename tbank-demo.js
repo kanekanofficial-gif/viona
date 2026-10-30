@@ -135,7 +135,25 @@ function registerTestPayments(app,pool,getCatalog){
   res.set("Cache-Control","no-store");
   const user=getUser(req);if(!user)return res.sendStatus(401);
   if(!/^[0-9a-f-]{36}$/i.test(req.params.id)||!pool)return res.sendStatus(404);
-  try{const r=await pool.query("SELECT status,amount_kopecks FROM viona_demo_payments WHERE order_id=$1 AND telegram_id=$2",[req.params.id,user.id]);if(!r.rowCount)return res.sendStatus(404);res.json({mode:"demo",...r.rows[0]})}catch{res.sendStatus(503)}
+  try{
+   const r=await pool.query("SELECT status,amount_kopecks,method,payment_id FROM viona_demo_payments WHERE order_id=$1 AND telegram_id=$2",[req.params.id,user.id]);
+   if(!r.rowCount)return res.sendStatus(404);
+   const payment=r.rows[0];
+   // A DEMO SBP notification might be delayed; verify status with the bank.
+   if(payment.method==="sbp" && payment.payment_id && ["INITIATED","QR_CREATED","AUTHORIZED"].includes(payment.status)){
+    try{
+     const remote=await bank("GetState",{PaymentId:payment.payment_id});
+     const valid=remote.Success===true && String(remote.PaymentId)===String(payment.payment_id) &&
+       String(remote.OrderId)===String(req.params.id) && Number(remote.Amount)===Number(payment.amount_kopecks);
+     const next=String(remote.Status||"");
+     if(valid && ["AUTHORIZED","CONFIRMED","REJECTED","DEADLINE_EXPIRED","REVERSED","CANCELED"].includes(next)){
+      await pool.query("UPDATE viona_demo_payments SET status=$2,updated_at=NOW() WHERE order_id=$1 AND telegram_id=$3 AND payment_id=$4",[req.params.id,next,user.id,payment.payment_id]);
+      payment.status=next;
+     }
+    }catch(e){console.error("Demo SBP state check:",safeNetworkError(e))}
+   }
+   res.json({mode:"demo",status:payment.status,amount_kopecks:payment.amount_kopecks});
+  }catch(e){console.error("Demo payment status:",e.message);res.sendStatus(503)}
  });
 }
 module.exports={registerTestPayments};
