@@ -418,11 +418,15 @@ body{background:#090a08!important;color:#fff3e5}
 .viona-logos-separated .viona-brand{
  background-size:contain!important;background-position:center!important;
 }
-.product-icon:has(.viona-brand-max),.product-icon:has(.viona-brand-game){
+.product-icon:has(.viona-brand){
  display:grid!important;place-items:center!important;
  width:100px!important;height:100px!important;min-width:100px!important;flex:0 0 100px!important;
  padding:0!important;overflow:hidden!important;border-radius:23px!important;
  transform:none;
+}
+.product-icon .viona-brand{
+ width:76px!important;height:76px!important;
+ transform:none!important;filter:none!important;
 }
 .product-icon .viona-brand-max{
  width:76px!important;height:76px!important;
@@ -444,11 +448,11 @@ body{background:#090a08!important;color:#fff3e5}
 .product:hover .product-icon:has(.viona-brand-max){
  transform:translateY(-2px)!important;
 }
-.detail-glyph .viona-brand-max,
-.detail-glyph .viona-brand-game{
- width:130px!important;height:116px!important;
+.detail-glyph .viona-brand{
+ width:min(130px,28vw)!important;height:min(130px,28vw)!important;
  background-size:400% 200%;
 }
+.detail-glyph .viona-brand-game{height:min(105px,23vw)!important}
 .viona-detail-icon-overlay .viona-brand{width:40px!important;height:40px!important}
 
 /* Payment methods: consistent icon columns, no overlap with titles. */
@@ -522,9 +526,10 @@ body{background:#090a08!important;color:#fff3e5}
  .v15-close,.v16-close{top:13px!important;right:13px!important}
  .panel-close{flex-basis:40px!important}
  .v15-dialog #v15Title,.v15-dialog .vx-title{padding-right:43px}
- .product-icon:has(.viona-brand-game),.product-icon:has(.viona-brand-max){
+ .product-icon:has(.viona-brand){
   width:92px!important;height:92px!important;min-width:92px!important;flex-basis:92px!important
  }
+ .product-icon .viona-brand{width:70px!important;height:70px!important}
  .product-icon .viona-brand-game{width:70px!important;height:56px!important}
  .product-icon .viona-brand-max{width:70px!important;height:70px!important}
  .vx-payment-method-list .vx-method{gap:10px!important;padding:10px 11px!important}
