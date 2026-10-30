@@ -21,3 +21,17 @@ CREATE INDEX IF NOT EXISTS viona_demo_order_events_order_idx
 -- Restrict newly recorded statuses without modifying historic payment entries.
 CREATE INDEX IF NOT EXISTS viona_demo_payment_confirmed_idx
  ON viona_demo_payments(telegram_id,created_at DESC);
+
+-- Keep the public timeline in sync with actual, committed stage updates.
+CREATE OR REPLACE FUNCTION viona_demo_stage_event() RETURNS TRIGGER LANGUAGE plpgsql AS $$
+BEGIN
+ IF NEW.fulfillment_status IS DISTINCT FROM OLD.fulfillment_status THEN
+  INSERT INTO viona_demo_order_events(order_id,stage,message)
+   VALUES(NEW.order_id,NEW.fulfillment_status,LEFT(NEW.fulfillment_note,500));
+ END IF;
+ RETURN NEW;
+END $$;
+DROP TRIGGER IF EXISTS viona_demo_stage_notify ON viona_demo_payments;
+CREATE TRIGGER viona_demo_stage_notify
+ AFTER UPDATE OF fulfillment_status ON viona_demo_payments
+ FOR EACH ROW EXECUTE FUNCTION viona_demo_stage_event();
