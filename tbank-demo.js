@@ -8,15 +8,24 @@ function sign(fields,password){
  const values={...fields,Password:password};
  return crypto.createHash("sha256").update(Object.keys(values).filter(k=>k!=="Token"&&values[k]!==null&&typeof values[k]!=="object").sort().map(k=>String(values[k])).join(""),"utf8").digest("hex");
 }
-// API endpoint and hosted payment form use different T-Bank hostnames.
-// Allow only the officially documented payment hosts (exact hostname match).
+// T-Bank returns the hosted payment URL in the successful /Init response.
+// Its payment hosts may differ between test and production terminals.
+// Trust only HTTPS hosts under bank-owned DNS suffixes (exact dot boundary).
 function trustedPaymentUrl(value){
  if(typeof value!=="string")return false;
  try{
   const url=new URL(value);
-  return url.protocol==="https:" && !url.username && !url.password && !url.port &&
-   ["securepay.tinkoff.ru","securepayments.tinkoff.ru"].includes(url.hostname);
+  const hostname=url.hostname.toLowerCase();
+  const bankHost=["tinkoff.ru","tbank.ru"].some(domain=>
+   hostname===domain||hostname.endsWith("."+domain));
+  return url.protocol==="https:" && !url.username && !url.password &&
+   !url.port && bankHost;
  }catch{return false}
+}
+// Never record PaymentURL paths, queries, credentials or payment identifiers in logs.
+function paymentHostForLog(value){
+ if(typeof value!=="string")return "not-a-string";
+ try{return new URL(value).hostname.slice(0,128)||"empty-host"}catch{return "invalid-url"}
 }
 function safeBankFailure(result){
  const redact=value=>{
@@ -27,7 +36,7 @@ function safeBankFailure(result){
   }
   return clean.slice(0,180);
  };
- return {success:result?.Success===true,errorCode:redact(String(result?.ErrorCode??"unknown")),message:redact(result?.Message),details:redact(result?.Details),hasPaymentUrl:typeof result?.PaymentURL==="string"};
+ return {success:result?.Success===true,errorCode:redact(String(result?.ErrorCode??"unknown")),message:redact(result?.Message),details:redact(result?.Details),hasPaymentUrl:typeof result?.PaymentURL==="string",paymentHost:paymentHostForLog(result?.PaymentURL)};
 }
 const configured=()=>Boolean(process.env.TBANK_DEMO_TERMINAL&&process.env.TBANK_DEMO_PASSWORD&&process.env.TBANK_DEMO_TERMINAL.endsWith("DEMO"));
 async function bank(method,fields){
