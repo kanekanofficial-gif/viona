@@ -10,6 +10,7 @@ function sign(fields,password){
 }
 // T-Bank returns the hosted payment URL in the successful /Init response.
 // Its payment hosts may differ between test and production terminals.
+// The API also returns https://pay.tbank-online.com for DEMO checkouts.
 // Trust only HTTPS hosts under bank-owned DNS suffixes (exact dot boundary).
 function trustedPaymentUrl(value){
  if(typeof value!=="string")return false;
@@ -17,7 +18,8 @@ function trustedPaymentUrl(value){
   const url=new URL(value);
   const hostname=url.hostname.toLowerCase();
   const bankHost=["tinkoff.ru","tbank.ru"].some(domain=>
-   hostname===domain||hostname.endsWith("."+domain));
+   hostname===domain||hostname.endsWith("."+domain)) ||
+   hostname==="pay.tbank-online.com";
   return url.protocol==="https:" && !url.username && !url.password &&
    !url.port && bankHost;
  }catch{return false}
