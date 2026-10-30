@@ -181,8 +181,9 @@ async function loadSavedCards(){
 }
 content.addEventListener("click",e=>{if(e.target.closest("#vionaRefreshCards"))loadSavedCards()});
 content.addEventListener("click",async e=>{
- if(e.target.id!=="vionaDemoPay")return;
- const button=e.target,status=content.querySelector("#checkoutStatus");
+ const button=e.target.closest("#vionaDemoPay");
+ if(!button)return;
+ const status=content.querySelector("#checkoutStatus");
  const ids=state.cart.map(Number);
  button.disabled=true;status.textContent="Создаём тестовый платёж…";
  try{const r=await fetch("/api/payments/test/init",{method:"POST",headers:{"Content-Type":"application/json"},credentials:"same-origin",body:JSON.stringify({items:ids,saveCard:content.querySelector("#vionaSaveCard")?.checked===true})});const data=await r.json();if(!r.ok)throw Error(data.error||"Ошибка оплаты");window.location.assign(data.paymentUrl)}
