@@ -466,3 +466,111 @@ body{background:#090a08!important;color:#fff3e5}
  .vx-mini-card-icon .viona-brand-card{width:44px!important;height:44px!important}
  .vx-card-list .vx-saved-card{gap:10px;padding:12px;min-height:88px}
 }
+
+/* VIONA 21: crisp vector marks; avoid upscaling 64px atlas cells.
+   Original combined WebP remains for unaffected legacy brand marks. */
+.viona-brand.viona-brand-card{
+ background-image:url('/assets/brand-mir.svg?v=21')!important;
+ background-size:contain!important;background-position:center!important;
+ background-repeat:no-repeat!important;image-rendering:auto;
+}
+.viona-brand.viona-brand-sber{
+ background-image:url('/assets/brand-sberpay.svg?v=21')!important;
+ background-size:contain!important;background-position:center!important;
+ background-repeat:no-repeat!important;image-rendering:auto;
+}
+.viona-brand.viona-brand-max{
+ background-image:url('/assets/brand-max.svg?v=21')!important;
+ background-size:contain!important;background-position:center!important;
+ background-repeat:no-repeat!important;image-rendering:auto;
+}
+.viona-brand.viona-brand-game{
+ background-image:url('/assets/brand-gamepad.svg?v=21')!important;
+ background-size:contain!important;background-position:center!important;
+ background-repeat:no-repeat!important;image-rendering:auto;
+}
+
+/* Catalog logos: a little larger, centered, never overflow the tile. */
+.product-icon:has(> .viona-brand-game),
+.product-icon:has(> .viona-brand-max){
+ width:106px;height:106px;flex:0 0 106px;
+ overflow:hidden!important;place-items:center;
+}
+.product-icon > .viona-brand-game,
+.product-icon > .viona-brand-max{
+ width:102px!important;height:102px!important;
+ max-width:calc(100% - 4px)!important;
+ max-height:calc(100% - 4px)!important;
+ transform:none!important;filter:none!important;
+ background-size:contain!important;background-position:center!important;
+}
+
+/* Saved MIR card: legible horizontal wordmark, no oversized square sprite. */
+.vx-mini-card-icon{
+ flex:0 0 54px!important;width:54px!important;height:46px!important;
+ display:grid!important;place-items:center!important;
+ overflow:hidden!important;
+}
+.vx-mini-card-icon .viona-brand-card{
+ position:static!important;display:block;
+ width:45px!important;height:34px!important;
+ left:auto!important;top:auto!important;
+ transform:none!important;
+ background-size:contain!important;background-position:center!important;
+}
+
+/* The MIR logo in the payment method remains inside its own button. */
+.vx-card-method .vx-method-icon{
+ width:60px!important;height:58px!important;flex:0 0 60px!important;
+ overflow:hidden!important;display:grid!important;place-items:center!important;
+}
+.vx-card-method .vx-method-icon .viona-brand-card{
+ position:static!important;display:block;
+ width:50px!important;height:39px!important;
+ transform:none!important;
+ background-size:contain!important;background-position:center!important;
+}
+
+/* SberPay needs a WIDE mark, not a square, zoomed/uncentered atlas fragment. */
+.vx-sber-method .vx-method-icon{
+ display:grid!important;place-items:center!important;
+ width:105px!important;height:60px!important;flex:0 0 105px!important;
+ padding:7px!important;border-radius:15px!important;
+ background:#1c271d!important;overflow:hidden!important;
+}
+.vx-sber-method .vx-method-icon .viona-brand-sber{
+ display:block;width:91px!important;height:40px!important;
+ flex:none;transform:none!important;
+ background-size:contain!important;background-position:center!important;
+ filter:none!important;
+}
+.vx-sber-method .vx-method-copy{
+ flex:1;min-width:0;
+}
+.v18-pay-brand.viona-brand-sber{
+ width:98px!important;height:38px!important;margin-left:auto;
+ background-size:contain!important;background-position:center!important;
+}
+.detail-glyph .viona-brand-game,
+.detail-glyph .viona-brand-max{
+ width:min(210px,30vw)!important;height:min(210px,30vw)!important;
+ background-size:contain!important;background-position:center!important;
+ transform:none!important;
+}
+@media(max-width:600px){
+ .product-icon > .viona-brand-game,
+ .product-icon > .viona-brand-max{
+  width:102px!important;height:102px!important;
+  max-width:calc(100% - 4px)!important;
+  max-height:calc(100% - 4px)!important;
+ }
+ .vx-mini-card-icon{flex-basis:50px!important;width:50px!important;height:46px!important}
+ .vx-mini-card-icon .viona-brand-card{width:43px!important;height:32px!important}
+ .vx-sber-method .vx-method-icon{
+  width:87px!important;height:54px!important;flex-basis:87px!important;
+  padding:6px!important;
+ }
+ .vx-sber-method .vx-method-icon .viona-brand-sber{
+  width:75px!important;height:37px!important;
+ }
+}

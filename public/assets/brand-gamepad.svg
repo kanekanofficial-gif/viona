@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" role="img" aria-label="Game Mod Toolkit">
+<title>Game Mod Toolkit</title>
+<path d="M29 39c-8 0-12 4-15 13l-5 16c-2 7 4 13 11 10l14-11h32l14 11c7 3 13-3 11-10l-5-16c-3-9-7-13-15-13H29z" fill="#0d0a09" stroke="#776452" stroke-width="2"/>
+<path d="M30 49v16M22 57h16" stroke="#796e65" stroke-width="4" stroke-linecap="round"/>
+<circle cx="66" cy="51" r="4" fill="#837567"/><circle cx="75" cy="60" r="4" fill="#837567"/>
+<path d="M44 63h12" stroke="#675a4e" stroke-width="3" stroke-linecap="round"/>
+</svg>
