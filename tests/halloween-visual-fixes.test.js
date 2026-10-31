@@ -62,10 +62,10 @@ test("MIR logo is contained and centred in saved-card and checkout slots",()=>{
 });
 
 test("new CSS and VIONA ID code are cache-busted together",()=>{
- assert.ok(html.includes("/viona-halloween.css?v=20"));
+ assert.ok(html.includes("/viona-halloween.css?v=21"));
  assert.ok(html.includes("/v16.js?v=19"));
- assert.ok(sw.includes('const CACHE="viona-shell-v20-1"'));
- assert.ok(sw.includes("/viona-halloween.css?v=20"));
+ assert.ok(sw.includes('const CACHE="viona-shell-v21-1"'));
+ assert.ok(sw.includes("/viona-halloween.css?v=21"));
  assert.ok(sw.includes("/v16.js?v=19"));
 });
 
@@ -73,4 +73,26 @@ test("payment flow files are preserved",()=>{
  const app=read("public/v15.js");
  for(const route of ["/api/payments/test/init","/api/payments/test/qr","/api/payments/test/sberpay"])
   assert.ok(app.includes(route));
+});
+
+test("four pixelated atlas marks are replaced by local vector SVG assets",()=>{
+ for(const file of ["brand-mir","brand-sberpay","brand-max","brand-gamepad"]){
+  const name="/assets/"+file+".svg?v=21";
+  assert.ok(css.includes(name),"CSS must use "+name);
+  assert.ok(sw.includes(name),"service worker must precache "+name);
+  const content=read("public/assets/"+file+".svg");
+  assert.match(content,/<svg\\s[^>]*viewBox=/);
+  assert.doesNotMatch(content,/<(?:image|script|foreignObject)\\b/i,"no raster or script embedded in SVG");
+  assert.ok(content.trim().endsWith("</svg>"));
+ }
+});
+
+test("saved-card MIR and full SberPay mark fit their containers",()=>{
+ assert.match(css,/\/\\* Saved MIR card: legible horizontal wordmark/);
+ assert.match(css,/width:45px!important;height:34px!important/);
+ assert.match(css,/\/\\* SberPay needs a WIDE mark/);
+ assert.match(css,/width:105px!important;height:60px!important;flex:0 0 105px!important/);
+ assert.match(css,/width:91px!important;height:40px!important/);
+ assert.match(css,/width:87px!important;height:54px!important;flex-basis:87px!important/);
+ assert.match(css,/width:102px!important;height:102px!important/);
 });
