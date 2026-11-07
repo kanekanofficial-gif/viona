@@ -7,30 +7,21 @@ const root=path.join(__dirname,"..");
 const read=p=>fs.readFileSync(path.join(root,p),"utf8");
 const html=read("public/index.html");
 const css=read("public/viona-halloween.css");
-const neo=read("public/viona-neo.css");
-const neoJs=read("public/viona-neo.js");
-const sw=read("public/sw.js");
-const manifest=JSON.parse(read("public/manifest.webmanifest"));
 const app=read("public/v15.js");
-const motion=neoJs;
+const motion=read("public/viona-halloween.js");
 const icons=read("public/viona-icons.js");
 const checkout=read("public/viona-checkout.css");
 const pay=read("public/payment-result.js");
 
-test("VIONA NEO replaces Halloween visuals with the graphite liquid-glass identity",()=>{
- assert.match(html,/neo-hero-art/);
- assert.match(html,/neo-glass-panel v18-hero-screen/);
- assert.match(html,/neo-chip-python/);
- assert.match(html,/neo-chip-csharp/);
- assert.match(html,/viona-mark\.webp\?v=22/);
- assert.match(html,/viona-neo\.css\?v=22/);
- assert.match(html,/VIONA — Digital Market/);
- assert.match(html,/DIGITAL MARKET · EST\. 2026/);
- assert.doesNotMatch(html,/Halloween Night Market|HALLOWEEN EDITION|DIGITAL AFTER DARK|NIGHT MARKET|MIDNIGHT SELECTION|NIGHT DROPS|v18-moon|v18-bat|v18-pumpkin/i);
- assert.match(neo,/--neo-cyan|#58d7f2/);
- assert.doesNotMatch(neo,/purple|violet|lavender|magenta/i);
- assert.match(neo,/backdrop-filter:blur\(28px\) saturate\(160%\)/);
- assert.match(neoJs,/ЦИФРОВАЯ КОЛЛЕКЦИЯ/);
+test("new front page is a structural Halloween redesign, not just old recolored hero",()=>{
+ assert.match(html,/v18-hero-art/);
+ assert.match(html,/v18-moon/);
+ assert.match(html,/v18-scene-base/);
+ assert.match(html,/v18-hero-screen/);
+ assert.match(html,/v18-editorial-inner/);
+ assert.match(html,/v18-masthead/);
+ assert.match(html,/Идея\.<br><em>Код\. Результат\.<\/em>/);
+ assert.doesNotMatch(html,/VIONA CREATIVE OS/);
 });
 
 test("all hooks needed by catalog, auth, checkout, favorites, cart and profile remain unique",()=>{
@@ -101,24 +92,6 @@ test("checkout stays wired to original TEST-only payment endpoints",()=>{
   assert.ok(app.includes(endpoint));
  assert.ok(app.includes("rememberPendingPayment"));
  assert.ok(app.includes("vionaQrPanel"));
-});
-
-
-test("the uploaded VIONA emblem has separate website and favicon assets",()=>{
- const logo=fs.readFileSync(path.join(root,"public/assets/viona-mark.webp"));
- const favicon=fs.readFileSync(path.join(root,"public/favicon.png"));
- assert.equal(logo.toString("ascii",0,4),"RIFF");
- assert.equal(logo.toString("ascii",8,12),"WEBP");
- assert.equal(favicon.toString("ascii",1,4),"PNG");
- assert.equal(favicon.readUInt32BE(16),32);
- assert.equal(favicon.readUInt32BE(20),32);
- assert.match(html,/rel="icon" type="image\/svg\+xml"/);
- assert.match(html,/favicon\.png\?v=22/);
- assert.match(manifest.name,/VIONA — Digital Market/);
- assert.ok(manifest.icons.some(icon=>icon.src==="/assets/viona-mark.webp?v=22"));
- assert.ok(manifest.icons.some(icon=>icon.src==="/favicon.png?v=22"));
- assert.ok(sw.includes("/assets/viona-mark.webp?v=22"));
- assert.ok(sw.includes("/favicon.png?v=22"));
 });
 
 test("HTML is properly nested and has no duplicated IDs",()=>{

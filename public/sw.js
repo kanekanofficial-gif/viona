@@ -1,11 +1,11 @@
 /* VIONA 17 — fresh visual shell. Payment/API/session responses never cached. */
-const CACHE="viona-shell-v22-1";
+const CACHE="viona-shell-v21-1";
 const SHELL=[
- "/","/favicon.png?v=22","/assets/viona-mark.webp?v=22","/manifest.webmanifest?v=22","/viona-icon.svg?v=22",
+ "/","/favicon.png",
  "/v14.css?v=1","/v15.css?v=1","/v16.css?v=1",
- "/viona-checkout.css?v=3","/viona-relaunch.css?v=17","/payment-result.css?v=17","/viona-halloween.css?v=21","/viona-neo.css?v=22","/assets/viona-user-logos.webp?v=18",
+ "/viona-checkout.css?v=3","/viona-relaunch.css?v=17","/payment-result.css?v=17","/viona-halloween.css?v=21","/assets/viona-user-logos.webp?v=18",
  "/assets/brand-mir.svg?v=21","/assets/brand-sberpay.svg?v=21","/assets/brand-max.svg?v=21","/assets/brand-gamepad.svg?v=21",
- "/viona-icons.js?v=18","/v15.js?v=18","/v16.js?v=19","/payment-result.js?v=17","/viona-neo.js?v=22"
+ "/viona-icons.js?v=18","/v15.js?v=18","/v16.js?v=19","/payment-result.js?v=17","/viona-halloween.js?v=18"
 ];
 self.addEventListener("install",event=>{
  event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(SHELL)).catch(()=>{}));
