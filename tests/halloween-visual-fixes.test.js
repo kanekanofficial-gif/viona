@@ -61,12 +61,15 @@ test("MIR logo is contained and centred in saved-card and checkout slots",()=>{
  assert.match(v16,/viona-brand-card/);
 });
 
-test("new CSS and VIONA ID code are cache-busted together",()=>{
+test("new CSS, brand assets and VIONA ID code are cache-busted together",()=>{
  assert.ok(html.includes("/viona-halloween.css?v=21"));
+ assert.ok(html.includes("/viona-neo.css?v=22"));
  assert.ok(html.includes("/v16.js?v=19"));
- assert.ok(sw.includes('const CACHE="viona-shell-v21-1"'));
+ assert.ok(sw.includes('const CACHE="viona-shell-v22-1"'));
  assert.ok(sw.includes("/viona-halloween.css?v=21"));
- assert.ok(sw.includes("/v16.js?v=19"));
+ assert.ok(sw.includes("/viona-neo.css?v=22"));
+ assert.ok(sw.includes("/viona-neo.js?v=22"));
+ assert.ok(sw.includes("/assets/viona-mark.webp?v=22"));
 });
 
 test("payment flow files are preserved",()=>{
