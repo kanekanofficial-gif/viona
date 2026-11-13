@@ -38,8 +38,8 @@ test("original gamepad and MAX icons stay crisp and large without replacing bran
  assert.match(css,/\.product-icon:has\(>\.viona-brand-game\)/);
  assert.match(css,/\.product-icon:has\(>\.viona-brand-max\)/);
  assert.match(css,/width:102px!important;height:102px!important/);
- assert.match(css,/background-image:url\('\\/assets\\/brand-max\.svg\?v=23'\\)!important/);
- assert.match(css,/background-image:url\('\\/assets\\/brand-gamepad\.svg\?v=23'\\)!important/);
+ assert.ok(css.includes("background-image:url('/assets/brand-max.svg?v=23')!important"));
+ assert.ok(css.includes("background-image:url('/assets/brand-gamepad.svg?v=23')!important"));
  assert.match(css,/\.product-icon>\.viona-brand-telegram,.product-icon>\.viona-brand-discord\{width:64px;height:64px\}/);
 });
 
