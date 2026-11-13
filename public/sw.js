@@ -11,7 +11,7 @@ const SHELL=[
  "/assets/brand-max.svg?v=23","/assets/brand-gamepad.svg?v=23",
  "/viona-icons.js?v=18","/v15.js?v=30","/rich-details.js?v=4",
  "/telegram-login.js?v=4","/v16.js?v=20","/payment-result.js?v=18",
- "/viona-reset-motion.js?v=1"
+ "/viona-reset-motion.js?v=1","/viona-original-assets.js?v=1"
 ];
 self.addEventListener("install",event=>{
  event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(SHELL)).catch(()=>{}));

@@ -77,6 +77,18 @@ test("original VIONA art and original brand sprite stay linked, not redrawn by A
  assert.doesNotMatch(css,/(?:^|[;}])\s*(?:filter:\s*blur|image-rendering:\s*pixelated)/im);
 });
 
+test("original image upgrade detects real PNGs and preserves existing fallbacks",()=>{
+ const optional=read("public/viona-original-assets.js");
+ for(const name of ["viona-original.png","viona-discord.png","viona-mir.png","viona-max.png",
+ "viona-tbank.png","viona-telegram.png","viona-sberpay.png","viona-sbp.png","viona-gamepad.png"])
+  assert.ok(optional.includes(name),name+" absent from full-resolution loader");
+ assert.match(optional,/method:"HEAD"/);
+ assert.match(optional,/naturalWidth<512/);
+ assert.match(optional,/background-size:contain!important/);
+ assert.match(html,/viona-original-assets\.js\?v=1/);
+ assert.match(sw,/viona-original-assets\.js\?v=1/);
+});
+
 test("favicon/manifest/cache use the v30 shell and all static assets exist",()=>{
  assert.match(html,/href="\/favicon\.svg\?v=30"/);
  assert.equal(manifest.theme_color,"#eef7f8");
