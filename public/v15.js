@@ -57,10 +57,10 @@ function render(){const list=visible();$("#resultCount").textContent=String(list
 function toggle(kind,id){if(!["favorites","cart"].includes(kind)||!products.some(p=>String(p.id)===id))return;const arr=state[kind],index=arr.indexOf(id);if(index<0)arr.push(id);else arr.splice(index,1);save();render();if(active)renderPanel();toast(index<0?t.saved:t.removed)}
 $("#products").addEventListener("click",e=>{const b=e.target.closest("[data-action]");if(b)toggle(b.dataset.action,b.dataset.id)});
 $("#search").addEventListener("input",render);
-$("#categories").addEventListener("click",e=>{const b=e.target.closest("[data-category]");if(!b)return;category=b.dataset.category;$("[data-category]").forEach(x=>x.classList.toggle("active",x===b));render()});
+$("#categories").addEventListener("click",e=>{const b=e.target.closest("[data-category]");if(!b)return;category=b.dataset.category;$$("[data-category]").forEach(x=>x.classList.toggle("active",x===b));render()});
 const sortTrigger=$("#sortTrigger"),sortList=$("#sortList");function closeSort(){sortList.hidden=true;sortTrigger.setAttribute("aria-expanded","false")}
 sortTrigger.addEventListener("click",()=>{const open=sortList.hidden;sortList.hidden=!open;sortTrigger.setAttribute("aria-expanded",String(open))});
-sortList.addEventListener("click",e=>{const b=e.target.closest("[data-sort]");if(!b)return;sort=b.dataset.sort;$("#sortLabel").textContent=t.sort[sorts.indexOf(sort)];$("[data-sort]").forEach(x=>x.classList.toggle("selected",x===b));closeSort();render()});
+sortList.addEventListener("click",e=>{const b=e.target.closest("[data-sort]");if(!b)return;sort=b.dataset.sort;$("#sortLabel").textContent=t.sort[sorts.indexOf(sort)];$$("[data-sort]").forEach(x=>x.classList.toggle("selected",x===b));closeSort();render()});
 const langTrigger=$("#langTrigger"),langList=$("#langList");function closeLang(){langList.hidden=true;langTrigger.setAttribute("aria-expanded","false")}
 langTrigger.addEventListener("click",()=>{const open=langList.hidden;langList.hidden=!open;langTrigger.setAttribute("aria-expanded",String(open))});
 langList.addEventListener("click",e=>{const b=e.target.closest("[data-lang]");if(!b)return;closeLang();if(b.dataset.lang===lang)return;try{localStorage.setItem("viona-world",JSON.stringify(b.dataset.lang));localStorage.setItem("viona-language-v18",JSON.stringify(b.dataset.lang));document.cookie="viona_language="+encodeURIComponent(b.dataset.lang)+"; Max-Age=31536000; Path=/; SameSite=Lax; Secure"}catch{}location.reload()});

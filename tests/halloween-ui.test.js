@@ -40,6 +40,8 @@ test("every required JS and payment hook remains present exactly once",()=>{
 
 test("search, category, sorting and five languages have working JavaScript",()=>{
  assert.doesNotMatch(js,/\$\$\$\(/);
+ assert.doesNotMatch(js,/\$\("\[data-category\]"\)\.forEach/);
+ assert.doesNotMatch(js,/\$\("\[data-sort\]"\)\.forEach/);
  assert.match(js,/\$\$\("\[data-category\]"\)/);
  assert.match(js,/\$\$\("\[data-sort\]"\)/);
  assert.match(js,/function localize\(\)/);
