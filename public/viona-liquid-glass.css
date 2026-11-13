@@ -432,3 +432,26 @@ html[data-world] .studio-grid article,html[data-world] .contact form{
  .vg-motion-ready .vg-reveal,.vg-motion-ready .reveal{opacity:1!important;transform:none!important}
  .product:hover,.tool-button:hover,.lang-trigger:hover,.action-primary:hover{transform:none!important}
 }
+
+/* Final compatibility overrides for legacy account, detail, checkout and receipt layers. */
+.vg-brand-image,.vg-mark-image{filter:none!important}
+.v16-avatar{border-color:#a7edf36a!important;background:linear-gradient(145deg,#1d6682,#0e2a43)!important;color:#eaffff!important}
+html[data-world] .detail-visual[data-art="1"],html[data-world] .detail-visual[data-art="2"]{border-color:#bdebf53d;background:radial-gradient(circle at 32% 22%,#7adff02b,transparent 55%),linear-gradient(145deg,#173d52,#0b1e30)!important;box-shadow:inset 1px 1px #ffffff32,0 20px 55px #0007!important}
+.viona-rich-details{border-top-color:#c9efff2b!important;color:#eaf8ff!important}
+.viona-rich-kicker,.viona-rich-code-label{color:#9de7f1!important}
+.viona-rich-description,.viona-rich-disclaimer{color:#a9c2cf!important}
+.viona-rich-features span{border-color:#bdebf53d!important;background:#b9eff211!important;color:#dff7fb!important}
+.viona-rich-code{border-color:#c5eefb3d!important;background:linear-gradient(145deg,#0d2a3b,#081a2a)!important;box-shadow:inset 1px 1px #ffffff1c,0 24px 65px #0007!important}
+.viona-rich-code-head{border-bottom-color:#c9efff24!important;color:#cdebf3!important}
+.viona-rich-code-head small,.viona-rich-code-dots{color:#9bdce9!important}
+.viona-rich-code pre{color:#d8f3fb!important}
+.viona-rich-fade{background:linear-gradient(0deg,#081a2a 8%,#081a2ae8 32%,transparent)!important}
+.vx-sber-phone input{border-color:#c2eaf43b!important;background:#061a2a!important;color:#effaff!important}
+.vx-account-wallet-head span{color:#9bdce9!important}
+.vx-qr-action{background:linear-gradient(120deg,#dffaff,#a9e8f6,#f9e5b2)!important;color:#082033!important}
+.vx-consent input:checked+.vx-checkbox-art{background:#a9eaf2!important;color:#082033!important}
+.vx-sber-fallback{color:#b9e8d8!important}
+.vr-root{--vr-blue:#8de5f1;--vr-teal:#a9f0dc}
+.vr-root .vr-fail-symbol{border-color:#ffc5a35e!important;background:linear-gradient(145deg,#6d3735,#2b2029)!important;color:#ffe6d6!important}
+.vr-root .vr-step-active .vr-step-number{border-color:#b9f3f7!important;background:linear-gradient(135deg,#c8f5f7,#78d6e9)!important;color:#082033!important}
+.vr-root .vr-admin button{background:linear-gradient(120deg,#dffaff,#a9e8f6)!important;color:#082033!important}
