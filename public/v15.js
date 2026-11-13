@@ -37,18 +37,18 @@ function updateCounters(){$("#favCount").textContent=state.favorites.length;$("#
 function money(n){if(!(Number(n)>0))return t.requestPrice;const [currency,rate,locale]=currencies[lang];return new Intl.NumberFormat(locale,{style:"currency",currency,maximumFractionDigits:currency==="RUB"||currency==="JPY"?0:2}).format(Number(n)*rate)}
 function toast(message){const el=$("#toast");el.textContent=message;el.classList.add("show");clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove("show"),2400)}
 function localize(){
- for(const el of $("[data-i]")){const key=el.dataset.i;if(t[key])el.textContent=t[key]}
- for(const el of $("[data-i-html]")){const key=el.dataset.iHtml;if(t[key])el.innerHTML=t[key]}
- for(const el of $("[data-i-placeholder]")){const key=el.dataset.iPlaceholder;if(t[key])el.placeholder=t[key]}
- for(const el of $("[data-i-aria]")){const key=el.dataset.iAria;if(t[key])el.setAttribute("aria-label",t[key])}
+ for(const el of $$("[data-i]")){const key=el.dataset.i;if(t[key])el.textContent=t[key]}
+ for(const el of $$("[data-i-html]")){const key=el.dataset.iHtml;if(t[key])el.innerHTML=t[key]}
+ for(const el of $$("[data-i-placeholder]")){const key=el.dataset.iPlaceholder;if(t[key])el.placeholder=t[key]}
+ for(const el of $$("[data-i-aria]")){const key=el.dataset.iAria;if(t[key])el.setAttribute("aria-label",t[key])}
  $("#heroTitle").innerHTML=t.hero;$("#heroDesc").textContent=t.desc;
- $(".section-top h2").forEach((el,i)=>el.innerHTML=i===0?t.catalogTitle:t.studioTitle);
+ $$(".section-top h2").forEach((el,i)=>el.innerHTML=i===0?t.catalogTitle:t.studioTitle);
  $(".contact h2").innerHTML=t.contactTitle;$("#search").placeholder=t.search;
  $("#langLabel").textContent={ru:"RU",en:"EN",ja:"JP",de:"DE",femboy:"♡"}[lang];
- $("[data-lang]").forEach(b=>b.classList.toggle("selected",b.dataset.lang===lang));
+ $$("[data-lang]").forEach(b=>b.classList.toggle("selected",b.dataset.lang===lang));
  $("#currencyNote").textContent=lang==="en"?"Approximate conversion from RUB. Checkout remains in RUB.":lang==="de"?"Ungefähre Umrechnung aus RUB. Abrechnung in RUB.":lang==="ja"?"参考換算価格です。決済通貨はルーブルです。":"";
- $("[data-sort]").forEach((b,i)=>b.textContent=t.sort[i]);$("#sortLabel").textContent=t.sort[sorts.indexOf(sort)];
- $("[data-category]").forEach((b,i)=>b.textContent=t.cats[i]);$(".demo-note").textContent=t.demo;
+ $$("[data-sort]").forEach((b,i)=>b.textContent=t.sort[i]);$("#sortLabel").textContent=t.sort[sorts.indexOf(sort)];
+ $$("[data-category]").forEach((b,i)=>b.textContent=t.cats[i]);$(".demo-note").textContent=t.demo;
  document.documentElement.dataset.world=lang;document.documentElement.lang=lang==="femboy"?"ru":lang;window.VionaLocale=lang;
  document.title="VIONA — "+({ru:"Digital Studio",en:"Digital Studio",ja:"デジタルスタジオ",de:"Digitalstudio",femboy:"Soft Digital Studio"}[lang]);
 }
@@ -57,10 +57,10 @@ function render(){const list=visible();$("#resultCount").textContent=String(list
 function toggle(kind,id){if(!["favorites","cart"].includes(kind)||!products.some(p=>String(p.id)===id))return;const arr=state[kind],index=arr.indexOf(id);if(index<0)arr.push(id);else arr.splice(index,1);save();render();if(active)renderPanel();toast(index<0?t.saved:t.removed)}
 $("#products").addEventListener("click",e=>{const b=e.target.closest("[data-action]");if(b)toggle(b.dataset.action,b.dataset.id)});
 $("#search").addEventListener("input",render);
-$("#categories").addEventListener("click",e=>{const b=e.target.closest("[data-category]");if(!b)return;category=b.dataset.category;$$("[data-category]").forEach(x=>x.classList.toggle("active",x===b));render()});
+$("#categories").addEventListener("click",e=>{const b=e.target.closest("[data-category]");if(!b)return;category=b.dataset.category;$$$("[data-category]").forEach(x=>x.classList.toggle("active",x===b));render()});
 const sortTrigger=$("#sortTrigger"),sortList=$("#sortList");function closeSort(){sortList.hidden=true;sortTrigger.setAttribute("aria-expanded","false")}
 sortTrigger.addEventListener("click",()=>{const open=sortList.hidden;sortList.hidden=!open;sortTrigger.setAttribute("aria-expanded",String(open))});
-sortList.addEventListener("click",e=>{const b=e.target.closest("[data-sort]");if(!b)return;sort=b.dataset.sort;$("#sortLabel").textContent=t.sort[sorts.indexOf(sort)];$$("[data-sort]").forEach(x=>x.classList.toggle("selected",x===b));closeSort();render()});
+sortList.addEventListener("click",e=>{const b=e.target.closest("[data-sort]");if(!b)return;sort=b.dataset.sort;$("#sortLabel").textContent=t.sort[sorts.indexOf(sort)];$$$("[data-sort]").forEach(x=>x.classList.toggle("selected",x===b));closeSort();render()});
 const langTrigger=$("#langTrigger"),langList=$("#langList");function closeLang(){langList.hidden=true;langTrigger.setAttribute("aria-expanded","false")}
 langTrigger.addEventListener("click",()=>{const open=langList.hidden;langList.hidden=!open;langTrigger.setAttribute("aria-expanded",String(open))});
 langList.addEventListener("click",e=>{const b=e.target.closest("[data-lang]");if(!b)return;closeLang();if(b.dataset.lang===lang)return;try{localStorage.setItem("viona-world",JSON.stringify(b.dataset.lang));localStorage.setItem("viona-language-v18",JSON.stringify(b.dataset.lang));document.cookie="viona_language="+encodeURIComponent(b.dataset.lang)+"; Max-Age=31536000; Path=/; SameSite=Lax; Secure"}catch{}location.reload()});
