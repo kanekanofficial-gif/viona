@@ -24,6 +24,7 @@ const {chromium}=require("playwright");
    console.log(label+" layout: "+JSON.stringify(layout));
    assert.ok(layout.scrollWidth<=width+1,label+" has horizontal scroll");
    assert.ok(layout.copy&&layout.screen,"hero regions missing");
+   assert.ok(layout.productCount>=5,label+" catalog did not load demo products");
    assert.ok(layout.logo.natural>=layout.logo.width,"logo is being enlarged beyond source resolution");
    if(width>=1000){
     assert.ok(layout.main.x>=layout.sidebar.right-3,"sidebar overlaps main");
@@ -34,6 +35,13 @@ const {chromium}=require("playwright");
    }
    await page.screenshot({path:"screenshots/"+label+".png",fullPage:true});
    if(width===1440){
+    await page.locator("#categories [data-category=\"Боты\"]").click();
+    await page.waitForTimeout(80);
+    assert.equal(await page.locator(".product").count(),3,"bot category does not filter correctly");
+    await page.locator("#categories [data-category=\"Все\"]").click();
+    await page.locator("#sortTrigger").click();
+    await page.locator("#sortList [data-sort=\"price-asc\"]").click();
+    assert.ok((await page.locator(".product").count())>=5,"sort did not preserve product cards");
     await page.locator("#langTrigger").click();
     assert.ok(await page.locator("#langList").isVisible(),"language selector didn't open");
     await page.locator('[data-lang="en"]').click();

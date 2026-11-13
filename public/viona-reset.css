@@ -272,14 +272,17 @@ html[data-world] .contact form{display:flex;flex-direction:column;gap:14px;paddi
 .vr-root .vr-logo-mark img,.vr-root .vr-hero-icon img{filter:none!important}
 .vr-root .vr-box,.vr-root .vr-hero{background:#f6fbfc!important;color:#294b5a!important;border-color:#d0e6ea!important}
 .nx-reveal{opacity:1;transform:none}
-.nx-motion-ready .nx-reveal:not(.nx-visible){opacity:0;transform:translateY(18px)}
+.nx-motion-ready .nx-reveal:not(.nx-visible){opacity:1;transform:none}
 .nx-motion-ready .nx-reveal{transition:opacity .55s cubic-bezier(.2,.8,.2,1),transform .55s cubic-bezier(.2,.8,.2,1)}
-.nx-motion-ready .nx-reveal.nx-visible{opacity:1;transform:none}
+.nx-motion-ready .nx-reveal.nx-visible{opacity:1;transform:none;animation:nx-appear .55s ease-out both}
+@keyframes nx-appear{from{opacity:.45;transform:translateY(10px)}to{opacity:1;transform:none}}
 @keyframes nx-pulse{50%{opacity:.55;box-shadow:0 0 0 7px #34bea114}}
 @keyframes nx-star{50%{transform:translateY(-9px) rotate(22deg);opacity:.65}}
 @media(min-width:1460px){.nx-workspace{padding-left:58px;padding-right:58px}.nx-hero{grid-template-columns:minmax(0,1.13fr) minmax(0,.87fr)!important}}
 @media(max-width:1250px){.nx-workspace{padding-left:26px;padding-right:26px}.nx-hero h1{font-size:clamp(35px,3.8vw,51px)!important}.nx-hero-copy{padding:30px}.nx-screen-main{padding:16px 22px}.nx-screen-symbol{width:112px}.nx-screen-symbol>span{font-size:150px}.products{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
 @media(max-width:1000px){
+ .nx-hero{display:flex!important;flex-direction:column;gap:13px;min-height:0}
+ .nx-hero-screen{min-height:400px}
  .site-header.nx-sidebar,html[data-world] .site-header.nx-sidebar{position:sticky!important;top:0!important;left:0!important;width:100%!important;height:70px!important;padding:9px 20px!important;border-right:0!important;border-bottom:1px solid #d3e5e9!important;flex-direction:row!important;justify-content:space-between!important}
  .nx-brand.logo{padding:0}.nx-sidebar-line,.nx-nav-caption,.desktop-links.nx-sidebar-nav,.nx-sidebar-bottom{display:none!important}
  .nx-workspace{width:100%;margin-left:0;padding:15px 24px 0}.nx-topbar{margin:0 0 20px}

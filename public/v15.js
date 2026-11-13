@@ -76,20 +76,6 @@ $("#requestForm").addEventListener("submit",async e=>{e.preventDefault();const f
 async function load(){try{const res=await fetch("/api/products");if(!res.ok)throw Error("API");const json=await res.json();products=Array.isArray(json)?json:Array.isArray(json.products)?json.products:[];products=products.map(p=>({...p,price:Number(p.price)||0}));render();renderPanel()}catch{$("#products").innerHTML='<div class="empty">'+safe(t.error)+'</div>';$("#resultCount").textContent="00"}}
 localize();updateCounters();load();
 
-/* V14 cinematic motion and accessibility */
-(function(){
-const reduced=window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-const bar=document.getElementById("readingBar");let pending=false;
-const update=()=>{pending=false;const max=document.documentElement.scrollHeight-window.innerHeight;bar.style.transform="scaleX("+(max>0?Math.max(0,Math.min(1,window.scrollY/max)):0)+")"};
-window.addEventListener("scroll",()=>{if(!pending){pending=true;requestAnimationFrame(update)}},{passive:true});window.addEventListener("resize",update,{passive:true});update();
-if(reduced||!("IntersectionObserver" in window))return;
-document.documentElement.classList.add("motion-ready");
-const io=new IntersectionObserver(entries=>{for(const entry of entries)if(entry.isIntersecting){entry.target.classList.add("visible");io.unobserve(entry.target)}},{threshold:.07,rootMargin:"0px 0px 35px 0px"});
-const observe=(root)=>{root.querySelectorAll(".section-top,.studio-grid article,.contact-copy,.contact form,.product").forEach(el=>{if(!el.classList.contains("reveal")){el.classList.add("reveal");io.observe(el)}})};
-observe(document);
-const grid=document.getElementById("products");if(grid){new MutationObserver(()=>observe(grid)).observe(grid,{childList:true});if(window.matchMedia("(hover:hover) and (pointer:fine)").matches){grid.addEventListener("pointermove",e=>{const card=e.target.closest(".product");if(!card)return;const r=card.getBoundingClientRect();card.style.setProperty("--card-x",(e.clientX-r.left)+"px");card.style.setProperty("--card-y",(e.clientY-r.top)+"px")},{passive:true})}}
-})();
-
 /* VIONA 15: detail, discovery, account and order-request experience. */
 (function(){
 const copy={
