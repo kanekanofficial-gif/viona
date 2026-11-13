@@ -1,24 +1,24 @@
 {
   "id": "/",
-  "name": "VIONA — Halloween Night Market",
+  "name": "VIONA — Digital Studio & Market",
   "short_name": "VIONA",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
-  "background_color": "#080611",
-  "theme_color": "#080611",
-  "description": "Цифровой маркетплейс VIONA",
+  "background_color": "#07111e",
+  "theme_color": "#07111e",
+  "description": "VIONA — цифровые продукты, инструменты, код и разработка.",
   "icons": [
     {
-      "src": "/viona-icon.svg",
+      "src": "/favicon.svg",
       "sizes": "any",
       "type": "image/svg+xml",
       "purpose": "any maskable"
     },
     {
-      "src": "/favicon.png",
-      "sizes": "32x32",
-      "type": "image/png",
+      "src": "/assets/viona-mark.webp",
+      "sizes": "512x512",
+      "type": "image/webp",
       "purpose": "any"
     }
   ]
