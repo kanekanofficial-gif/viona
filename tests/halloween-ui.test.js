@@ -108,6 +108,19 @@ test("favicon, PWA manifest and service worker all use the new brand shell",()=>
  assert.doesNotMatch(sw,/halloween|favicon\.png/);
 });
 
+
+test("every local stylesheet, script, favicon and image reference resolves",()=>{
+ const refs=[
+  ...[...html.matchAll(/(?:href|src)=["'](\/[^"'?#]+\.(?:css|js|svg|webp|png|webmanifest))(?:\?[^"']*)?["']/gi)].map(m=>m[1]),
+  ...[...css.matchAll(/url\(['"]?(\/[^'")]+)['"]?\)/g)].map(m=>m[1].split("?")[0])
+ ];
+ for(const ref of new Set(refs)){
+  const clean=ref.split("?")[0];
+  assert.ok(fs.existsSync(path.join(root,"public",clean.replace(/^\/+/,""))),ref+" must exist");
+ }
+ for(const pathRef of ["/rich-details.css?v=1","/product-detail-layout.css?v=4","/telegram-login.css?v=2"])assert.ok(sw.includes(pathRef),pathRef+" must be precached");
+});
+
 test("HTML is properly nested and has no duplicate IDs",()=>{
  const voids=new Set(["meta","link","input","img","br","hr","source","area","base"]);
  const opened=[],errors=[];
