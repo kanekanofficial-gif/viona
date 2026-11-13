@@ -1,95 +1,127 @@
 <!doctype html>
 <html lang="ru" data-world="ru">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<link rel="manifest" href="/manifest.webmanifest?v=23"><link rel="canonical" href="https://viona.space/"><meta name="robots" content="index,follow"><meta property="og:type" content="website"><meta property="og:title" content="VIONA — Digital Studio & Market"><meta property="og:description" content="Боты, дизайн, код и цифровые продукты VIONA."><meta property="og:url" content="https://viona.space/"><meta name="theme-color" content="#07111e"><meta name="description" content="VIONA — цифровой маркетплейс. Боты, дизайн, код и разработка.">
-<link rel="icon" type="image/svg+xml" href="/favicon.svg?v=1"><link rel="icon" type="image/webp" sizes="512x512" href="/assets/viona-mark.webp?v=1"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Unbounded:wght@400;500;600;700;800&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/rich-details.css?v=1"><link rel="stylesheet" href="/v14.css?v=1"><link rel="stylesheet" href="/v15.css?v=1"><link rel="stylesheet" href="/v16.css?v=1"><link rel="stylesheet" href="/telegram-login.css?v=2"><title>VIONA — Digital Studio & Market</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#eef7f8">
+<meta name="description" content="VIONA — цифровые продукты, боты, код и сервисы для твоих проектов.">
+<meta property="og:title" content="VIONA — Digital Studio">
+<meta property="og:description" content="Идея. Код. Результат.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://viona.space/">
+<link rel="canonical" href="https://viona.space/">
+<link rel="manifest" href="/manifest.webmanifest?v=30">
+<link rel="icon" href="/favicon.svg?v=30" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Unbounded:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/rich-details.css?v=1">
+<link rel="stylesheet" href="/v14.css?v=1">
+<link rel="stylesheet" href="/v15.css?v=1">
+<link rel="stylesheet" href="/v16.css?v=1">
+<link rel="stylesheet" href="/telegram-login.css?v=2">
 <link rel="stylesheet" href="/product-detail-layout.css?v=4">
 <link rel="stylesheet" href="/viona-checkout.css?v=3">
 <link rel="stylesheet" href="/viona-relaunch.css?v=17">
 <link rel="stylesheet" href="/payment-result.css?v=17">
-<link rel="stylesheet" href="/viona-liquid-glass.css?v=1">
+<link rel="stylesheet" href="/viona-reset.css?v=1">
+<title>VIONA — Digital Studio</title>
 </head>
 <body>
-<div class="v14-atmosphere" aria-hidden="true"><div class="atmo-moon"></div><div class="atmo-stars"></div><div class="atmo-glow"></div></div><div id="readingBar" class="reading-bar" aria-hidden="true"></div>
-
-<header class="site-header vg-nav" id="top">
-  <a href="#home" class="logo" data-i-aria="brandHomeAria" aria-label="VIONA — на главную"><img class="vg-brand-image" src="/assets/viona-mark.webp?v=1" alt="" width="46" height="46"><span class="vg-wordmark">viona<span class="logo-dot">.</span></span></a>
-  <nav class="desktop-links" data-i-aria="navAria" aria-label="Основная навигация"><a href="#catalog" data-i="navCatalog">Каталог</a><a href="#studio" data-i="navStudio">Студия</a><a href="#contact" data-i="navContact">Связаться</a></nav>
-  <div class="header-tools">
-    <button class="tool-button v16-notify-trigger" id="v16NotifyOpen" type="button" data-i-aria="notificationsAria" aria-label="Уведомления"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M17.5 8.5a5.5 5.5 0 0 0-11 0c0 7-3 7-3 9h17c0-2-3-2-3-9Z"/><path d="M10 21h4"/></svg><i id="v16NotifyDot" hidden></i></button>
-    <button class="tool-button profile-trigger" id="profileOpen" type="button" data-i-aria="profileAria" aria-label="VIONA ID"><span aria-hidden="true">◉</span></button>
-    <div class="language" id="language"><button class="lang-trigger" id="langTrigger" aria-expanded="false" aria-controls="langList" data-i-aria="languageAria" aria-label="Язык" type="button"><span id="langLabel">RU</span><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg></button><div class="lang-list" id="langList" hidden><button type="button" data-lang="ru">🇷🇺 Русский</button><button type="button" data-lang="en">🇬🇧 English</button><button type="button" data-lang="ja">🇯🇵 日本語</button><button type="button" data-lang="de">🇩🇪 Deutsch</button><button type="button" data-lang="femboy">🎀 Фембойский</button></div></div>
-    <button class="tool-button" id="favOpen" type="button" data-i-aria="favoritesAria" aria-label="Избранное"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8L12 21l8.8-8.6a5.5 5.5 0 0 0 0-7.8Z"/></svg><span class="counter" id="favCount">0</span></button>
-    <button class="tool-button" id="cartOpen" type="button" data-i-aria="cartAria" aria-label="Корзина"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 8h14l-1 12H6L5 8Z"/><path d="M9 9V6a3 3 0 0 1 6 0v3"/></svg><span class="counter" id="cartCount">0</span></button>
+<div id="readingBar" class="reading-bar" aria-hidden="true"></div>
+<header class="site-header nx-sidebar" id="top">
+  <a class="nx-brand logo" href="#home" aria-label="VIONA — на главную" data-i-aria="brandHomeAria">
+    <img src="/assets/viona-mark.webp?v=1" width="48" height="48" alt="" class="nx-brand-logo">
+    <span class="nx-brand-type"><strong>VIONA</strong><small>digital studio</small></span>
+    <span class="nx-brand-dot" aria-hidden="true"></span>
+  </a>
+  <div class="nx-sidebar-line"></div>
+  <span class="nx-nav-caption">РАЗДЕЛЫ / MENU</span>
+  <nav class="desktop-links nx-sidebar-nav" aria-label="Основная навигация" data-i-aria="navAria">
+    <a class="nx-nav-active" href="#home"><span class="nx-rail-glyph" aria-hidden="true">⌂</span><span data-i="mobileHome">Главная</span><span class="nx-nav-arrow" aria-hidden="true">↗</span></a>
+    <a href="#catalog"><span class="nx-rail-glyph" aria-hidden="true">▦</span><span data-i="navCatalog">Каталог</span><span class="nx-nav-arrow" aria-hidden="true">↗</span></a>
+    <a href="#studio"><span class="nx-rail-glyph" aria-hidden="true">⌘</span><span data-i="navStudio">Студия</span><span class="nx-nav-arrow" aria-hidden="true">↗</span></a>
+    <a href="#contact"><span class="nx-rail-glyph" aria-hidden="true">✎</span><span data-i="navContact">Связаться</span><span class="nx-nav-arrow" aria-hidden="true">↗</span></a>
+  </nav>
+  <div class="nx-sidebar-bottom">
+    <div class="nx-sidebar-status"><span class="nx-pulse"></span><span data-i="status">Открыты для новых идей</span></div>
+    <p class="nx-sidebar-tiny">VIONA © 2026<br>DESIGNED TO CREATE</p>
   </div>
 </header>
-<main id="home">
- <section class="masthead vg-masthead" aria-labelledby="heroTitle">
-  <div class="masthead-top"><span class="edition" data-i="edition">DIGITAL STUDIO / 2026</span><span class="status"><span class="status-dot"></span><span data-i="status">Открыты для новых идей</span></span></div>
-  <div class="masthead-grid">
-   <div class="masthead-copy">
-    <div class="tiny-title" data-i="eyebrow">НЕ ПРОСТО МАРКЕТПЛЕЙС</div>
-    <h1 id="heroTitle">Идея.<br><em>Код. Результат.</em><span class="period">✦</span></h1>
-    <p id="heroDesc">Выбирай инструменты, создавай свои проекты и отслеживай каждый заказ.</p>
-    <div class="hero-cta"><a class="action-primary" href="#catalog"><span data-i="explore">Смотреть каталог</span><span aria-hidden="true">↗</span></a><a class="action-link" href="#studio"><span data-i="howItWorks">Как это работает</span><span aria-hidden="true">↗</span></a></div>
-    <div class="vg-hero-note"><span class="vg-note-orb" aria-hidden="true">✳</span><div><strong data-i="heroNoteTitle">VIONA / DIGITAL STUDIO</strong><small data-i="heroNoteDesc">Инструменты для твоих следующих идей.</small></div></div>
-   </div>
-   <div class="feature-art vg-hero-art" data-i-aria="heroArtAria" aria-label="Глянцевый стеклянный логотип VIONA">
-    <div class="vg-orb vg-orb-one" aria-hidden="true"></div><div class="vg-orb vg-orb-two" aria-hidden="true"></div>
-    <div class="vg-glass-card">
-     <div class="vg-glass-reflection" aria-hidden="true"></div>
-     <div class="vg-glass-top"><span data-i="glassEyebrow">VIONA / BRAND MARK</span><span class="vg-live-chip"><i></i> <span data-i="glassLive">LIVE</span></span></div>
-     <div class="vg-mark-stage"><img class="vg-mark-image" src="/assets/viona-mark.webp?v=1" alt="" width="512" height="512" fetchpriority="high"></div>
-     <div class="vg-glass-bottom"><span data-i="glassCaption">CODE · DESIGN · DIGITAL</span><strong data-i="glassCaptionStrong">One space. More possibilities.</strong></div>
+<div class="nx-workspace">
+  <div class="nx-topbar">
+    <div class="nx-breadcrumb"><span>VIONA</span><span aria-hidden="true">/</span><strong>Digital workspace</strong></div>
+    <div class="nx-topbar-actions header-tools">
+      <div class="language" id="language">
+        <button class="lang-trigger" id="langTrigger" type="button" aria-expanded="false" aria-controls="langList" data-i-aria="languageAria" aria-label="Выбрать язык"><span aria-hidden="true">◎</span> <span id="langLabel">RU</span><span class="nx-chevron" aria-hidden="true">⌄</span></button>
+        <div class="lang-list" id="langList" hidden><button type="button" data-lang="ru">🇷🇺 Русский</button><button type="button" data-lang="en">🇬🇧 English</button><button type="button" data-lang="ja">🇯🇵 日本語</button><button type="button" data-lang="de">🇩🇪 Deutsch</button><button type="button" data-lang="femboy">🎀 Фембойский</button></div>
+      </div>
+      <button class="tool-button v16-notify-trigger" id="v16NotifyOpen" type="button" data-i-aria="notificationsAria" aria-label="Уведомления"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M18 9a6 6 0 1 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9Z"/><path d="M10 21h4"/></svg><i id="v16NotifyDot" hidden></i></button>
+      <button class="tool-button" id="favOpen" type="button" data-i-aria="favoritesAria" aria-label="Избранное"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8L12 21l8.8-8.6a5.5 5.5 0 0 0 0-7.8Z"/></svg><span class="counter" id="favCount">0</span></button>
+      <button class="tool-button" id="cartOpen" type="button" data-i-aria="cartAria" aria-label="Корзина"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 8h14l-1 12H6L5 8Z"/><path d="M9 9V6a3 3 0 0 1 6 0v3"/></svg><span class="counter" id="cartCount">0</span></button>
+      <button class="nx-profile-button profile-trigger" id="profileOpen" type="button" data-i-aria="profileAria" aria-label="VIONA ID"><span class="nx-avatar" aria-hidden="true">V</span><span>VIONA ID</span><span class="nx-chevron" aria-hidden="true">⌄</span></button>
     </div>
-    <div class="vg-float-chip vg-chip-top"><span class="vg-chip-icon">⌘</span><span><small data-i="chipOne">DIGITAL TOOLS</small><strong data-i="chipOneValue">Ready to create</strong></span></div>
-    <div class="vg-float-chip vg-chip-bottom"><span class="vg-chip-icon">✧</span><span><small data-i="chipTwo">BUILT AROUND IDEAS</small><strong data-i="chipTwoValue">Made by VIONA</strong></span></div>
-   </div>
   </div>
-  <div class="hero-features">
-   <div><span>✦</span><div><strong data-i="featureOne">Цифровые продукты</strong><small data-i="featureOneDesc">Боты · Код · Шаблоны</small></div></div>
-   <div><span>◈</span><div><strong data-i="featureTwo">Прозрачный процесс</strong><small data-i="featureTwoDesc">Статусы и обновления заказов</small></div></div>
-   <div><span>⌘</span><div><strong data-i="featureThree">VIONA ID</strong><small data-i="featureThreeDesc">Профиль и история в одном месте</small></div></div>
-  </div>
-  <div class="masthead-bottom"><span data-i="scroll">ЛИСТАЙ НИЖЕ ↓</span><span data-i="themeEdition">LIQUID GLASS / 2026</span></div>
- </section>
- <div class="marquee vg-marquee" aria-hidden="true"><div>VIONA · DIGITAL GOODS · CODE · DESIGN · TOOLS · VIONA · DIGITAL GOODS · CODE · DESIGN · TOOLS · VIONA · DIGITAL GOODS · CODE · DESIGN · TOOLS ·</div></div>
- <section class="catalog section" id="catalog">
-  <div class="section-top"><div><span class="section-kicker" data-i="catalogKicker">01 / DIGITAL COLLECTION</span><h2 data-i="catalogTitle">Выбирай. <em>Создавай.</em></h2><p data-i="catalogDesc">Цифровые решения для твоих проектов.</p></div><span class="index-label"><span id="resultCount">00</span><span data-i="catalogCount"> / PRODUCTS</span></span></div>
-  <div class="market-intro"><span class="market-bullet">✦</span><span data-i="marketKicker">CURATED DIGITAL GOODS</span><span class="market-intro-line"></span><span data-i="marketAvailability">READY FOR YOUR NEXT IDEA</span></div>
-  <div class="market-controls"><div class="smart-search"><label class="search-field"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></svg><input id="search" type="search" autocomplete="off" data-i-placeholder="search" data-i-aria="searchAria" placeholder="Поиск по каталогу..." aria-label="Поиск" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="searchSuggestions"></label><div id="searchSuggestions" class="search-suggestions" role="listbox" hidden></div></div><div class="sort-holder" id="sortHolder"><button id="sortTrigger" class="sort-trigger" type="button" aria-expanded="false" aria-controls="sortList"><span id="sortLabel">По умолчанию</span><span aria-hidden="true">⌄</span></button><div class="sort-list" id="sortList" hidden><button data-sort="default">По умолчанию</button><button data-sort="price-asc">Сначала дешевле</button><button data-sort="price-desc">Сначала дороже</button><button data-sort="name">По названию</button></div></div></div>
-  <div class="category-bar" id="categories"><button class="active" data-category="Все">Все</button><button data-category="Боты">Боты</button><button data-category="Шаблоны">Шаблоны</button><button data-category="Игры">Игры</button><button data-category="Услуги">Услуги</button></div>
-  <p class="currency-disclaimer" id="currencyNote"></p><div class="products" id="products" aria-live="polite"><p>Подбираем товары…</p></div><p class="demo-note" data-i="demo">Тестовая оплата картой, СБП и SberPay доступна при оформлении.</p>
- </section>
- <section class="vg-editorial"><div class="vg-editorial-inner"><span class="vg-editorial-mark" aria-hidden="true">✧</span><div><span class="section-kicker" data-i="editorialKicker">VIONA / BEYOND THE SCREEN</span><h2 data-i-html="editorialTitle">У тебя есть <em>идея?</em><br>У нас есть <strong>инструменты.</strong></h2></div><a href="#catalog" class="vg-editorial-link"><span data-i="editorialLink">Открыть коллекцию</span> ↗</a></div></section>
- <section class="studio section" id="studio">
-  <div class="section-top"><div><span class="section-kicker" data-i="studioKicker">02 / HOW IT WORKS</span><h2 data-i="studioTitle">Идея → <em>результат.</em></h2><p data-i="studioDesc">От первого клика до готового результата — всё понятно.</p></div></div>
-  <div class="studio-intro"><span data-i="studioIntro">A SIMPLE, CLEAR PROCESS</span><span>✦</span></div>
-  <div class="studio-grid">
-   <article><span class="step-num" data-i="stepNum1">01 / DISCOVER</span><span class="step-symbol">◈</span><h3 data-i="step1">Найди своё</h3><p data-i="step1desc">Исследуй коллекцию цифровых решений.</p><span class="vg-step-line"></span></article>
-   <article><span class="step-num" data-i="stepNum2">02 / SAVE</span><span class="step-symbol">✳</span><h3 data-i="step2">Сохрани идеи</h3><p data-i="step2desc">Избранное и корзина всегда под рукой.</p><span class="vg-step-line"></span></article>
-   <article><span class="step-num" data-i="stepNum3">03 / CREATE</span><span class="step-symbol">↗</span><h3 data-i="step3">Начни проект</h3><p data-i="step3desc">Расскажи, что хочешь создать.</p><span class="vg-step-line"></span></article>
-  </div>
- </section>
- <section class="contact section" id="contact">
-  <div class="contact-copy"><div class="contact-orbit" aria-hidden="true"><span>✧</span></div><span class="section-kicker" data-i="contactKicker">03 / DIRECT CONTACT</span><h2 data-i="contactTitle">Есть идея?<br><em>Погнали.</em></h2><p data-i="contactDesc">Опиши свой проект — обсудим возможности.</p><span class="contact-decor" aria-hidden="true">V</span></div>
-  <form id="requestForm" data-i-aria="requestFormAria"><span class="vg-form-label" data-i="contactFormKicker">LET'S TALK ABOUT YOUR IDEA</span>
-   <label><span data-i="nameLabel">Как тебя зовут?</span><input name="name" maxlength="100" required data-i-placeholder="namePlaceholder" placeholder="Имя или ник"></label>
-   <label><span data-i="contactLabel">Как с тобой связаться?</span><input name="contact" maxlength="200" required data-i-placeholder="contactPlaceholder" placeholder="Telegram / email"></label>
-   <label><span data-i="detailsLabel">Что создаём?</span><textarea name="details" rows="5" minlength="10" maxlength="5000" required data-i-placeholder="detailsPlaceholder" placeholder="Расскажи о задумке..."></textarea></label>
-   <button class="action-primary" type="submit"><span data-i="submit">Отправить заявку</span><span aria-hidden="true">↗</span></button><p id="formStatus" role="status"></p>
-  </form>
- </section>
-</main>
-<footer class="vg-footer"><a href="#home" class="footer-brand"><img src="/assets/viona-mark.webp?v=1" alt="" width="34" height="34"><span>viona<span>.</span></span></a><div><span class="vg-footer-kicker" data-i="footerKicker">DIGITAL PRODUCTS / EST. 2026</span><span data-i="footer">Делаем цифровое необычным.</span></div><span>© 2026 VIONA</span></footer>
+  <main id="home">
+    <section class="masthead nx-hero" aria-labelledby="heroTitle">
+      <div class="nx-hero-copy">
+        <div class="nx-eyebrow"><span class="nx-spark" aria-hidden="true">✳</span><span data-i="eyebrow">НЕ ПРОСТО МАРКЕТПЛЕЙС</span></div>
+        <h1 id="heroTitle">Идея.<br>Код. Результат.</h1>
+        <p id="heroDesc">Выбирай инструменты, создавай свои проекты и отслеживай каждый заказ.</p>
+        <div class="nx-hero-actions"><a class="action-primary" href="#catalog"><span data-i="explore">Смотреть каталог</span><span aria-hidden="true">↗</span></a><a class="nx-secondary-link" href="#studio"><span data-i="howItWorks">Как это работает</span><span aria-hidden="true">↗</span></a></div>
+        <div class="nx-hero-tags"><span>CODE</span><span>DESIGN</span><span>TOOLS</span><span>2026</span></div>
+      </div>
+      <div class="nx-hero-screen" role="img" aria-label="Обзор цифровой студии VIONA">
+        <div class="nx-screen-title"><span class="nx-screen-dots" aria-hidden="true"><i></i><i></i><i></i></span><span>VIONA / STUDIO</span><span>01 — 03</span></div>
+        <div class="nx-screen-main">
+          <div class="nx-screen-symbol" aria-hidden="true"><span>V</span><b>✳</b></div>
+          <div class="nx-screen-content"><div class="nx-screen-heading">Built for<br><strong>new ideas.</strong></div><p>Design + Technology + Community</p></div>
+        </div>
+        <div class="nx-screen-foot">
+          <div class="nx-mark-original"><img src="/assets/viona-mark.webp?v=1" width="68" height="68" alt="" aria-hidden="true"><span><strong>VIONA</strong><small>Original brand mark</small></span></div>
+          <div class="nx-screen-version">V.2026.11 <span aria-hidden="true">●</span></div>
+        </div>
+      </div>
+    </section>
+    <div class="nx-metrics"><div><span class="nx-metric-number">01</span><span data-i="featureOne">Цифровые продукты</span><small data-i="featureOneDesc">Боты · Код · Шаблоны</small></div><div><span class="nx-metric-number">02</span><span data-i="featureTwo">Прозрачный процесс</span><small data-i="featureTwoDesc">Статусы и обновления заказов</small></div><div><span class="nx-metric-number">03</span><span data-i="featureThree">VIONA ID</span><small data-i="featureThreeDesc">Профиль и история в одном месте</small></div></div>
+    <section class="catalog section" id="catalog">
+      <div class="nx-section-label"><span>01</span><span>MARKETPLACE / COLLECTION</span><span class="nx-label-rule"></span></div>
+      <div class="section-top"><div><h2 data-i="catalogTitle">Выбирай. <em>Создавай.</em></h2><p data-i="catalogDesc">Цифровые решения для твоих проектов.</p></div><span class="nx-result-pill"><span id="resultCount">00</span><span data-i="catalogCount"> / ТОВАРОВ</span></span></div>
+      <div class="nx-discovery">
+        <div class="smart-search"><label class="search-field"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></svg><input id="search" type="search" autocomplete="off" data-i-placeholder="search" data-i-aria="searchAria" placeholder="Поиск по каталогу..." aria-label="Поиск" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="searchSuggestions"></label><div id="searchSuggestions" class="search-suggestions" role="listbox" hidden></div></div>
+        <div class="sort-holder" id="sortHolder"><button id="sortTrigger" class="sort-trigger" type="button" aria-expanded="false" aria-controls="sortList"><span id="sortLabel">По умолчанию</span><span aria-hidden="true">⌄</span></button><div id="sortList" class="sort-list" hidden><button data-sort="default">По умолчанию</button><button data-sort="price-asc">Сначала дешевле</button><button data-sort="price-desc">Сначала дороже</button><button data-sort="name">По названию</button></div></div>
+      </div>
+      <div class="category-bar" id="categories"><button class="active" data-category="Все">Все</button><button data-category="Боты">Боты</button><button data-category="Шаблоны">Шаблоны</button><button data-category="Игры">Игры</button><button data-category="Услуги">Услуги</button></div>
+      <p class="currency-disclaimer" id="currencyNote"></p>
+      <div class="products" id="products" aria-live="polite"><p>Загружаем каталог…</p></div>
+      <p class="demo-note" data-i="demo">Тестовая оплата картой, СБП и SberPay доступна при оформлении.</p>
+    </section>
+    <section class="studio section" id="studio">
+      <div class="nx-section-label"><span>02</span><span>HOW IT WORKS / PROCESS</span><span class="nx-label-rule"></span></div>
+      <div class="section-top"><div><h2 data-i="studioTitle">Идея → <em>результат.</em></h2><p data-i="studioDesc">От первого клика до готового результата — всё понятно.</p></div></div>
+      <div class="studio-grid">
+        <article><span class="step-num">/ 01</span><span class="nx-step-icon" aria-hidden="true">⌕</span><h3 data-i="step1">Найди своё</h3><p data-i="step1desc">Исследуй коллекцию цифровых решений.</p><span class="nx-step-line" aria-hidden="true"></span></article>
+        <article><span class="step-num">/ 02</span><span class="nx-step-icon" aria-hidden="true">♡</span><h3 data-i="step2">Сохрани идеи</h3><p data-i="step2desc">Избранное и корзина всегда под рукой.</p><span class="nx-step-line" aria-hidden="true"></span></article>
+        <article><span class="step-num">/ 03</span><span class="nx-step-icon" aria-hidden="true">↗</span><h3 data-i="step3">Начни проект</h3><p data-i="step3desc">Расскажи, что хочешь создать.</p><span class="nx-step-line" aria-hidden="true"></span></article>
+      </div>
+    </section>
+    <section class="contact section" id="contact">
+      <div class="contact-copy"><div class="nx-section-label"><span>03</span><span>CONTACT / REQUEST</span></div><h2 data-i="contactTitle">Есть идея?<br><em>Погнали.</em></h2><p data-i="contactDesc">Опиши свой проект — обсудим возможности.</p><div class="nx-contact-decoration" aria-hidden="true">V.</div></div>
+      <form id="requestForm" data-i-aria="requestFormAria">
+        <div class="nx-form-header"><strong>START A PROJECT</strong><span>✳</span></div>
+        <label><span data-i="nameLabel">Как тебя зовут?</span><input name="name" maxlength="100" required data-i-placeholder="namePlaceholder" placeholder="Имя или ник"></label>
+        <label><span data-i="contactLabel">Как с тобой связаться?</span><input name="contact" maxlength="200" required data-i-placeholder="contactPlaceholder" placeholder="Telegram / email"></label>
+        <label><span data-i="detailsLabel">Что создаём?</span><textarea name="details" rows="5" minlength="10" maxlength="5000" required data-i-placeholder="detailsPlaceholder" placeholder="Расскажи о задумке..."></textarea></label>
+        <button class="action-primary" type="submit"><span data-i="submit">Отправить заявку</span><span aria-hidden="true">↗</span></button><p id="formStatus" role="status"></p>
+      </form>
+    </section>
+  </main>
+  <footer class="vg-footer"><a href="#home" class="footer-brand"><img src="/assets/viona-mark.webp?v=1" width="40" height="40" alt=""><span>VIONA</span></a><span data-i="footer">Делаем цифровое необычным.</span><span>© VIONA 2026</span></footer>
+</div>
 <nav class="mobile-bar" data-i-aria="mobileNavAria" aria-label="Мобильная навигация"><a href="#home"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m3 10 9-7 9 7v11H3V10Z"/><path d="M9 21v-8h6v8"/></svg><small data-i="mobileHome">Главная</small></a><a href="#catalog"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="4" width="7" height="7" rx="2"/><rect x="13" y="4" width="7" height="7" rx="2"/><rect x="4" y="13" width="7" height="7" rx="2"/><rect x="13" y="13" width="7" height="7" rx="2"/></svg><small data-i="mobileCatalog">Каталог</small></a><button id="mobileFav" type="button"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 5a5 5 0 0 0-7 0l-1 1-1-1a5 5 0 0 0-7 7l8 8 8-8a5 5 0 0 0 0-7Z"/></svg><small data-i="mobileFav">Избранное</small></button><button id="mobileCart" type="button"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 8h14l-1 12H6L5 8Z"/><path d="M9 9V6a3 3 0 0 1 6 0v3"/></svg><small data-i="mobileCart">Корзина</small></button></nav>
-
 <div class="overlay" id="overlay" hidden></div><div class="v15-overlay" id="v15Overlay" hidden></div><section class="v15-dialog" id="v15Dialog" role="dialog" aria-modal="true" aria-labelledby="v15Title" aria-hidden="true" tabindex="-1"><button type="button" id="v15Close" class="v15-close" aria-label="Закрыть"></button><div id="v15Content"></div></section><aside class="panel" id="panel" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="panelTitle"><div class="panel-top"><div><span class="section-kicker" data-i="panelKicker">YOUR COLLECTION</span><h2 id="panelTitle">Корзина</h2></div><button id="panelClose" class="panel-close" type="button" aria-label="Закрыть"></button></div><div class="panel-tabs"><button id="tabFav" data-panel="favorites" type="button">♡ <span data-i="mobileFav">Избранное</span></button><button id="tabCart" data-panel="cart" type="button">◫ <span data-i="mobileCart">Корзина</span></button></div><div class="panel-body" id="panelBody"></div><div class="panel-bottom" id="panelBottom"></div></aside><div class="toast" id="toast" role="status" aria-live="polite"></div>
 <script src="/viona-icons.js?v=18" defer></script>
-<script src="/v15.js?v=19" defer></script><script src="/rich-details.js?v=4" defer></script>
+<script src="/v15.js?v=30" defer></script><script src="/rich-details.js?v=4" defer></script>
 <script src="/telegram-login.js?v=4" defer></script><script src="/v16.js?v=20" defer></script>
 <script src="/payment-result.js?v=18" defer></script>
-<script src="/viona-motion.js?v=1" defer></script></body></html>
+<script src="/viona-reset-motion.js?v=1" defer></script></body></html>
