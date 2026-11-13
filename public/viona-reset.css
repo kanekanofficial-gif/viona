@@ -84,7 +84,7 @@ h1,h2,h3,p{margin:0}
 .nx-eyebrow{display:inline-flex;align-items:center;gap:9px;margin-bottom:21px;color:#24788c;font:800 10px "IBM Plex Mono",monospace;letter-spacing:.055em}
 .nx-spark{display:grid;place-items:center;width:29px;height:29px;border:1px solid #bedde1;border-radius:10px;background:#fff;color:#0089a2;font-size:15px}
 .nx-hero h1,.masthead h1{max-width:700px;margin:0 0 19px!important;color:#14313c!important;font:800 clamp(36px,4.2vw,62px)/1.16 "Unbounded",sans-serif!important;letter-spacing:-.07em!important;text-shadow:none!important;overflow-wrap:break-word}
-.nx-hero h1 em{font-style:normal;color:#047c9a!important;background:none!important;-webkit-text-fill-color:currentColor!important}
+.nx-hero h1 em{font-style:normal!important;font-family:"Unbounded",sans-serif!important;font-weight:800!important;letter-spacing:-.065em!important;color:#047c9a!important;background:none!important;-webkit-text-fill-color:currentColor!important}
 .nx-hero h1 .period{color:#00a4a9!important}
 .nx-hero-copy>p{max-width:490px;margin:0;color:#57717c!important;font-size:13px!important;line-height:1.9!important}
 .nx-hero-actions{display:flex;align-items:center;gap:23px;flex-wrap:wrap;margin:28px 0 35px}
