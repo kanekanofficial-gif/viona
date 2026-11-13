@@ -17,11 +17,12 @@ jobs:
           node --check tbank-demo.js
           node --check payment-order.js
           node --check public/v15.js
-          node --check public/viona-halloween.js
           node --check public/v16.js
           node --check public/viona-icons.js
+          node --check public/viona-motion.js
           node --check public/payment-result.js
           node --check public/rich-details.js
+          node --check public/telegram-login.js
           node --check public/sw.js
       - name: Run payment verification and visual tests
         run: npm test

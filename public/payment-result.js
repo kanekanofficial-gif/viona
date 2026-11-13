@@ -26,7 +26,7 @@
  root.setAttribute("aria-live","polite");
  document.body.append(root);
  let interval=null,requests=0,lastHash="",busy=false;
- const header=()=>'<header class="vr-bar"><a href="/" class="vr-logo" aria-label="На главную VIONA"><span class="vr-logo-mark">V</span><span>viona<span class="vr-logo-dot">.</span></span></a><span class="vr-bar-badge"><span class="vr-signal"></span> ТЕСТОВЫЙ РЕЖИМ</span></header>';
+ const header=()=>'<header class="vr-bar"><a href="/" class="vr-logo" aria-label="На главную VIONA"><span class="vr-logo-mark"><img src="/assets/viona-mark.webp?v=1" alt=""></span><span>viona<span class="vr-logo-dot">.</span></span></a><span class="vr-bar-badge"><span class="vr-signal"></span> ТЕСТОВЫЙ РЕЖИМ</span></header>';
  function shell(inner){return header()+'<div class="vr-wrap">'+inner+'</div><footer class="vr-footer"><span>VIONA DIGITAL MARKET / 2026</span><span>Данные платежа сверяются с Т-Банком</span></footer>'}
  const loading=()=>shell('<div class="vr-message vr-waiting"><div class="vr-spinner" aria-hidden="true"></div><span class="vr-eyebrow">VIONA / VERIFYING</span><h1>Проверяем оплату<span class="vr-dot">.</span></h1><p>Связываемся с банком и загружаем твой заказ. Подтверждение происходит на сервере VIONA.</p></div>');
  function problem(title,description,showRetry=true){
