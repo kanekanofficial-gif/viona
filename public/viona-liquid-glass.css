@@ -452,6 +452,6 @@ html[data-world] .detail-visual[data-art="1"],html[data-world] .detail-visual[da
 .vx-consent input:checked+.vx-checkbox-art{background:#a9eaf2!important;color:#082033!important}
 .vx-sber-fallback{color:#b9e8d8!important}
 .vr-root{--vr-blue:#8de5f1;--vr-teal:#a9f0dc}
-.vr-root .vr-fail-symbol{border-color:#ffc5a35e!important;background:linear-gradient(145deg,#6d3735,#2b2029)!important;color:#ffe6d6!important}
+.vr-root .vr-fail-symbol{border-color:#ffc5a35e!important;background:linear-gradient(145deg,#6d3735,#1c2933)!important;color:#ffe6d6!important}
 .vr-root .vr-step-active .vr-step-number{border-color:#b9f3f7!important;background:linear-gradient(135deg,#c8f5f7,#78d6e9)!important;color:#082033!important}
 .vr-root .vr-admin button{background:linear-gradient(120deg,#dffaff,#a9e8f6)!important;color:#082033!important}
