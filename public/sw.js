@@ -2,7 +2,7 @@
 const CACHE="viona-shell-v23-1";
 const SHELL=[
  "/","/favicon.svg?v=1","/manifest.webmanifest?v=23",
- "/v14.css?v=1","/v15.css?v=1","/v16.css?v=1",
+ "/rich-details.css?v=1","/v14.css?v=1","/v15.css?v=1","/v16.css?v=1","/product-detail-layout.css?v=4","/telegram-login.css?v=2",
  "/viona-checkout.css?v=3","/viona-relaunch.css?v=17","/payment-result.css?v=17","/viona-liquid-glass.css?v=1",
  "/assets/viona-mark.webp?v=1","/assets/viona-user-logos.webp?v=23",
  "/assets/brand-mir.svg?v=23","/assets/brand-sberpay.svg?v=23","/assets/brand-max.svg?v=23","/assets/brand-gamepad.svg?v=23",
