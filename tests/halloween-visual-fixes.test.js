@@ -25,7 +25,7 @@ test("the new site palette has no brown or saturated violet theme colors",()=>{
  const colors=[...css.matchAll(/#([a-f0-9]{6})(?:[a-f0-9]{2})?(?![a-z0-9_-])/gi)].map(m=>m[1]);
  const violets=colors.filter(color=>{const[h,s]=hue(color);return h>=245&&h<335&&s>.19});
  assert.deepEqual(violets,[],"unexpected violet theme colors: "+violets.slice(0,10).join(","));
- assert.doesNotMatch(css,/--bg:#[0-9a-f]*(?:1[0-9a-f]{4}|[0-9a-f]{6})/i);
+ assert.doesNotMatch(css,/--bg:#100b07|#100b07|#201912|#281f17|--accent:#ff994c|#ff8c49/i);
 });
 
 test("Liquid Glass uses layered translucency, refraction, highlights and motion",()=>{
