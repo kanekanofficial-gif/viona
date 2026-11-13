@@ -37,7 +37,7 @@ test("catalog, authentication, checkout, favorites, cart and profile hooks remai
   "sortTrigger","sortList","sortLabel","sortHolder","categories","products","resultCount","currencyNote","requestForm",
   "formStatus","v15Dialog","v15Content","v15Close","v15Overlay","overlay","panel","panelTitle","panelBody","panelBottom",
   "panelClose","tabFav","tabCart","toast","readingBar"];
- for(const id of ids){const re=new RegExp("\\bid=\\""+id+"\\"","g");assert.equal((html.match(re)||[]).length,1,id+" must exist exactly once")}
+ for(const id of ids){const re=new RegExp("\\bid=\""+id+"\"","g");assert.equal((html.match(re)||[]).length,1,id+" must exist exactly once")}
 });
 
 test("original user artwork, catalog icon logic and payment brands are preserved",()=>{
