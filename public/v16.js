@@ -31,7 +31,7 @@ function accountHtml(){const p=state16.profile;return '<div class="v16-eyebrow">
  ).join(""):'<p class="v16-empty">'+escape(t.noRequests)+'</p>')+'</section>';
  return '<div class="v16-eyebrow">VIONA / HISTORY</div><h2>'+escape(t.orders)+'</h2>'+bought+inquiries;
 }function notifHtml(){return '<div class="v16-eyebrow">VIONA / UPDATES</div><h2>'+escape(t.notify)+'</h2>'+(state16.notifications.length?state16.notifications.map(n=>'<article class="v16-notification '+(n.read_at?"read":"")+'"><div><strong>'+escape(n.message)+'</strong><small>'+fmt(n.created_at)+'</small></div>'+(n.read_at?"":'<button type="button" data-read="'+escape(n.id)+'">'+escape(t.mark)+'</button>')+'</article>').join(""):'<p class="v16-empty">'+escape(t.emptyNotifs)+'</p>')}
-async async function refreshV16Cards(){
+async function refreshV16Cards(){
  const target=by("v16SavedCards");if(!target)return;
  target.innerHTML='<p class="vx-card-state">'+escape(t.loadingCards)+'</p>';
  try{
