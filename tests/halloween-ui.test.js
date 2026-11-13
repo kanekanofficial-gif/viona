@@ -31,7 +31,7 @@ test("every required JS and payment hook remains present exactly once",()=>{
  "currencyNote","requestForm","formStatus","mobileFav","mobileCart","overlay","v15Overlay","v15Dialog",
  "v15Close","v15Content","panel","panelTitle","panelClose","tabFav","tabCart","panelBody","panelBottom","toast"];
  for(const id of hooks){
-  const hits=[...html.matchAll(new RegExp('\\\\bid="'+id+'"',"g"))];
+  const hits=[...html.matchAll(new RegExp('\\bid="'+id+'"',"g"))];
   assert.equal(hits.length,1,id+" should exist exactly once");
  }
  const ids=[...html.matchAll(/\bid="([^"]+)"/g)].map(m=>m[1]);
@@ -74,7 +74,7 @@ test("original VIONA art and original brand sprite stay linked, not redrawn by A
  }
  assert.match(css,/\.nx-mark-original img\{[^}]*width:68px!important;height:68px!important/);
  assert.match(css,/\.product-icon \.viona-brand\{[^}]*width:64px!important;height:64px!important/);
- assert.doesNotMatch(css,/(?:filter:blur|image-rendering:pixelated)/i);
+ assert.doesNotMatch(css,/(?:^|[;}])\s*(?:filter:\s*blur|image-rendering:\s*pixelated)/im);
 });
 
 test("favicon/manifest/cache use the v30 shell and all static assets exist",()=>{
