@@ -20,6 +20,7 @@ jobs:
           node --check public/v16.js
           node --check public/viona-icons.js
           node --check public/viona-reset-motion.js
+          node --check public/viona-original-assets.js
           node --check public/payment-result.js
           node --check public/rich-details.js
           node --check public/telegram-login.js
