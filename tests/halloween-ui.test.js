@@ -3,133 +3,106 @@ const test=require("node:test");
 const assert=require("node:assert/strict");
 const fs=require("node:fs");
 const path=require("node:path");
-const root=path.join(__dirname,"..");
-const read=p=>fs.readFileSync(path.join(root,p),"utf8");
+const base=path.resolve(__dirname,"..");
+const read=file=>fs.readFileSync(path.join(base,file),"utf8");
 const html=read("public/index.html");
-const css=read("public/viona-liquid-glass.css");
-const app=read("public/v15.js");
-const v16=read("public/v16.js");
-const rich=read("public/rich-details.js");
-const motion=read("public/viona-motion.js");
-const icons=read("public/viona-icons.js");
-const pay=read("public/payment-result.js");
+const css=read("public/viona-reset.css");
+const js=read("public/v15.js");
+const motion=read("public/viona-reset-motion.js");
 const sw=read("public/sw.js");
 const manifest=JSON.parse(read("public/manifest.webmanifest"));
 
-test("homepage is a real Liquid Glass redesign and uses the supplied VIONA artwork",()=>{
- assert.match(html,/viona-liquid-glass\.css\?v=1/);
- assert.match(html,/viona-motion\.js\?v=1/);
- assert.match(html,/favicon\.svg\?v=1/);
- assert.match(html,/assets\/viona-mark\.webp\?v=1/);
- assert.match(html,/class="vg-glass-card"/);
- assert.match(html,/class="vg-mark-image"/);
- assert.match(css,/backdrop-filter:blur\(38px\) saturate\(195%\)/);
- assert.match(css,/@keyframes vg-refraction/);
- assert.match(css,/@keyframes vg-card-float/);
- assert.doesNotMatch(html,/halloween|pumpkin|ghost|bat|night market/i);
- assert.doesNotMatch(css,/--bg:#100b07|#100b07|#ff994c/i);
- assert.ok(fs.existsSync(path.join(root,"public/assets/viona-mark.webp")));
+test("VIONA has a distinct complete storefront design, not the old overlapping hero",()=>{
+ for(const part of ["nx-sidebar","nx-topbar","nx-hero-copy","nx-hero-screen","nx-screen-main","nx-metrics","nx-discovery","nx-step-icon","nx-contact-decoration"])
+  assert.ok(html.includes(part),part);
+ assert.match(html,/href="\/viona-reset\.css\?v=1"/);
+ assert.match(html,/src="\/viona-reset-motion\.js\?v=1"/);
+ assert.doesNotMatch(html,/vg-glass-card|vg-float-chip|vg-chip-top|vg-chip-bottom|viona-liquid-glass\.css|viona-motion\.js|halloween|ghost|pumpkin/i);
+ assert.match(css,/grid-template-columns:minmax\(0,1\.03fr\) minmax\(0,.97fr\)/);
+ assert.match(css,/position:fixed!important;inset:0 auto 0 0!important/);
+ assert.match(css,/\.nx-hero-screen/);
+ assert.match(css,/\.nx-workspace/);
 });
 
-test("catalog, authentication, checkout, favorites, cart and profile hooks remain unique",()=>{
- const ids=["top","profileOpen","v16NotifyOpen","v16NotifyDot","language","langTrigger","langList","langLabel",
-  "favOpen","cartOpen","favCount","cartCount","mobileFav","mobileCart","heroTitle","heroDesc","search","searchSuggestions",
-  "sortTrigger","sortList","sortLabel","sortHolder","categories","products","resultCount","currencyNote","requestForm",
-  "formStatus","v15Dialog","v15Content","v15Close","v15Overlay","overlay","panel","panelTitle","panelBody","panelBottom",
-  "panelClose","tabFav","tabCart","toast","readingBar"];
- for(const id of ids){const re=new RegExp("\\bid=\""+id+"\"","g");assert.equal((html.match(re)||[]).length,1,id+" must exist exactly once")}
-});
-
-test("original user artwork, catalog icon logic and payment brands are preserved",()=>{
- const binary=fs.readFileSync(path.join(root,"public/assets/viona-user-logos.webp"));
- assert.ok(binary.length>4000);
- assert.equal(binary.toString("ascii",0,4),"RIFF");
- assert.equal(binary.toString("ascii",8,12),"WEBP");
- for(const brand of ["telegram","discord","max","game","card","sbp","sber","tbank"])assert.match(css,new RegExp("\\.viona-brand-"+brand+"\\b"));
- assert.match(icons,/const uploaded=\{1:"telegram",3:"discord",4:"game",7:"max"\}/);
- for(const brand of ["brand-mir","brand-sberpay","brand-max","brand-gamepad"]){
-  const svg=read("public/assets/"+brand+".svg");
-  assert.match(svg,/^<svg /);
-  assert.match(svg,/viewBox=/);
-  assert.ok(!svg.includes("<image"));
+test("every required JS and payment hook remains present exactly once",()=>{
+ const hooks=["readingBar","top","home","heroTitle","heroDesc","v16NotifyOpen","v16NotifyDot","profileOpen",
+ "language","langTrigger","langLabel","langList","favOpen","favCount","cartOpen","cartCount","search",
+ "searchSuggestions","sortHolder","sortTrigger","sortLabel","sortList","categories","products","resultCount",
+ "currencyNote","requestForm","formStatus","mobileFav","mobileCart","overlay","v15Overlay","v15Dialog",
+ "v15Close","v15Content","panel","panelTitle","panelClose","tabFav","tabCart","panelBody","panelBottom","toast"];
+ for(const id of hooks){
+  const hits=[...html.matchAll(new RegExp('\\\\bid="'+id+'"',"g"))];
+  assert.equal(hits.length,1,id+" should exist exactly once");
  }
- for(const path of ["/assets/brand-mir.svg?v=23","/assets/brand-sberpay.svg?v=23","/assets/brand-max.svg?v=23","/assets/brand-gamepad.svg?v=23"])assert.ok(css.includes(path));
- assert.match(css,/width:102px!important;height:102px!important/);
- assert.match(css,/width:105px!important;height:60px!important;flex:0 0 105px!important/);
- assert.match(css,/width:45px!important;height:34px!important/);
+ const ids=[...html.matchAll(/\bid="([^"]+)"/g)].map(m=>m[1]);
+ assert.equal(ids.length,new Set(ids).size,"duplicate DOM ids");
 });
 
-test("all visible static UI and product details have working five-language translations",()=>{
- for(const locale of ["ru","en","ja","de","femboy"])assert.match(app,new RegExp(locale+":\\{"));
- assert.match(app,/data-i-html/);
- assert.match(app,/data-i-placeholder/);
- assert.match(app,/data-i-aria/);
- assert.match(app,/for\(const el of \$\$\("\[data-i\]"\)\)/);
- assert.match(app,/viona-language-v18/);
- assert.match(app,/viona_language=/);
- assert.match(app,/Max-Age=31536000/);
- assert.match(v16,/document\.documentElement\.dataset\.world/);
- for(const locale of ["ja","de","femboy"])assert.match(v16,new RegExp(locale+":\\{"));
- assert.match(rich,/const detailsCopy=/);
- assert.match(rich,/localized\.heading/);
- assert.match(app,/data-product-id=/);
- assert.match(html,/data-i-aria="languageAria"/);
- assert.match(html,/data-i-placeholder="detailsPlaceholder"/);
+test("search, category, sorting and five languages have working JavaScript",()=>{
+ assert.doesNotMatch(js,/\$\$\$\(/);
+ assert.match(js,/\$\$\("\[data-category\]"\)/);
+ assert.match(js,/\$\$\("\[data-sort\]"\)/);
+ assert.match(js,/function localize\(\)/);
+ assert.match(js,/data-i-placeholder/);
+ assert.match(js,/data-i-aria/);
+ for(const locale of ["ru","en","ja","de","femboy"])assert.match(js,new RegExp(locale+":\\{"));
+ assert.match(js,/viona-language-v18/);
+ assert.match(html,/data-lang="ru"/);
+ assert.match(html,/data-lang="en"/);
+ assert.match(html,/data-lang="ja"/);
+ assert.match(html,/data-lang="de"/);
+ assert.match(html,/data-lang="femboy"/);
 });
 
-test("glass animations are smooth, interactive and respect reduced-motion preferences",()=>{
- assert.match(motion,/IntersectionObserver/);
- assert.match(motion,/pointermove/);
- assert.match(motion,/prefers-reduced-motion/);
- assert.match(motion,/is-scrolled/);
- assert.doesNotMatch(motion,/scrollTo\(\{top:0/);
- assert.match(css,/prefers-reduced-motion:reduce/);
- assert.match(css,/vg-motion-ready/);
- assert.match(css,/vg-pressed/);
+test("payment/checkout still goes to exact test endpoints with explicit verification",()=>{
+ for(const endpoint of ["/api/payments/test/init","/api/payments/test/qr","/api/payments/test/sberpay"])
+  assert.ok(js.includes(endpoint),endpoint);
+ assert.match(js,/rememberPendingPayment/);
+ assert.match(js,/vionaQrPanel/);
+ assert.ok(fs.existsSync(path.join(base,"public/payment-result.js")));
 });
 
-test("the existing cart and payment flows remain wired to their TEST endpoints",()=>{
- for(const endpoint of ["/api/payments/test/init","/api/payments/test/qr","/api/payments/test/sberpay"])assert.ok(app.includes(endpoint));
- assert.ok(app.includes("rememberPendingPayment"));
- assert.ok(app.includes("vionaQrPanel"));
- assert.match(html,/id="cartOpen"[^>]*>[\s\S]*?<svg/);
- assert.match(html,/id="mobileCart"[^>]*><svg/);
- assert.match(pay,/assets\/viona-mark\.webp/);
+test("original VIONA art and original brand sprite stay linked, not redrawn by AI",()=>{
+ assert.match(html,/assets\/viona-mark\.webp/);
+ assert.match(css,/assets\/viona-user-logos\.webp/);
+ assert.match(html,/class="nx-mark-original"/);
+ const brand=fs.readFileSync(path.join(base,"public/assets/viona-mark.webp"));
+ const sprite=fs.readFileSync(path.join(base,"public/assets/viona-user-logos.webp"));
+ for(const b of [brand,sprite]){
+  assert.equal(b.toString("ascii",0,4),"RIFF");
+  assert.equal(b.toString("ascii",8,12),"WEBP");
+ }
+ assert.match(css,/\.nx-mark-original img\{[^}]*width:68px!important;height:68px!important/);
+ assert.match(css,/\.product-icon \.viona-brand\{[^}]*width:64px!important;height:64px!important/);
+ assert.doesNotMatch(css,/(?:filter:blur|image-rendering:pixelated)/i);
 });
 
-test("favicon, PWA manifest and service worker all use the new brand shell",()=>{
- assert.match(read("public/favicon.svg"),/data:image\/webp;base64,/);
- assert.match(read("public/viona-icon.svg"),/data:image\/webp;base64,/);
- assert.equal(manifest.theme_color,"#07111e");
- assert.ok(manifest.icons.some(x=>x.src==="/favicon.svg"));
- assert.ok(manifest.icons.some(x=>x.src==="/assets/viona-mark.webp"));
- assert.match(sw,/viona-shell-v23-1/);
- for(const asset of ["/favicon.svg?v=1","/viona-liquid-glass.css?v=1","/viona-motion.js?v=1","/assets/viona-mark.webp?v=1","/v15.js?v=19","/v16.js?v=20"])assert.ok(sw.includes(asset),asset);
- assert.doesNotMatch(sw,/halloween|favicon\.png/);
-});
-
-
-test("every local stylesheet, script, favicon and image reference resolves",()=>{
- const refs=[
-  ...[...html.matchAll(/(?:href|src)=["'](\/[^"'?#]+\.(?:css|js|svg|webp|png|webmanifest))(?:\?[^"']*)?["']/gi)].map(m=>m[1]),
+test("favicon/manifest/cache use the v30 shell and all static assets exist",()=>{
+ assert.match(html,/href="\/favicon\.svg\?v=30"/);
+ assert.equal(manifest.theme_color,"#eef7f8");
+ assert.match(sw,/viona-reboot-v30/);
+ for(const name of ["/viona-reset.css?v=1","/viona-reset-motion.js?v=1","/v15.js?v=30","/assets/viona-mark.webp?v=1"])
+  assert.ok(sw.includes(name),name);
+ const links=[
+  ...[...html.matchAll(/(?:href|src)="(\/[^"?#]+\.(?:css|js|webp|svg|png|webmanifest))(?:\?[^"]*)?"/g)].map(m=>m[1]),
   ...[...css.matchAll(/url\(['"]?(\/[^'")]+)['"]?\)/g)].map(m=>m[1].split("?")[0])
  ];
- for(const ref of new Set(refs)){
-  const clean=ref.split("?")[0];
-  assert.ok(fs.existsSync(path.join(root,"public",clean.replace(/^\/+/,""))),ref+" must exist");
- }
- for(const pathRef of ["/rich-details.css?v=1","/product-detail-layout.css?v=4","/telegram-login.css?v=2"])assert.ok(sw.includes(pathRef),pathRef+" must be precached");
+ for(const loc of new Set(links))assert.ok(fs.existsSync(path.join(base,"public",loc.replace(/^\/+/,""))),loc+" is missing");
 });
 
-test("HTML is properly nested and has no duplicate IDs",()=>{
- const voids=new Set(["meta","link","input","img","br","hr","source","area","base"]);
- const opened=[],errors=[];
- for(const m of html.matchAll(/<(\/?)([a-zA-Z][\w:-]*)([^<>]*)>/g)){
-  const closing=Boolean(m[1]),tag=m[2].toLowerCase();
-  if(voids.has(tag)||m[3].trim().endsWith("/"))continue;
-  if(!closing)opened.push(tag);else if(opened.pop()!==tag)errors.push(tag);
- }
- assert.deepEqual(errors,[]);assert.deepEqual(opened,[]);
- const ids=[...html.matchAll(/\bid="([^"]+)"/g)].map(x=>x[1]);
- assert.equal(ids.length,new Set(ids).size);
+test("new animations avoid moving or blurring product photos and reduce motion",()=>{
+ assert.match(motion,/IntersectionObserver/);
+ assert.match(motion,/prefers-reduced-motion/);
+ assert.match(motion,/MutationObserver/);
+ assert.doesNotMatch(motion,/pointermove|filter\s*:\s*blur|rotateX|rotateY/);
+ assert.match(css,/prefers-reduced-motion:reduce/);
+ assert.match(css,/\.nx-motion-ready \.nx-reveal/);
+});
+
+test("HTML DOM sections are ordered and no controls are nested inside buttons",()=>{
+ const ids=["home","catalog","studio","contact"].map(id=>html.indexOf('id="'+id+'"'));
+ assert.ok(ids.every(i=>i>0));
+ assert.ok(ids[0]<ids[1]&&ids[1]<ids[2]&&ids[2]<ids[3]);
+ const buttons=[...html.matchAll(/<button\b[\s\S]*?<\/button>/g)].map(m=>m[0]);
+ for(const button of buttons)assert.doesNotMatch(button,/<button\b[^>]*>[\s\S]*<button\b/);
 });

@@ -3,79 +3,56 @@ const test=require("node:test");
 const assert=require("node:assert/strict");
 const fs=require("node:fs");
 const path=require("node:path");
-const root=path.resolve(__dirname,"..");
-const read=file=>fs.readFileSync(path.join(root,file),"utf8");
-const css=read("public/viona-liquid-glass.css");
+const base=path.resolve(__dirname,"..");
+const read=file=>fs.readFileSync(path.join(base,file),"utf8");
+const css=read("public/viona-reset.css");
 const html=read("public/index.html");
-const v16=read("public/v16.js");
-const sw=read("public/sw.js");
-const app=read("public/v15.js");
+const js=read("public/v15.js");
+const manifest=JSON.parse(read("public/manifest.webmanifest"));
 
-function hue(hex){
- const rgb=[0,2,4].map(x=>parseInt(hex.slice(x,x+2),16)/255),mx=Math.max(...rgb),mn=Math.min(...rgb),delta=mx-mn;
- const sat=mx===0?0:delta/mx;
- if(delta===0)return[0,sat];
- let h=mx===rgb[0]?(rgb[1]-rgb[2])/delta:mx===rgb[1]?(rgb[2]-rgb[0])/delta+2:(rgb[0]-rgb[1])/delta+4;
- return[((h*60)%360+360)%360,sat];
-}
-
-test("the new site palette has no brown or saturated violet theme colors",()=>{
- assert.match(css,/--bg:#07111e/);
- assert.match(css,/--accent:#62d8f2/);
- const colors=[...css.matchAll(/#([a-f0-9]{6})(?:[a-f0-9]{2})?(?![a-z0-9_-])/gi)].map(m=>m[1]);
- const violets=colors.filter(color=>{const[h,s]=hue(color);return h>=245&&h<335&&s>.19});
- assert.deepEqual(violets,[],"unexpected violet theme colors: "+violets.slice(0,10).join(","));
- assert.doesNotMatch(css,/--bg:#100b07|#100b07|#201912|#281f17|--accent:#ff994c|#ff8c49/i);
+test("new light glass uses cool gray, teal and white and no brown theme",()=>{
+ assert.match(css,/--bg:#eef6f8/);
+ assert.match(css,/--accent:#027e9a/);
+ assert.match(css,/backdrop-filter:blur\(36px\) saturate\(165%\)/);
+ for(const bad of ["#100b07","#281f17","#ff994c","#201912","#8d52d9"])assert.ok(!css.includes(bad),bad);
 });
 
-test("Liquid Glass uses layered translucency, refraction, highlights and motion",()=>{
- for(const token of ["backdrop-filter:blur(34px) saturate(190%)","inset 1px 1px #ffffff52","vg-glass-reflection","vg-glass-card:after","@keyframes vg-refraction","@keyframes vg-chip-float","@keyframes vg-card-float"])assert.ok(css.includes(token),token);
- assert.match(css,/prefers-reduced-motion:reduce/);
- assert.doesNotMatch(css,/\.vg-mark-image\{[^}]*filter:blur/);
+test("hero and mobile navigation have predictable grid, breakpoints and no overlap",()=>{
+ assert.match(css,/\.nx-hero\{display:grid!important/);
+ assert.match(css,/\.nx-hero-screen\{position:relative;display:flex/);
+ assert.doesNotMatch(html,/nx-float-chip|vg-float-chip/);
+ for(const b of ["max-width:1250px","max-width:1000px","max-width:740px","max-width:455px"])assert.ok(css.includes(b),b);
+ assert.match(css,/\.nx-workspace\{width:calc\(100% - 248px\)/);
+ assert.match(css,/\.mobile-bar\{position:fixed!important/);
 });
 
-test("original gamepad and MAX icons stay crisp and large without replacing brand artwork",()=>{
- assert.match(css,/\.product-icon:has\(>\.viona-brand-game\)/);
- assert.match(css,/\.product-icon:has\(>\.viona-brand-max\)/);
- assert.match(css,/width:102px!important;height:102px!important/);
- assert.ok(css.includes("background-image:url('/assets/brand-max.svg?v=23')!important"));
- assert.ok(css.includes("background-image:url('/assets/brand-gamepad.svg?v=23')!important"));
- assert.match(css,/\.product-icon>\.viona-brand-telegram,.product-icon>\.viona-brand-discord\{width:64px;height:64px\}/);
+test("original 96px asset is never enlarged to a giant blurry 350px hero image",()=>{
+ assert.doesNotMatch(html,/class="vg-mark-image"|class="nx-mark-image"/);
+ assert.match(css,/\.nx-mark-original img\{[^}]*width:68px!important;height:68px!important/);
+ assert.match(css,/\.nx-brand-logo\{[^}]*width:48px!important;height:48px!important/);
+ const file=fs.readFileSync(path.join(base,"public/assets/viona-mark.webp"));
+ assert.equal(file.toString("ascii",0,4),"RIFF");
+ assert.equal(file.toString("ascii",8,12),"WEBP");
 });
 
-test("MIR and SberPay keep their own artwork and proper wide containers",()=>{
- assert.match(css,/brand-mir\.svg\?v=23/);
- assert.match(css,/brand-sberpay\.svg\?v=23/);
- assert.match(css,/\.vx-sber-method \.vx-method-icon\{[^}]*width:105px!important;height:60px!important/);
- assert.match(css,/\.vx-sber-method \.vx-method-icon \.viona-brand-sber\{[^}]*width:91px!important;height:40px!important/);
- assert.match(css,/\.vx-card-method \.vx-method-icon \.viona-brand-card\{[^}]*width:50px!important;height:39px!important/);
- assert.match(v16,/viona-brand-card/);
+test("real user sprite assets are displayed in fixed native-sized frames",()=>{
+ assert.match(css,/\.product-icon \.viona-brand\{[^}]*width:64px!important;height:64px!important/);
+ for(const name of ["telegram","discord","max","game"])assert.match(css,new RegExp("\\.product-icon \\.viona-brand-"+name+"\\{"));
+ assert.match(css,/background-size:256px 128px!important/);
+ assert.doesNotMatch(css,/\.product-icon \.viona-brand\{[^}]*transform:scale/);
 });
 
-test("all close controls keep a visible, aligned CSS cross",()=>{
- assert.match(css,/:is\(\.v15-close,\.panel-close,\.v16-close\):before/);
- assert.match(css,/:is\(\.v15-close,\.panel-close,\.v16-close\):after/);
- assert.match(css,/rotate\(45deg\)/);
- assert.match(css,/rotate\(-45deg\)/);
- assert.match(html,/id="v15Close" class="v15-close" aria-label="Закрыть"><\/button>/);
- assert.match(html,/id="panelClose" class="panel-close" type="button" aria-label="Закрыть"><\/button>/);
+test("checkout, account and gallery remain styled after reset",()=>{
+ for(const token of [".panel.open",".v15-dialog.open",".detail-layout",".vx-sber-method",".vx-card-method",".v16-workspace",".v16-account"])
+  assert.ok(css.includes(token),token);
+ assert.match(css,/\.vx-sber-method \.vx-method-icon\{width:112px!important;height:65px!important/);
+ assert.match(css,/\.vx-card-method \.vx-method-icon \.viona-brand-card\{[^}]*width:55px!important;height:45px!important/);
+ assert.match(html,/id="v15Dialog"/);
 });
 
-test("service worker drops the old seasonal cache and preloads the new shell",()=>{
- assert.match(sw,/viona-shell-v23-1/);
- assert.match(sw,/viona-liquid-glass\.css/);
- assert.match(sw,/viona-motion\.js/);
- assert.match(sw,/assets\/viona-mark\.webp/);
- assert.doesNotMatch(sw,/viona-halloween|favicon\.png/);
- assert.match(html,/viona-liquid-glass\.css\?v=1/);
-});
-
-test("language changes are applied to the hero, catalog, forms and VIONA ID",()=>{
- assert.match(app,/function localize\(\)/);
- assert.match(app,/data-i-placeholder/);
- assert.match(app,/data-i-aria/);
- assert.match(app,/location\.reload\(\)/);
- assert.match(v16,/dataset\.world\|\|document\.documentElement\.lang/);
- assert.match(v16,/paymentsAndGoods/);
- assert.match(v16,/savedCards/);
+test("language state and profile remain supported",()=>{
+ assert.match(js,/document\.documentElement\.dataset\.world=lang/);
+ assert.match(js,/viona-language-v18/);
+ assert.match(html,/id="profileOpen"/);
+ assert.equal(manifest.short_name,"VIONA");
 });
