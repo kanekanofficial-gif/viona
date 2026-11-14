@@ -52,6 +52,7 @@ const {chromium}=require("playwright");
     await theme.selectOption("auto");
     assert.equal(await page.locator("html").getAttribute("data-theme"),"dark","system dark mode not detected");
     await page.emulateMedia({colorScheme:"light"});
+    await page.waitForFunction(()=>document.documentElement.dataset.theme==="light",{timeout:3000});
     assert.equal(await page.locator("html").getAttribute("data-theme"),"light","system light mode not detected");
     assert.equal(await page.locator(".nx-requirements").count(),await page.locator(".product").count(),"all products need requirement lists");
     await page.locator(".product .nx-requirements summary").first().click();
