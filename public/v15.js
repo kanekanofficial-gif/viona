@@ -57,10 +57,10 @@ function render(){const list=visible();$("#resultCount").textContent=String(list
 function toggle(kind,id){if(!["favorites","cart"].includes(kind)||!products.some(p=>String(p.id)===id))return;const arr=state[kind],index=arr.indexOf(id);if(index<0)arr.push(id);else arr.splice(index,1);save();render();if(active)renderPanel();toast(index<0?t.saved:t.removed)}
 $("#products").addEventListener("click",e=>{const b=e.target.closest("[data-action]");if(b)toggle(b.dataset.action,b.dataset.id)});
 $("#search").addEventListener("input",render);
-$("#categories").addEventListener("click",e=>{const b=e.target.closest("[data-category]");if(!b)return;category=b.dataset.category;$$$("[data-category]").forEach(x=>x.classList.toggle("active",x===b));render()});
+$("#categories").addEventListener("click",e=>{const b=e.target.closest("[data-category]");if(!b)return;category=b.dataset.category;$$("[data-category]").forEach(x=>x.classList.toggle("active",x===b));render()});
 const sortTrigger=$("#sortTrigger"),sortList=$("#sortList");function closeSort(){sortList.hidden=true;sortTrigger.setAttribute("aria-expanded","false")}
 sortTrigger.addEventListener("click",()=>{const open=sortList.hidden;sortList.hidden=!open;sortTrigger.setAttribute("aria-expanded",String(open))});
-sortList.addEventListener("click",e=>{const b=e.target.closest("[data-sort]");if(!b)return;sort=b.dataset.sort;$("#sortLabel").textContent=t.sort[sorts.indexOf(sort)];$$$("[data-sort]").forEach(x=>x.classList.toggle("selected",x===b));closeSort();render()});
+sortList.addEventListener("click",e=>{const b=e.target.closest("[data-sort]");if(!b)return;sort=b.dataset.sort;$("#sortLabel").textContent=t.sort[sorts.indexOf(sort)];$$("[data-sort]").forEach(x=>x.classList.toggle("selected",x===b));closeSort();render()});
 const langTrigger=$("#langTrigger"),langList=$("#langList");function closeLang(){langList.hidden=true;langTrigger.setAttribute("aria-expanded","false")}
 langTrigger.addEventListener("click",()=>{const open=langList.hidden;langList.hidden=!open;langTrigger.setAttribute("aria-expanded",String(open))});
 langList.addEventListener("click",e=>{const b=e.target.closest("[data-lang]");if(!b)return;closeLang();if(b.dataset.lang===lang)return;try{localStorage.setItem("viona-world",JSON.stringify(b.dataset.lang));localStorage.setItem("viona-language-v18",JSON.stringify(b.dataset.lang));document.cookie="viona_language="+encodeURIComponent(b.dataset.lang)+"; Max-Age=31536000; Path=/; SameSite=Lax; Secure"}catch{}location.reload()});
@@ -75,20 +75,6 @@ $("#panelBody").addEventListener("click",e=>{const b=e.target.closest("[data-rem
 $("#requestForm").addEventListener("submit",async e=>{e.preventDefault();const form=e.currentTarget,button=form.querySelector("button[type=submit]");if(!form.reportValidity())return;button.disabled=true;$("#formStatus").textContent="…";try{const data=Object.fromEntries(new FormData(form));const res=await fetch("/api/request",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(data)});if(!res.ok)throw Error();const result=await res.json().catch(()=>({}));if(res.status===202){$("#formStatus").textContent=lang==="en"?"Demo mode: request was not saved.":lang==="de"?"Demo-Modus: Anfrage nicht gespeichert.":lang==="ja"?"デモモード：保存されませんでした。":"Демо-режим: заявка не сохранена. Нужна база данных.";return}form.reset();$("#formStatus").textContent=t.sent}catch{$("#formStatus").textContent=t.error}finally{button.disabled=false}});
 async function load(){try{const res=await fetch("/api/products");if(!res.ok)throw Error("API");const json=await res.json();products=Array.isArray(json)?json:Array.isArray(json.products)?json.products:[];products=products.map(p=>({...p,price:Number(p.price)||0}));render();renderPanel()}catch{$("#products").innerHTML='<div class="empty">'+safe(t.error)+'</div>';$("#resultCount").textContent="00"}}
 localize();updateCounters();load();
-
-/* V14 cinematic motion and accessibility */
-(function(){
-const reduced=window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-const bar=document.getElementById("readingBar");let pending=false;
-const update=()=>{pending=false;const max=document.documentElement.scrollHeight-window.innerHeight;bar.style.transform="scaleX("+(max>0?Math.max(0,Math.min(1,window.scrollY/max)):0)+")"};
-window.addEventListener("scroll",()=>{if(!pending){pending=true;requestAnimationFrame(update)}},{passive:true});window.addEventListener("resize",update,{passive:true});update();
-if(reduced||!("IntersectionObserver" in window))return;
-document.documentElement.classList.add("motion-ready");
-const io=new IntersectionObserver(entries=>{for(const entry of entries)if(entry.isIntersecting){entry.target.classList.add("visible");io.unobserve(entry.target)}},{threshold:.07,rootMargin:"0px 0px 35px 0px"});
-const observe=(root)=>{root.querySelectorAll(".section-top,.studio-grid article,.contact-copy,.contact form,.product").forEach(el=>{if(!el.classList.contains("reveal")){el.classList.add("reveal");io.observe(el)}})};
-observe(document);
-const grid=document.getElementById("products");if(grid){new MutationObserver(()=>observe(grid)).observe(grid,{childList:true});if(window.matchMedia("(hover:hover) and (pointer:fine)").matches){grid.addEventListener("pointermove",e=>{const card=e.target.closest(".product");if(!card)return;const r=card.getBoundingClientRect();card.style.setProperty("--card-x",(e.clientX-r.left)+"px");card.style.setProperty("--card-y",(e.clientY-r.top)+"px")},{passive:true})}}
-})();
 
 /* VIONA 15: detail, discovery, account and order-request experience. */
 (function(){

@@ -19,10 +19,26 @@ jobs:
           node --check public/v15.js
           node --check public/v16.js
           node --check public/viona-icons.js
-          node --check public/viona-motion.js
+          node --check public/viona-reset-motion.js
+          node --check public/viona-original-assets.js
           node --check public/payment-result.js
           node --check public/rich-details.js
           node --check public/telegram-login.js
           node --check public/sw.js
-      - name: Run payment verification and visual tests
+      - name: Regression tests
         run: npm test
+      - name: Install headless Chromium for layout test
+        run: |
+          npm install --no-save playwright
+          npx playwright install --with-deps chromium
+      - name: Check desktop, tablet and mobile layout + save screenshots
+        run: |
+          PORT=4173 node server.js >/tmp/viona-http.log 2>&1 &
+          sleep 2
+          node tests/browser-smoke.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: viona-layout-screenshots
+          path: screenshots/
+          if-no-files-found: ignore
