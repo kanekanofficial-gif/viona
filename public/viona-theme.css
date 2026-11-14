@@ -1,0 +1,181 @@
+/* VIONA Theme Tokens: light preserves the 2026 cyan-white design. */
+/* Dark theme uses grayscale with subtle silver emphasis. Femboy locale is pink & black. */
+html[data-theme="dark"]{
+ --vt-bg:#111316;--vt-panel:#1b1e22;--vt-card:#22262b;--vt-surface:#282d32;
+ --vt-text:#f1f2f4;--vt-heading:#f8f9fa;--vt-muted:#b1b7bd;--vt-soft:#899199;
+ --vt-border:#3b424a;--vt-highlight:#383f46;--vt-accent:#d5dade;--vt-link:#e3e6e9;
+ --vt-tint:#202428;--vt-shadow:#0007;--vt-btn-bg:#e1e4e7;--vt-btn-text:#181b1e;
+ color-scheme:dark;
+}
+html[data-world="femboy"]{
+ --vt-bg:#0c0b10;--vt-panel:#141119;--vt-card:#211623;--vt-surface:#2b1b2d;
+ --vt-text:#fff3fb;--vt-heading:#fff4fb;--vt-muted:#e1afce;--vt-soft:#b98fac;
+ --vt-border:#70405e;--vt-highlight:#5c2a4a;--vt-accent:#ff70b7;--vt-link:#ff92c8;
+ --vt-tint:#241421;--vt-shadow:#000a;--vt-btn-bg:#ff78be;--vt-btn-text:#220f1b;
+ color-scheme:dark;
+}
+.nx-theme-picker{display:flex;align-items:center;gap:8px;height:45px;padding:0 10px;border:1px solid #fff;border-radius:15px;background:#fffffff2;box-shadow:0 6px 19px #1e61751b;color:#315866}
+.nx-theme-picker .nx-theme-icon{font-size:16px;line-height:1}
+.nx-theme-picker label{font-size:10px;font-weight:850}
+.nx-theme-picker select{min-width:84px;max-width:127px;border:0;background:transparent;color:inherit;font:800 10px "Manrope",sans-serif;outline-offset:2px;cursor:pointer}
+.nx-theme-picker option{background:#fff;color:#142d3b}
+:is(html[data-theme="dark"],html[data-world="femboy"]) body{
+ background:linear-gradient(140deg,var(--vt-bg) 0%,var(--vt-panel) 100%)!important;
+ color:var(--vt-text)!important;
+}
+:is(html[data-theme="dark"],html[data-world="femboy"]) .site-header.nx-sidebar,
+:is(html[data-theme="dark"],html[data-world="femboy"]) .nx-hero-copy,
+:is(html[data-theme="dark"],html[data-world="femboy"]) .nx-metrics>div,
+:is(html[data-theme="dark"],html[data-world="femboy"]) .nx-result-pill,
+:is(html[data-theme="dark"],html[data-world="femboy"]) .search-field,
+:is(html[data-theme="dark"],html[data-world="femboy"]) .sort-trigger,
+:is(html[data-theme="dark"],html[data-world="femboy"]) .nx-theme-picker,
+:is(html[data-theme="dark"],html[data-world="femboy"]) .tool-button,
+:is(html[data-theme="dark"],html[data-world="femboy"]) .lang-trigger,
+:is(html[data-theme="dark"],html[data-world="femboy"]) .nx-profile-button,
+:is(html[data-theme="dark"],html[data-world="femboy"]) .product,
+:is(html[data-theme="dark"],html[data-world="femboy"]) .studio-grid article,
+:is(html[data-theme="dark"],html[data-world="femboy"]) .contact form,
+:is(html[data-theme="dark"],html[data-world="femboy"]) .panel,
+:is(html[data-theme="dark"],html[data-world="femboy"]) .v15-dialog,
+:is(html[data-theme="dark"],html[data-world="femboy"]) .v15-dialog:has(.vx-checkout),
+:is(html[data-theme="dark"],html[data-world="femboy"]) .v16-workspace-inner,
+:is(html[data-theme="dark"],html[data-world="femboy"]) .nx-code-promo,
+:is(html[data-theme="dark"],html[data-world="femboy"]) .nx-requirements,
+:is(html[data-theme="dark"],html[data-world="femboy"]) .lang-list,
+:is(html[data-theme="dark"],html[data-world="femboy"]) .sort-list,
+:is(html[data-theme="dark"],html[data-world="femboy"]) .search-suggestions{
+ background:var(--vt-card)!important;border-color:var(--vt-border)!important;
+ color:var(--vt-text)!important;box-shadow:0 14px 40px var(--vt-shadow)!important;
+}
+:is(html[data-theme="dark"],html[data-world="femboy"]) .site-header.nx-sidebar{background:var(--vt-panel)!important}
+:is(html[data-theme="dark"],html[data-world="femboy"]) .nx-hero-screen{
+ background:linear-gradient(120deg,var(--vt-tint),var(--vt-card))!important;
+ border-color:var(--vt-border)!important;
+}
+:is(html[data-theme="dark"],html[data-world="femboy"]) :is(
+ .nx-brand-type strong,.nx-sidebar-nav a,.nx-breadcrumb strong,.nx-profile-button,
+ .nx-hero h1,.nx-screen-heading,.nx-screen-heading strong,.nx-screen-title,
+ .nx-metrics>div>span:nth-child(2),.section-top h2,.contact h2,.nx-code-promo h2,
+ .product h3,.product-view,.product-actions button,.studio-grid h3,
+ .contact form label,.nx-form-header,.nx-requirements summary,.nx-requirements li,
+ .panel-top h2,.panel-item strong,.v15-dialog h2,.v15-dialog .vx-title,
+ .detail-info h2,.vx-method-copy strong,.vx-section-title h3,
+ .vx-summary-heading,.vx-summary-amount strong,.vx-line strong,
+ .vx-wallet-heading strong,.vx-consent strong,.v16-workspace h2,.v16-account strong,
+ .vx-contact-fold summary,.viona-rich-details h3,.vx-sber-phone,
+ .lang-list button,.sort-list button,.search-suggestions button
+ ){color:var(--vt-heading)!important;-webkit-text-fill-color:currentColor!important}
+:is(html[data-theme="dark"],html[data-world="femboy"]) :is(
+ .nx-brand-type small,.nx-sidebar-tiny,.nx-breadcrumb,.nx-screen-content>p,
+ .nx-screen-version,.nx-mark-original small,.nx-metrics small,.section-top p,
+ .product>p,.studio-grid p,.contact-copy>p,.currency-disclaimer,.demo-note,
+ .vx-lead,.vx-method-copy small,.vx-wallet-footnote,.vx-consent small,
+ .vx-summary-amount>span,.vx-test-banner small,.vx-sber-guide,
+ .vx-qr-panel #vionaQrState,.v15-dialog .detail-info p,.detail-note,
+ .viona-rich-description,.viona-rich-disclaimer,.panel-item small,.vx-card-state
+ ){color:var(--vt-muted)!important;-webkit-text-fill-color:currentColor!important}
+:is(html[data-theme="dark"],html[data-world="femboy"]) :is(
+ .nx-sidebar-nav a:hover,.nx-sidebar-nav a.nx-nav-active,.category-bar button,
+ .nx-hero-tags span,.nx-metric-number,.product-icon,.product-tag,
+ .product-view,.product-actions button,.search-field input,.contact input,.contact textarea,
+ .sort-trigger,.nx-theme-picker select,.panel-tabs button,.panel-item button,
+ .v15-form input,.v15-form textarea,.detail-fav,.v16-nick input,
+ .vx-method,.vx-method-icon,.vx-wallet,.vx-summary,.vx-saved-card,
+ .vx-sber-panel,.vx-contact-fold,.vx-qr-panel,.vx-sber-phone input,
+ .vx-sber-fallback,.vx-card-state,.vx-account-wallet,.viona-rich-code,
+ .viona-rich-features span,.v16-account,.v16-order,.v16-notification
+ ){background:var(--vt-surface)!important;border-color:var(--vt-border)!important;color:var(--vt-text)!important;box-shadow:none!important}
+:is(html[data-theme="dark"],html[data-world="femboy"]) :is(
+ .nx-screen-symbol>span,.nx-eyebrow,.nx-rail-glyph,.nx-section-label,
+ .nx-result-pill #resultCount,.nx-metric-number,.nx-step-icon,.step-num,
+ .nx-sidebar-nav a.nx-nav-active,.nx-hero h1 em,.section-top h2 em,
+ .contact h2 em,.price,.vx-title em,.vx-summary-amount strong,
+ .vx-section-number,.vx-overline,.vx-sber-status,.vx-status,.vx-sber-fallback,
+ .vx-wallet-refresh,.vx-contact-fold summary>span,.vx-summary-heading
+ ){color:var(--vt-accent)!important;-webkit-text-fill-color:currentColor!important}
+:is(html[data-theme="dark"],html[data-world="femboy"]) :is(
+ .action-primary,.category-bar button.active,.panel-tabs button.active,
+ .vx-qr-action,.vx-sber-start,.v16-nick button
+ ){background:var(--vt-btn-bg)!important;color:var(--vt-btn-text)!important;
+ border-color:var(--vt-btn-bg)!important;-webkit-text-fill-color:currentColor!important}
+:is(html[data-theme="dark"],html[data-world="femboy"]) :is(
+ .nx-theme-picker option,.vx-method-copy,.vx-sber-phone input,.contact input,
+ .contact textarea,.v15-form input,.v15-form textarea,.v16-nick input
+ ){color:var(--vt-text)!important}
+:is(html[data-theme="dark"],html[data-world="femboy"]) .nx-theme-picker option{
+ background:var(--vt-card)!important;color:var(--vt-text)!important
+}
+:is(html[data-theme="dark"],html[data-world="femboy"]) .nx-hero-tags span,
+:is(html[data-theme="dark"],html[data-world="femboy"]) .nx-section-label span:first-child,
+:is(html[data-theme="dark"],html[data-world="femboy"]) .nx-step-icon{
+ background:var(--vt-highlight)!important;border-color:var(--vt-border)!important;color:var(--vt-accent)!important
+}
+:is(html[data-theme="dark"],html[data-world="femboy"]) .contact-copy{
+ background:linear-gradient(140deg,var(--vt-panel),var(--vt-tint))!important;
+ border-color:var(--vt-border)!important
+}
+:is(html[data-theme="dark"],html[data-world="femboy"]) .nx-contact-decoration{color:var(--vt-highlight)!important}
+:is(html[data-theme="dark"],html[data-world="femboy"]) .nx-hero h1 em,
+:is(html[data-theme="dark"],html[data-world="femboy"]) .section-top h2 em,
+:is(html[data-theme="dark"],html[data-world="femboy"]) .contact h2 em{
+ background:none!important;-webkit-background-clip:unset!important
+}
+:is(html[data-theme="dark"],html[data-world="femboy"]) .vx-test-banner{
+ background:var(--vt-tint)!important;border-color:var(--vt-border)!important
+}
+:is(html[data-theme="dark"],html[data-world="femboy"]) .vx-test-banner strong{color:var(--vt-accent)!important}
+:is(html[data-theme="dark"],html[data-world="femboy"]) .vx-sber-panel :is(.vx-sber-guide,.vx-sber-status,.vx-sber-fallback){color:var(--vt-text)!important}
+:is(html[data-theme="dark"],html[data-world="femboy"]) .vx-sber-fallback{background:var(--vt-surface)!important;text-decoration:underline!important}
+:is(html[data-theme="dark"],html[data-world="femboy"]) .vx-summary-items .vx-line{
+ border-color:var(--vt-border)!important
+}
+:is(html[data-theme="dark"],html[data-world="femboy"]) .vx-summary-amount{
+ border-color:var(--vt-border)!important
+}
+:is(html[data-theme="dark"],html[data-world="femboy"]) .vx-safety,
+:is(html[data-theme="dark"],html[data-world="femboy"]) #vionaQrState{color:var(--vt-muted)!important}
+:is(html[data-theme="dark"],html[data-world="femboy"]) .nx-sidebar-line,
+:is(html[data-theme="dark"],html[data-world="femboy"]) .nx-sidebar-bottom,
+:is(html[data-theme="dark"],html[data-world="femboy"]) .vg-footer{
+ border-color:var(--vt-border)!important
+}
+:is(html[data-theme="dark"],html[data-world="femboy"]) .vg-footer,
+:is(html[data-theme="dark"],html[data-world="femboy"]) .vg-footer *{color:var(--vt-muted)!important}
+:is(html[data-theme="dark"],html[data-world="femboy"]) .mobile-bar{
+ background:var(--vt-card)!important;border-color:var(--vt-border)!important
+}
+:is(html[data-theme="dark"],html[data-world="femboy"]) .mobile-bar :is(a,button,small,svg){
+ color:var(--vt-text)!important;stroke:var(--vt-accent)!important
+}
+:is(html[data-theme="dark"],html[data-world="femboy"]) .nx-profile-button .nx-avatar{
+ background:var(--vt-highlight)!important;color:var(--vt-accent)!important;border-color:var(--vt-border)!important
+}
+:is(html[data-theme="dark"],html[data-world="femboy"]) .nx-screen-foot,
+:is(html[data-theme="dark"],html[data-world="femboy"]) .nx-screen-title{
+ background:var(--vt-tint)!important;border-color:var(--vt-border)!important
+}
+/* Fix light-mode contrast in SberPay fallback (white-on-white before). */
+html[data-theme="light"]:not([data-world="femboy"]) .vx-sber-panel{
+ background:#e9f8ee!important;border-color:#9bcdb1!important
+}
+html[data-theme="light"]:not([data-world="femboy"]) .vx-sber-panel :is(
+ .vx-sber-guide,.vx-sber-status,.vx-sber-phone,.vx-sber-fallback,
+ .vx-section-title h3,.vx-sber-label
+ ){color:#174c3a!important;-webkit-text-fill-color:currentColor!important}
+html[data-theme="light"]:not([data-world="femboy"]) .vx-sber-fallback{
+ background:#e0f4e7!important;border:1px solid #82bda0!important;color:#14543c!important
+}
+html[data-theme="light"]:not([data-world="femboy"]) .vx-test-banner strong,
+html[data-theme="light"]:not([data-world="femboy"]) .vx-safety,
+html[data-theme="light"]:not([data-world="femboy"]) .vx-status,
+html[data-theme="light"]:not([data-world="femboy"]) .vx-wallet-footnote{
+ color:#2d6266!important
+}
+html[data-theme="light"]:not([data-world="femboy"]) .vx-sber-phone input{
+ background:#fff!important;color:#173d33!important;border-color:#8fc1a3!important
+}
+html[data-theme="light"]:not([data-world="femboy"]) .vx-qr-panel :is(a,button,small,p){color:#174b5a!important}
+@media(max-width:990px){.nx-theme-picker{padding:0 8px}.nx-theme-picker label{display:none}}
+@media(max-width:580px){.nx-theme-picker .nx-theme-icon{display:none}.nx-theme-picker{height:40px;padding:0 5px}.nx-theme-picker select{min-width:65px;max-width:76px;font-size:9px}}
+@media(prefers-reduced-motion:reduce){.nx-theme-picker *{transition:none!important}}
