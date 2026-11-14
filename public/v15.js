@@ -153,7 +153,7 @@ function openCheckout(){
       '<label id="vionaSberPhoneWrap" class="vx-sber-phone">Номер телефона, привязанный к СберБанк Онлайн<input type="tel" id="vionaSberPhone" inputmode="tel" autocomplete="tel" placeholder="+79990000000" maxlength="16" aria-label="Номер телефона для SberPay"></label>',
       '<button type="button" id="vionaSberSubmit" class="vx-sber-start">Продолжить через SberPay ↗</button>',
       '<p id="vionaSberStatus" class="vx-sber-status" role="status"></p>',
-      '<a id="vionaSberFallback" class="vx-sber-fallback" hidden target="_self" rel="noopener">Перейти на форму Т-Банка и выбрать SberPay ↗</a>',
+      '<a id="vionaSberFallback" class="vx-sber-fallback" hidden target="_self" rel="noopener">Открыть форму Т-Банка (доступные способы) ↗</a>',
      '</section>',
      '<div id="checkoutStatus" class="vx-status" role="status" aria-live="polite"></div>',
      '<section id="vionaQrPanel" class="vx-qr-panel" hidden>',
