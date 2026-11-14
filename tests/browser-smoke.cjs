@@ -22,6 +22,13 @@ const {chromium}=require("playwright");
       productCount:document.querySelectorAll(".product").length,lang:document.documentElement.lang};
    });
    console.log(label+" layout: "+JSON.stringify(layout));
+   if(layout.scrollWidth>width+1){
+    const overflow=await page.evaluate(()=>[...document.querySelectorAll("body *")].map(el=>{
+     const r=el.getBoundingClientRect();
+     return{tag:el.tagName.toLowerCase(),id:el.id,className:typeof el.className==="string"?el.className.slice(0,80):"",right:r.right,left:r.left};
+    }).filter(x=>x.right>innerWidth+1||x.left< -1).slice(0,20));
+    console.log(label+" overflow: "+JSON.stringify(overflow));
+   }
    assert.ok(layout.scrollWidth<=width+1,label+" has horizontal scroll");
    assert.ok(layout.copy&&layout.screen,"hero regions missing");
    assert.ok(layout.productCount>=5,label+" catalog did not load demo products");

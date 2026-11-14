@@ -191,3 +191,15 @@ html[data-theme="light"]:not([data-world="femboy"]) .vx-qr-panel :is(a,button,sm
 :is(html[data-theme="dark"],html[data-world="femboy"]) .nx-hero-console{background:var(--vt-bg)!important;border-color:var(--vt-border)!important;color:var(--vt-text)!important}
 @media(max-width:1250px){.nx-screen-main{gap:8px 13px!important;padding:16px!important}.nx-screen-symbol{width:100px!important;height:120px!important}.nx-screen-symbol>span{font-size:125px!important}}
 @media(max-width:600px){.nx-hero-console{font-size:9px;padding:12px}.nx-screen-main{grid-template-columns:95px minmax(0,1fr)!important}}
+
+/* Keep all settings reachable on narrow phones without horizontal overflow. */
+@media(max-width:455px){
+ .nx-topbar{flex-wrap:wrap;align-items:center;gap:7px!important}
+ .nx-breadcrumb{width:100%;min-height:18px}
+ .nx-topbar-actions.header-tools{width:100%;justify-content:space-between;gap:3px!important}
+ .nx-theme-picker{flex:0 1 85px;min-width:0;padding:0 3px}
+ .nx-theme-picker select{min-width:0;width:100%;max-width:80px;font-size:9px}
+ .nx-topbar-actions .tool-button{min-width:34px;width:34px;padding:0 3px}
+ .nx-topbar-actions .lang-trigger{min-width:44px;width:44px;padding:0 3px}
+ .nx-topbar-actions .nx-profile-button{min-width:36px;width:36px;padding:0 2px}
+}
