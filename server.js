@@ -6,6 +6,7 @@ const {register:registerTelegramAuth}=require("./telegram-auth");
 const {registerV16}=require("./v16-api");
 const {initializeDatabase}=require("./db-init");
 const {registerTestPayments}=require("./tbank-demo");
+const {registerCodeEdit}=require("./code-edit-api");
 const PORT = process.env.PORT || 3000;
 app.use(express.json({limit:"1mb"}));
 app.use(express.static(path.join(__dirname,"public")));
@@ -27,6 +28,7 @@ if(pool&&!ready){console.error("VIONA: database schema unavailable; persistent A
 const getCatalog=async()=>{if(pool){try{const r=await pool.query("SELECT id,title,category,description,price,icon,tag FROM products ORDER BY id");return r.rows.some(p=>String(p.title).toLowerCase().includes("max bot"))?r.rows:[...r.rows,demo[6]]}catch(e){console.error("Catalog fallback:",e.message)}}return demo};
 registerV16(app,pool,getCatalog);
 registerTestPayments(app,pool,getCatalog);
+registerCodeEdit(app,pool);
 app.get("/api/health",(_req,res)=>res.json({ok:true,app:"VIONA"}));
 app.get("/api/products",async(_req,res)=>{
  if(pool){try{const r=await pool.query("SELECT id,title,category,description,price,icon,tag FROM products ORDER BY id");return res.json({products:r.rows.some(p=>String(p.title).toLowerCase().includes("max bot"))?r.rows:[...r.rows,demo[6]],source:"database"});}catch(e){console.error(e.message);}}
@@ -38,6 +40,7 @@ app.post("/api/request",async(req,res)=>{
  if(pool){try{await pool.query("INSERT INTO requests(name,contact,details) VALUES($1,$2,$3)",[String(name).slice(0,100),String(contact).slice(0,200),String(details).slice(0,5000)]);return res.status(201).json({message:"Заявка сохранена."});}catch(e){console.error(e.message);return res.status(500).json({error:"Не удалось сохранить заявку."});}}
  res.status(202).json({message:"Демо-режим: заявка не сохранена. Подключи PostgreSQL."});
 });
+app.get("/code-edit",(_req,res)=>res.sendFile(path.join(__dirname,"public","code-edit.html")));
 app.get("*path",(_req,res)=>res.sendFile(path.join(__dirname,"public","index.html")));
 app.listen(PORT,()=>console.log("VIONA listening on "+PORT));
 };
