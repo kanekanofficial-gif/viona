@@ -1,0 +1,21 @@
+/* Product customization requirements, visible in every catalog card and detail modal. */
+.nx-requirements{margin:10px 0 14px;padding:11px 13px;border:1px solid #cce5e9;border-radius:13px;background:#f5fbfc;color:#225463}
+.nx-requirements summary{cursor:pointer;color:#117e96;font-size:11px;font-weight:850;list-style-position:inside}
+.nx-requirements>p{margin:10px 0 8px!important;min-height:0!important;color:#59808c!important;font:600 10px/1.6 "Manrope",sans-serif!important}
+.nx-requirements ul{margin:7px 0;padding-left:17px}.nx-requirements li{margin:5px 0;font:600 10px/1.5 "Manrope",sans-serif}
+.nx-requirements>small{display:block;margin:12px 0;color:#698692;font-size:10px;line-height:1.55}
+.nx-customize-form{display:flex;flex-direction:column;gap:9px;margin:15px 0 0}
+.nx-customize-form input,.nx-customize-form textarea{display:block;width:100%;min-width:0;resize:vertical;padding:10px 11px;border:1px solid #cde6eb;border-radius:10px;background:#fff;color:#234c59;font-size:11px;font-family:"Manrope",sans-serif}
+.nx-customize-form :is(input,textarea):focus{outline:2px solid #17a1b7;outline-offset:2px}
+.nx-customize-form :is(input,textarea)::placeholder{color:#7897a2}
+.nx-customize-form>small{color:#527988;font-size:9px;line-height:1.5}
+.nx-customize-form button{padding:11px;border:0;border-radius:10px;background:#117f98;color:#fff;font-size:10px;font-weight:800;cursor:pointer}
+.nx-customize-form button:disabled{opacity:.55}
+.nx-customize-status{font-size:10px;line-height:1.5;overflow-wrap:anywhere;color:#196d81}
+.detail-info>.nx-requirements{margin:22px 0 0}
+:is(html[data-theme="dark"],html[data-world="femboy"]) .nx-requirements{border-color:var(--vt-border)!important;background:var(--vt-surface)!important;color:var(--vt-text)!important}
+:is(html[data-theme="dark"],html[data-world="femboy"]) .nx-requirements :is(summary,li,p,small){color:var(--vt-text)!important}
+:is(html[data-theme="dark"],html[data-world="femboy"]) .nx-customize-form :is(input,textarea){border-color:var(--vt-border)!important;background:var(--vt-panel)!important;color:var(--vt-text)!important}
+:is(html[data-theme="dark"],html[data-world="femboy"]) .nx-customize-form :is(input,textarea)::placeholder{color:var(--vt-muted)!important}
+:is(html[data-theme="dark"],html[data-world="femboy"]) .nx-customize-form button{background:var(--vt-btn-bg)!important;color:var(--vt-btn-text)!important}
+:is(html[data-theme="dark"],html[data-world="femboy"]) .nx-customize-status{color:var(--vt-accent)!important}
