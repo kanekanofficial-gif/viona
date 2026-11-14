@@ -31,7 +31,7 @@ async function initializeDatabase(pool){
   await client.query(fs.readFileSync(path.join(__dirname,"migrations","017_tbank_demo.sql"),"utf8"));
   await client.query(fs.readFileSync(path.join(__dirname,"migrations","018_tbank_methods.sql"),"utf8"));
   await client.query(fs.readFileSync(path.join(__dirname,"migrations","019_verified_orders.sql"),"utf8"));
-  await client.query(\`CREATE TABLE IF NOT EXISTS code_edit_requests (
+  await client.query(`CREATE TABLE IF NOT EXISTS code_edit_requests (
     id UUID PRIMARY KEY,
     project_name VARCHAR(120) NOT NULL,
     client_name VARCHAR(100) NOT NULL,
@@ -41,7 +41,7 @@ async function initializeDatabase(pool){
     requested_changes TEXT NOT NULL,
     status VARCHAR(24) NOT NULL DEFAULT 'new',
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
-  )\`);
+  )`);
   await client.query("COMMIT");
   console.log("VIONA: PostgreSQL schema ready");
   return true;
