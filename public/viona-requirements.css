@@ -1,0 +1,36 @@
+/* Product customization requirements, visible in every catalog card and detail modal. */
+.nx-requirements{margin:10px 0 14px;padding:11px 13px;border:1px solid #cce5e9;border-radius:13px;background:#f5fbfc;color:#225463}
+.nx-requirements summary{cursor:pointer;color:#117e96;font-size:11px;font-weight:850;list-style-position:inside}
+.nx-requirements>p{margin:10px 0 8px!important;min-height:0!important;color:#59808c!important;font:600 10px/1.6 "Manrope",sans-serif!important}
+.nx-requirements ul{margin:7px 0;padding-left:17px}.nx-requirements li{margin:5px 0;font:600 10px/1.5 "Manrope",sans-serif}
+.nx-requirements>small{display:block;margin:12px 0;color:#698692;font-size:10px;line-height:1.55}
+.nx-customize-form{display:flex;flex-direction:column;gap:9px;margin:15px 0 0}
+.nx-customize-form input,.nx-customize-form textarea{display:block;width:100%;min-width:0;resize:vertical;padding:10px 11px;border:1px solid #cde6eb;border-radius:10px;background:#fff;color:#234c59;font-size:11px;font-family:"Manrope",sans-serif}
+.nx-customize-form :is(input,textarea):focus{outline:2px solid #17a1b7;outline-offset:2px}
+.nx-customize-form :is(input,textarea)::placeholder{color:#7897a2}
+.nx-customize-form>small{color:#527988;font-size:9px;line-height:1.5}
+.nx-customize-form button{padding:11px;border:0;border-radius:10px;background:#117f98;color:#fff;font-size:10px;font-weight:800;cursor:pointer}
+.nx-customize-form button:disabled{opacity:.55}
+.nx-customize-status{font-size:10px;line-height:1.5;overflow-wrap:anywhere;color:#196d81}
+.detail-info>.nx-requirements{margin:22px 0 0}
+:is(html[data-theme="dark"],html[data-world="femboy"]) .nx-requirements{border-color:var(--vt-border)!important;background:var(--vt-surface)!important;color:var(--vt-text)!important}
+:is(html[data-theme="dark"],html[data-world="femboy"]) .nx-requirements :is(summary,li,p,small){color:var(--vt-text)!important}
+:is(html[data-theme="dark"],html[data-world="femboy"]) .nx-customize-form :is(input,textarea){border-color:var(--vt-border)!important;background:var(--vt-panel)!important;color:var(--vt-text)!important}
+:is(html[data-theme="dark"],html[data-world="femboy"]) .nx-customize-form :is(input,textarea)::placeholder{color:var(--vt-muted)!important}
+:is(html[data-theme="dark"],html[data-world="femboy"]) .nx-customize-form button{background:var(--vt-btn-bg)!important;color:var(--vt-btn-text)!important}
+:is(html[data-theme="dark"],html[data-world="femboy"]) .nx-customize-status{color:var(--vt-accent)!important}
+
+/* Paid custom code changes: separate service entry below the catalog. */
+.nx-code-promo{display:flex;align-items:center;justify-content:space-between;gap:28px;margin:90px 0 0;padding:34px 38px;border:1px solid #cbdee4;border-radius:24px;background:linear-gradient(130deg,#ffffffef,#d7eff2f4);box-shadow:0 14px 34px #123f5711}
+.nx-code-promo-copy{min-width:0}.nx-code-kicker{font:800 10px "IBM Plex Mono",monospace;color:#087e9c}
+.nx-code-promo h2{margin:10px 0;color:#193946;font:800 clamp(24px,2.5vw,37px)/1.4 "Unbounded",sans-serif;letter-spacing:-.055em}
+.nx-code-promo h2 em{font-style:normal;color:#007e9b}.nx-code-promo p{max-width:700px;font-size:12px;color:#68838c;line-height:1.75}
+.nx-code-promo-link{display:inline-flex;align-items:center;justify-content:space-between;gap:18px;flex:none;min-height:48px;padding:12px 17px;border-radius:12px;background:#097e9a;color:#fff;font-size:12px;font-weight:850;transition:transform .2s}
+.nx-code-promo-link:hover{transform:translateY(-2px)}.nx-code-promo-link span:last-child{font-size:17px}
+:is(html[data-theme="dark"],html[data-world="femboy"]) .nx-code-promo{background:var(--vt-card)!important;border-color:var(--vt-border)!important}
+:is(html[data-theme="dark"],html[data-world="femboy"]) .nx-code-promo h2{color:var(--vt-heading)!important}
+:is(html[data-theme="dark"],html[data-world="femboy"]) .nx-code-promo h2 em,:is(html[data-theme="dark"],html[data-world="femboy"]) .nx-code-kicker{color:var(--vt-accent)!important}
+:is(html[data-theme="dark"],html[data-world="femboy"]) .nx-code-promo p{color:var(--vt-muted)!important}
+:is(html[data-theme="dark"],html[data-world="femboy"]) .nx-code-promo-link{background:var(--vt-btn-bg)!important;color:var(--vt-btn-text)!important}
+@media(max-width:790px){.nx-code-promo{flex-direction:column;align-items:stretch;padding:25px;margin-top:70px}.nx-code-promo-link{width:100%}}
+@media(max-width:450px){.nx-code-promo h2{font-size:24px}.nx-code-promo{padding:20px}}

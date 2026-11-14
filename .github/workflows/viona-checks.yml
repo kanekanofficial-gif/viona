@@ -20,6 +20,12 @@ jobs:
           node --check public/v16.js
           node --check public/viona-icons.js
           node --check public/viona-reset-motion.js
+          node --check public/viona-theme.js
+          node --check public/viona-checkout-i18n.js
+          node --check public/viona-requirements.js
+          node --check public/code-edit.js
+          node --check code-edit-api.js
+          node --check db-init.js
           node --check public/viona-original-assets.js
           node --check public/payment-result.js
           node --check public/rich-details.js
@@ -33,7 +39,7 @@ jobs:
           npx playwright install --with-deps chromium
       - name: Check desktop, tablet and mobile layout + save screenshots
         run: |
-          PORT=4173 node server.js >/tmp/viona-http.log 2>&1 &
+          NODE_ENV=test PORT=4173 node server.js >/tmp/viona-http.log 2>&1 &
           sleep 2
           node tests/browser-smoke.cjs
       - uses: actions/upload-artifact@v4

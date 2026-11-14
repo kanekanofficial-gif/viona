@@ -92,8 +92,8 @@ test("original image upgrade detects real PNGs and preserves existing fallbacks"
 test("favicon/manifest/cache use the v30 shell and all static assets exist",()=>{
  assert.match(html,/href="\/favicon\.svg\?v=30"/);
  assert.equal(manifest.theme_color,"#eef7f8");
- assert.match(sw,/viona-reboot-v30/);
- for(const name of ["/viona-reset.css?v=1","/viona-reset-motion.js?v=1","/v15.js?v=30","/assets/viona-mark.webp?v=1"])
+ assert.match(sw,/viona-reboot-v31/);
+ for(const name of ["/viona-reset.css?v=1","/viona-reset-motion.js?v=1","/v15.js?v=31","/assets/viona-mark.webp?v=1"])
   assert.ok(sw.includes(name),name);
  const links=[
   ...[...html.matchAll(/(?:href|src)="(\/[^"?#]+\.(?:css|js|webp|svg|png|webmanifest))(?:\?[^"]*)?"/g)].map(m=>m[1]),
