@@ -179,3 +179,15 @@ html[data-theme="light"]:not([data-world="femboy"]) .vx-qr-panel :is(a,button,sm
 @media(max-width:990px){.nx-theme-picker{padding:0 8px}.nx-theme-picker label{display:none}}
 @media(max-width:580px){.nx-theme-picker .nx-theme-icon{display:none}.nx-theme-picker{height:40px;padding:0 5px}.nx-theme-picker select{min-width:65px;max-width:76px;font-size:9px}}
 @media(prefers-reduced-motion:reduce){.nx-theme-picker *{transition:none!important}}
+
+/* More balanced hero: smaller mark, readable text and a code sample. */
+.nx-screen-main{display:grid!important;grid-template-columns:minmax(100px,.32fr) minmax(0,1fr)!important;align-items:center;gap:12px 20px!important;padding:20px 28px!important}
+.nx-screen-symbol{width:120px!important;height:155px!important;min-height:0!important}
+.nx-screen-symbol>span{font-size:150px!important}
+.nx-screen-content{text-align:left!important;align-self:center}
+.nx-screen-heading{font-size:clamp(19px,2.1vw,28px)!important}
+.nx-hero-console{grid-column:1/-1;display:flex;flex-direction:column;gap:7px;margin:0 0 6px;padding:13px 16px;border:1px solid #ffffff2e;border-radius:13px;background:#062b3e90;box-shadow:inset 1px 1px #ffffff22;color:#c7edf2;font:700 10px/1.8 "IBM Plex Mono",monospace;letter-spacing:.03em}
+.nx-hero-console span:nth-child(2){padding-left:10px}.nx-hero-console span:nth-child(3){padding-left:10px;color:#d8ecd2}
+:is(html[data-theme="dark"],html[data-world="femboy"]) .nx-hero-console{background:var(--vt-bg)!important;border-color:var(--vt-border)!important;color:var(--vt-text)!important}
+@media(max-width:1250px){.nx-screen-main{gap:8px 13px!important;padding:16px!important}.nx-screen-symbol{width:100px!important;height:120px!important}.nx-screen-symbol>span{font-size:125px!important}}
+@media(max-width:600px){.nx-hero-console{font-size:9px;padding:12px}.nx-screen-main{grid-template-columns:95px minmax(0,1fr)!important}}

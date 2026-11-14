@@ -19,3 +19,18 @@
 :is(html[data-theme="dark"],html[data-world="femboy"]) .nx-customize-form :is(input,textarea)::placeholder{color:var(--vt-muted)!important}
 :is(html[data-theme="dark"],html[data-world="femboy"]) .nx-customize-form button{background:var(--vt-btn-bg)!important;color:var(--vt-btn-text)!important}
 :is(html[data-theme="dark"],html[data-world="femboy"]) .nx-customize-status{color:var(--vt-accent)!important}
+
+/* Paid custom code changes: separate service entry below the catalog. */
+.nx-code-promo{display:flex;align-items:center;justify-content:space-between;gap:28px;margin:90px 0 0;padding:34px 38px;border:1px solid #cbdee4;border-radius:24px;background:linear-gradient(130deg,#ffffffef,#d7eff2f4);box-shadow:0 14px 34px #123f5711}
+.nx-code-promo-copy{min-width:0}.nx-code-kicker{font:800 10px "IBM Plex Mono",monospace;color:#087e9c}
+.nx-code-promo h2{margin:10px 0;color:#193946;font:800 clamp(24px,2.5vw,37px)/1.4 "Unbounded",sans-serif;letter-spacing:-.055em}
+.nx-code-promo h2 em{font-style:normal;color:#007e9b}.nx-code-promo p{max-width:700px;font-size:12px;color:#68838c;line-height:1.75}
+.nx-code-promo-link{display:inline-flex;align-items:center;justify-content:space-between;gap:18px;flex:none;min-height:48px;padding:12px 17px;border-radius:12px;background:#097e9a;color:#fff;font-size:12px;font-weight:850;transition:transform .2s}
+.nx-code-promo-link:hover{transform:translateY(-2px)}.nx-code-promo-link span:last-child{font-size:17px}
+:is(html[data-theme="dark"],html[data-world="femboy"]) .nx-code-promo{background:var(--vt-card)!important;border-color:var(--vt-border)!important}
+:is(html[data-theme="dark"],html[data-world="femboy"]) .nx-code-promo h2{color:var(--vt-heading)!important}
+:is(html[data-theme="dark"],html[data-world="femboy"]) .nx-code-promo h2 em,:is(html[data-theme="dark"],html[data-world="femboy"]) .nx-code-kicker{color:var(--vt-accent)!important}
+:is(html[data-theme="dark"],html[data-world="femboy"]) .nx-code-promo p{color:var(--vt-muted)!important}
+:is(html[data-theme="dark"],html[data-world="femboy"]) .nx-code-promo-link{background:var(--vt-btn-bg)!important;color:var(--vt-btn-text)!important}
+@media(max-width:790px){.nx-code-promo{flex-direction:column;align-items:stretch;padding:25px;margin-top:70px}.nx-code-promo-link{width:100%}}
+@media(max-width:450px){.nx-code-promo h2{font-size:24px}.nx-code-promo{padding:20px}}
