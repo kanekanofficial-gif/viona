@@ -47,6 +47,7 @@ test("code edit has a real page, protected backend and no automatic payment",()=
  assert.match(codeEdit,/name="changes"/);
  assert.match(codeEdit,/name="contact"/);
  assert.match(codeEdit,/id="codeConfirm"/);
+ assert.match(codeEdit,/viona-theme\.css\?v=1/);
  assert.match(codeForm,/"\/api\/code-edit"/);
  assert.match(server,/app.get\("\/code-edit"/);
  assert.match(server,/registerCodeEdit\(app,pool\)/);
