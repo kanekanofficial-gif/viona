@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="ru" data-world="ru">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#eef7f8">
+<meta name="description" content="Запрос на платную доработку вашего собственного кода в VIONA.">
+<title>Доработка кода — VIONA</title>
+<link rel="icon" href="/favicon.svg?v=30" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Unbounded:wght@400;500;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/code-edit.css?v=1">
+<script defer src="/viona-theme.js?v=1"></script>
+<script defer src="/code-edit.js?v=1"></script>
+</head>
+<body class="code-page">
+<header class="code-header">
+ <a href="/#home" class="code-logo"><span class="code-symbol" aria-hidden="true">V</span><span><b>VIONA</b><small>CODE SERVICES</small></span></a>
+ <nav aria-label="Code page navigation"><a href="/#catalog" data-text="catalog">Каталог</a><a href="/" data-text="back">На главную</a></nav>
+ <div class="code-top-tools">
+ <label class="code-language"><span data-text="langLabel">Язык</span><select id="codeLocale" aria-label="Язык"><option value="ru">RU</option><option value="en">EN</option><option value="ja">JA</option><option value="de">DE</option><option value="femboy">♡</option></select></label>
+ <label class="code-theme"><span id="vionaThemeLabel">Тема</span><select id="vionaThemeMode" aria-label="Тема"><option value="auto">Как в системе</option><option value="light">Светлая</option><option value="dark">Тёмная</option></select></label>
+ </div>
+</header>
+<main>
+ <div class="code-kicker"><span>VIONA</span> / SERVICE 01</div>
+ <section class="code-intro">
+ <div><p class="code-eyebrow" data-text="eyebrow">УСЛУГА / РАЗРАБОТКА</p><h1 data-text="heading">Доработка <em>твоего кода.</em></h1><p class="code-lead" data-text="description">Пришли исходный код своего проекта и объясни, что изменить, удалить, исправить или добавить. Мы оценим задачу и сообщим стоимость до начала работы.</p></div>
+ <aside class="code-price"><span data-text="priceLabel">Стоимость</span><strong data-text="priceValue">По оценке задачи</strong><p data-text="priceNote">Это запрос на оценку, а не платёж. Никаких списаний.</p></aside>
+ </section>
+ <section class="code-layout">
+ <form id="codeEditForm" class="code-form">
+  <div class="code-form-header"><span>01 — BRIEF</span><strong data-text="formTitle">Расскажи о проекте</strong></div>
+  <div class="code-fields-two">
+   <label><span data-text="projectLabel">Название проекта</span><input name="project" maxlength="120" required placeholder="Мой Telegram-бот" data-placeholder="projectPlaceholder" autocomplete="off"></label>
+   <label><span data-text="languageLabel">Технология</span><select name="language" required><option value="" data-text="chooseLanguage">Выбери язык</option><option value="Python">Python</option><option value="JavaScript">JavaScript</option><option value="TypeScript">TypeScript</option><option value="C#">C#</option><option value="HTML/CSS">HTML/CSS</option><option value="Java">Java</option><option value="C++">C++</option><option value="Other" data-text="other">Другое</option></select></label>
+  </div>
+  <label><span data-text="codeLabel">Вставь исходный код</span><textarea name="source" id="codeSource" minlength="5" maxlength="30000" required spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off" rows="15" data-placeholder="codePlaceholder" placeholder="// Вставь сюда код проекта..."></textarea><small class="code-field-note" data-text="codeLimit">До 30 000 символов. Не вставляй токены, пароли, API-ключи или чужой закрытый код.</small></label>
+  <label><span data-text="changesLabel">Что нужно изменить?</span><textarea name="changes" rows="7" minlength="15" maxlength="5000" required data-placeholder="changesPlaceholder" placeholder="Опиши, что исправить, удалить или добавить. Укажи ожидаемый результат."></textarea></label>
+  <div class="code-fields-two">
+   <label><span data-text="nameLabel">Имя или ник</span><input name="name" maxlength="100" required data-placeholder="namePlaceholder" placeholder="Ник"></label>
+   <label><span data-text="contactLabel">Telegram или email</span><input name="contact" maxlength="200" required data-placeholder="contactPlaceholder" placeholder="@username или email" autocomplete="email"></label>
+  </div>
+  <label class="code-confirm"><input id="codeConfirm" type="checkbox" required><span data-text="confirm">Я имею право изменять этот код и понимаю, что оценка и доработка оплачиваются отдельно.</span></label>
+  <button type="submit" class="code-submit"><span data-text="send">Отправить на оценку</span><span aria-hidden="true">↗</span></button>
+  <p id="codeEditStatus" class="code-status" role="status" aria-live="polite"></p>
+ </form>
+ <aside class="code-help">
+  <article><span class="code-help-count">01</span><h2 data-text="typesTitle">Что можно заказать</h2><ul><li data-text="task1">Исправление ошибок и багов</li><li data-text="task2">Изменение или удаление функций</li><li data-text="task3">Новые возможности и интеграции</li><li data-text="task4">Улучшение интерфейса и структуры</li></ul></article>
+  <article><span class="code-help-count">02</span><h2 data-text="processTitle">Как проходит работа</h2><p data-text="processDesc">Ты отправляешь запрос. Мы уточняем объём и цену. Работа начинается только после отдельного согласования.</p></article>
+  <article class="code-security"><span class="code-help-count">03</span><h2 data-text="safeTitle">Безопасность кода</h2><p data-text="safeDesc">Не отправляй пароли, токены ботов, приватные ключи или персональные данные. Вставляй только код, который имеешь право передавать.</p></article>
+ </aside>
+ </section>
+</main>
+<footer class="code-footer"><span>© 2026 VIONA</span><a href="/#contact" data-text="support">Связаться с нами</a></footer>
+</body></html>
