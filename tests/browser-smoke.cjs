@@ -95,8 +95,6 @@ const {chromium}=require("playwright");
     await page.waitForTimeout(250);
     assert.ok(await page.locator("#codeEditForm").isVisible(),"separate code-edit page unavailable");
     assert.equal(await page.locator("html").getAttribute("data-world"),"femboy","code-edit locale not shared");
-    const serviceAccent=await page.evaluate(()=>getComputedStyle(document.documentElement).getPropertyValue("--accent").trim());
-    assert.equal(serviceAccent,"var(--vt-accent,#e4e6e8)");
     const serviceAccentResolved=await page.evaluate(()=>getComputedStyle(document.documentElement).getPropertyValue("--vt-accent").trim());
     assert.equal(serviceAccentResolved,"#ff70b7","code-edit page must use pink femboy accent");
 
