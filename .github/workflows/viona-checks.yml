@@ -16,6 +16,8 @@ jobs:
           node --check server.js
           node --check tbank-demo.js
           node --check payment-order.js
+          node --check admin-console.js
+          node --check public/admin-console.js
           node --check public/v15.js
           node --check public/v16.js
           node --check public/viona-icons.js
