@@ -44,9 +44,9 @@ test("refund is not represented as a successful active payment",()=>{
  assert.equal(refunded.stage,"awaiting_payment");
 });
 
-test("only verified admin may see fulfillment controls",()=>{
+test("customer payload never grants admin stage permissions, even to an old Telegram admin",()=>{
  assert.equal(publicOrder({...row,status:"CONFIRMED",fulfillment_status:"queued"},false).canManage,false);
- assert.equal(publicOrder({...row,status:"CONFIRMED",fulfillment_status:"queued"},true).canManage,true);
+ assert.equal(publicOrder({...row,status:"CONFIRMED",fulfillment_status:"queued"},true).canManage,false);
 });
 
 test("public payload contains a product snapshot but no bank payment identifiers",()=>{
