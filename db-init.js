@@ -31,6 +31,7 @@ async function initializeDatabase(pool){
   await client.query(fs.readFileSync(path.join(__dirname,"migrations","017_tbank_demo.sql"),"utf8"));
   await client.query(fs.readFileSync(path.join(__dirname,"migrations","018_tbank_methods.sql"),"utf8"));
   await client.query(fs.readFileSync(path.join(__dirname,"migrations","019_verified_orders.sql"),"utf8"));
+  await client.query(fs.readFileSync(path.join(__dirname,"migrations","020_admin_order_delivery.sql"),"utf8"));
   await client.query(`CREATE TABLE IF NOT EXISTS code_edit_requests (
     id UUID PRIMARY KEY,
     project_name VARCHAR(120) NOT NULL,
