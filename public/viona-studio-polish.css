@@ -62,3 +62,19 @@ body.vs-studio-page .vb-nav button[aria-selected="true"],body.vs-studio-page .vs
 .vst-foot-contacts{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;align-items:center;padding:14px}
 .vst-foot-contacts a{color:var(--vst-accent);font-weight:800}
 @media(max-width:650px){.vst-support-actions{width:100%}.vst-support-actions .vst-btn{flex:1;text-align:center}.vst-lang-badge{padding:8px}.vst-head-tools{flex-wrap:wrap}}
+
+/* Specificity fixes for standalone header badge and theme-controlled settings dialog. */
+.vst-head-tools .vst-lang-badge{width:auto;min-height:40px;min-width:70px;margin:0;padding:8px 10px;box-shadow:none;background:var(--vst-card)!important;color:var(--vst-ink)!important;border-color:var(--vst-border)!important}
+html[data-theme="dark"] body.vs-studio-page .vs-overlay{
+ --vs-bg:#101419;--vs-paper:#1b2026;--vs-soft:#252c34;--vs-ink:#f2f6fa;--vs-muted:#b6c4d0;--vs-border:#455360;--vs-accent:#d6e9f2;--vs-tint:#303842;--vs-button:#e5edf5;--vs-button-text:#15191d;--vs-selected:#303c45;color-scheme:dark;
+}
+html[data-theme="light"] body.vs-studio-page .vs-overlay{
+ --vs-bg:#f8fcff;--vs-paper:#fff;--vs-soft:#eaf4f9;--vs-ink:#163241;--vs-muted:#557181;--vs-border:#c1d9e5;--vs-accent:#07748f;--vs-tint:#e1f3f8;--vs-button:#087f9b;--vs-button-text:#fff;--vs-selected:#e3f5f8;color-scheme:light;
+}
+html:not([data-world="ru"]) .lang-trigger .lang-flag img{display:none}
+html:not([data-world="ru"]) .lang-trigger .lang-flag::after{content:"🌐"}
+.viona-support-link{font-weight:800;text-decoration:underline;text-underline-offset:3px;overflow-wrap:anywhere}
+.vst-head-tools .vst-lang-badge img[hidden]{display:none}
+body.vs-studio-page .vst-btn:has(.vst-svg),body.vs-studio-page .vb-btn:has(.vb-svg){display:inline-flex;align-items:center;justify-content:center;gap:8px}
+body.vs-studio-page .vb-send .vb-svg{width:18px;height:18px}
+body.vs-studio-page .vb-attachment .vb-svg{width:32px;height:32px}
