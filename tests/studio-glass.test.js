@@ -13,7 +13,7 @@ test("all agreed Studio tools are linked from homepage",()=>{
   assert.match(studio,new RegExp('data-vst-tab="'+view+'"'));
  }
  assert.match(server,/app.get\("\/studio"/);
- assert.match(studio,/viona-studio\.js\?v=1/);
+ assert.match(studio,/viona-studio\.js\?v=2/);
  assert.match(studio,/VIONA Studio/);
  assert.match(studio,/code-edit/);
  assert.match(site,/window\.VionaStudio/);
