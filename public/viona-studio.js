@@ -276,7 +276,7 @@
  ROOT.addEventListener("click",e=>{
   const x=e.target.closest("button,[data-vst-tab]");if(!x)return;
   if(x.dataset.vstTab){navigate(x.dataset.vstTab);return}
-  if(x.hasAttribute("data-vst-copy-support")){navigator.clipboard?.writeText("support.viona.space@gmail.com").then(()=>toast("Адрес поддержки скопирован.")).catch(()=>toast("Не удалось скопировать. Выдели адрес вручную."));return}
+  if(x.hasAttribute("data-vst-copy-support")){if(!navigator.clipboard?.writeText){toast("Выдели адрес поддержки и скопируй вручную.");return}navigator.clipboard.writeText("support.viona.space@gmail.com").then(()=>toast("Адрес поддержки скопирован.")).catch(()=>toast("Не удалось скопировать. Выдели адрес вручную."));return}
   if(x.dataset.vstLab){state.lab=x.dataset.vstLab;save();renderLab();return}
   if(x.dataset.vstDemo){const v=x.dataset.vstDemo;labMessage=v==="/start"?"Привет! Это интерактивная демонстрация бота VIONA.":v==="/help"?"Команды: /start, /help, /about.": "VIONA Bot Starter — макет для будущего проекта.";renderLab();return}
   if(x.dataset.vstSite){demoSite=x.dataset.vstSite;renderLab();return}
