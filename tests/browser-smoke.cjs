@@ -79,7 +79,7 @@ const {chromium}=require("playwright");
     assert.equal(await page.locator("html").getAttribute("data-pref-font"),"large");
     await page.locator('[data-settings-contrast="high"]').click();
     assert.equal(await page.locator("html").getAttribute("data-pref-contrast"),"high");
-    await page.locator('[data-settings-motion="reduce"]').click();
+    await page.locator('.vs-segment[data-settings-motion="reduce"]').click();
     assert.equal(await page.locator("html").getAttribute("data-pref-motion"),"reduce");
     await page.locator('[data-settings-tab="interface"]').click();
     await page.locator("#vionaSettingsBadge").uncheck();
@@ -105,7 +105,7 @@ const {chromium}=require("playwright");
     await page.locator('[data-settings-density="comfortable"]').click();
     await page.locator('[data-settings-font="normal"]').click();
     await page.locator('[data-settings-contrast="normal"]').click();
-    await page.locator('[data-settings-motion="system"]').click();
+    await page.locator('.vs-segment[data-settings-motion="system"]').click();
     await page.locator(".vs-close").click();
     await page.locator("#v15Close").click();
 
@@ -143,12 +143,76 @@ const {chromium}=require("playwright");
     const serviceAccentResolved=await page.evaluate(()=>getComputedStyle(document.documentElement).getPropertyValue("--vt-accent").trim());
     assert.equal(serviceAccentResolved,"#ff70b7","code-edit page must use pink femboy accent");
 
+    /* VIONA Studio end-to-end: demos, builder, workspace, boards, code diff, bundles and editor. */
+    await page.goto("http://127.0.0.1:4173/studio?view=lab",{waitUntil:"domcontentloaded"});
+    await page.waitForFunction(()=>document.querySelector('#vstContent [data-vst-demo]')!==null,{timeout:10000});
+    assert.ok(await page.locator("#vstTabs [data-vst-tab]").count()>=8);
+    await page.locator('[data-vst-demo="/help"]').click();
+    assert.match(await page.locator(".vst-chat").innerText(),/Команды:/);
+    await page.locator('#vstTabs [data-vst-tab="builder"]').click();
+    await page.locator('#vstBuildForm [name="title"]').fill("Тестовый проект VIONA");
+    await page.locator('#vstBuildForm [name="details"]').fill("Подключить меню команд и базу данных");
+    await page.locator('#vstBuildForm [name="features"][value="Авторизация"]').check();
+    await page.locator('#vstBuildForm button[value="draft"]').click();
+    assert.ok(await page.locator("#vstContent").getByText("Тестовый проект VIONA").count()>0);
+    await page.locator('#vstNoteForm [name="note"]').fill("Черновик для проверки");
+    await page.locator('#vstNoteForm button[type="submit"]').click();
+    assert.match(await page.locator("#vstContent").innerText(),/Черновик для проверки/);
+    await page.locator("#vstFile").setInputFiles({name:"notes.txt",mimeType:"text/plain",buffer:Buffer.from("Original code file for VIONA Studio")});
+    await page.getByRole("button",{name:"Скачать"}).waitFor({timeout:5000});
+    await page.screenshot({path:"screenshots/studio-workspace.png",fullPage:true});
+    await page.locator('#vstTabs [data-vst-tab="boards"]').click();
+    await page.locator('#vstBoardForm [name="board"]').fill("Моя доска");
+    await page.locator('#vstBoardForm button[type="submit"]').click();
+    await page.locator('#vstBoardNote [name="note"]').fill("Идея для нового проекта");
+    await page.locator('#vstBoardNote button[type="submit"]').click();
+    assert.match(await page.locator("#vstContent").innerText(),/Идея для нового проекта/);
+    await page.locator("#vstPin").selectOption("1");
+    await page.locator("[data-vst-pin]").click();
+    assert.match(await page.locator("#vstContent").innerText(),/Telegram Bot Starter/);
+    await page.locator('#vstTabs [data-vst-tab="diff"]').click();
+    await page.locator("[data-vst-run-diff]").click();
+    assert.ok(await page.locator(".vst-diff-line.add").count()>0);
+    assert.ok(await page.locator(".vst-diff-line.remove").count()>0);
+    await page.locator('#vstTabs [data-vst-tab="dashboard"]').click();
+    await page.locator('[data-vst-widget-down="projects"]').click();
+    assert.equal(await page.locator('.vst-dashboard-item').first().getAttribute("data-vst-drag"),"orders");
+    await page.locator('#vstTabs [data-vst-tab="editor"]').click();
+    await page.locator('[data-vst-editor="font"]').selectOption("18");
+    assert.equal(await page.locator("#vstCode").evaluate(x=>x.style.fontSize),"18px");
+    await page.locator('#vstTabs [data-vst-tab="bundles"]').click();
+    await page.locator('[data-vst-bundle="1"]').check();
+    assert.match(await page.locator("#vstContent").innerText(),/1 товара/);
+    await page.locator("#vstPrivacy").click();
+    assert.equal(await page.locator("html").getAttribute("data-viona-private"),"on");
+    await page.keyboard.press("Control+k");
+    assert.ok(await page.locator("#vionaCommandOverlay").isVisible());
+    await page.locator("#vgcSearch").fill("LAB");
+    await page.keyboard.press("Escape");
+    assert.equal(await page.locator("#vionaCommandOverlay").count(),0);
+    await page.screenshot({path:"screenshots/studio-bundles.png",fullPage:true});
+    await page.goto("http://127.0.0.1:4173/",{waitUntil:"domcontentloaded"});
+    await page.waitForTimeout(600);
+    assert.equal(await page.locator(".vg-hub-card").count(),8,"home should link eight new tools");
+    assert.ok(await page.locator(".fluid-edge>.vg-drop").count()>=2,"no flowing water edge elements");
+    await page.locator("#profileOpen").click();
+    await page.locator("#vionaSettingsEntryLocal").click();
+    assert.equal(await page.locator(".vs-preview-card").count(),2,"motion previews missing");
+    await page.locator("#vionaSettingsOverlay .vs-dialog").waitFor({state:"visible"});
+    await page.waitForFunction(()=>Number(getComputedStyle(document.querySelector("#vionaSettingsOverlay .vs-dialog")).opacity)>.99,null,{timeout:5000});
+    assert.ok(await page.locator("#vionaSettingsOverlay .vs-dialog").isVisible());
+    await page.screenshot({path:"screenshots/settings-glass.png"});
+    await page.locator(".vs-close").click();
+    await page.locator("#v15Close").click();
+
+
    }
 
    if(width===390){
     await page.locator("#profileOpen").click();
     await page.locator("#vionaSettingsEntryLocal").click();
     assert.ok(await page.locator("#vionaSettingsOverlay .vs-dialog").isVisible(),"mobile preferences not visible");
+    await page.waitForFunction(()=>Number(getComputedStyle(document.querySelector("#vionaSettingsOverlay .vs-dialog")).opacity)>.99,null,{timeout:5000});
     const ui=await page.evaluate(()=>{
      const dlg=document.querySelector("#vionaSettingsOverlay .vs-dialog").getBoundingClientRect();
      return{left:dlg.left,right:dlg.right,windowWidth:innerWidth,scrollWidth:document.documentElement.scrollWidth};

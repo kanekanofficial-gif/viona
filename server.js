@@ -41,6 +41,7 @@ app.post("/api/request",async(req,res)=>{
  res.status(202).json({message:"Демо-режим: заявка не сохранена. Подключи PostgreSQL."});
 });
 app.get("/code-edit",(_req,res)=>res.sendFile(path.join(__dirname,"public","code-edit.html")));
+app.get("/studio",(_req,res)=>res.sendFile(path.join(__dirname,"public","studio.html")));
 app.get("*path",(_req,res)=>res.sendFile(path.join(__dirname,"public","index.html")));
 app.listen(PORT,()=>console.log("VIONA listening on "+PORT));
 };
