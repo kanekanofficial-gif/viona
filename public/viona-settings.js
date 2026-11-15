@@ -3,7 +3,7 @@
 (()=>{
  const KEY="viona-preferences-v1";
  const root=document.documentElement;
- const defaults={motion:"system",density:"comfortable",font:"normal",contrast:"normal",badge:true,start:"home"};
+ const defaults={motion:"system",density:"comfortable",font:"normal",contrast:"normal",badge:true,start:"home",privacy:false,water:true};
  const choices={motion:["system","reduce"],density:["comfortable","compact"],font:["normal","large"],contrast:["normal","high"],start:["home","catalog"]};
  const translations={
   ru:{
@@ -12,7 +12,7 @@
    close:"Закрыть настройки",appearance:"Оформление",interface:"Интерфейс",data:"Данные",
    themeTitle:"Тема сайта",themeHelp:"Автоматическая тема следует настройкам твоего устройства.",system:"Как в системе",light:"Светлая",dark:"Тёмная",
    pinkNote:"Фембойский язык включает розово-чёрное оформление независимо от режима темы.",
-   motionTitle:"Анимации",motionHelp:"Уважать настройки системы или уменьшить движение на сайте.",motionSystem:"По системе",motionReduce:"Минимум анимаций",
+   motionTitle:"Анимации",motionHelp:"Сравни живой интерфейс и мгновенные переходы прямо здесь.",motionPreviewOn:"Плавная анимация",motionPreviewOff:"Без анимации",privacyTitle:"Приватный режим",privacyHelp:"Размытие личной информации при демонстрации экрана.",privacyOn:"Скрывать личные данные на экране",waterTitle:"Жидкое стекло · эксперимент",waterHelp:"Глянцевые потёки и капли по краям избранных карточек.",waterOn:"Показывать водяной глянец",toolsTitle:"Новые инструменты",toolsHelp:"Виджеты профиля, редактор и VIONA LAB.",widgetLink:"Настроить виджеты",editorLink:"Редактор кода",motionSystem:"По системе",motionReduce:"Минимум анимаций",
    densityTitle:"Плотность каталога",densityHelp:"Компактный режим уменьшает отступы и размеры карточек.",comfortable:"Обычная",compact:"Компактная",
    fontTitle:"Размер текста",fontHelp:"Увеличивает текст в основных разделах без масштабирования страницы.",normal:"Обычный",large:"Крупнее",
    contrastTitle:"Контраст",contrastHelp:"Более выраженные границы и вторичный текст.",contrastNormal:"Обычный",contrastHigh:"Повышенный",
@@ -35,7 +35,7 @@
    close:"Close settings",appearance:"Appearance",interface:"Interface",data:"Data",
    themeTitle:"Site theme",themeHelp:"System mode follows your device's appearance.",system:"System",light:"Light",dark:"Dark",
    pinkNote:"The Femboy language uses a pink-and-black palette in every theme mode.",
-   motionTitle:"Animations",motionHelp:"Follow system preferences or reduce site motion.",motionSystem:"System",motionReduce:"Reduced motion",
+   motionTitle:"Animations",motionHelp:"Compare smooth motion and instant transitions.",motionPreviewOn:"Smooth animation",motionPreviewOff:"No animation",privacyTitle:"Privacy mode",privacyHelp:"Blur sensitive text while sharing your screen.",privacyOn:"Hide sensitive details",waterTitle:"Liquid Glass experiment",waterHelp:"Animated glossy droplets on selected cards.",waterOn:"Show flowing glass highlights",toolsTitle:"New tools",toolsHelp:"Custom dashboard, code editor and LAB.",widgetLink:"Customize widgets",editorLink:"Code editor",motionSystem:"System",motionReduce:"Reduced motion",
    densityTitle:"Catalog density",densityHelp:"Compact mode reduces spacing and card height.",comfortable:"Comfortable",compact:"Compact",
    fontTitle:"Text size",fontHelp:"Larger text in main sections without zooming the whole page.",normal:"Normal",large:"Larger",
    contrastTitle:"Contrast",contrastHelp:"Stronger borders and secondary text.",contrastNormal:"Normal",contrastHigh:"High contrast",
@@ -58,7 +58,7 @@
    close:"Einstellungen schließen",appearance:"Design",interface:"Oberfläche",data:"Daten",
    themeTitle:"Designmodus",themeHelp:"Im Systemmodus richtet sich die Farbe nach deinem Gerät.",system:"System",light:"Hell",dark:"Dunkel",
    pinkNote:"Die Femboy-Sprache verwendet unabhängig vom Designmodus Rosa und Schwarz.",
-   motionTitle:"Animationen",motionHelp:"Systemeinstellung verwenden oder Bewegungen reduzieren.",motionSystem:"System",motionReduce:"Weniger Bewegung",
+   motionTitle:"Animationen",motionHelp:"Animierte und sofortige Übergänge vergleichen.",motionPreviewOn:"Flüssig",motionPreviewOff:"Ohne Animation",privacyTitle:"Privatmodus",privacyHelp:"Persönliche Daten auf dem Bildschirm weichzeichnen.",privacyOn:"Private Daten verbergen",waterTitle:"Liquid Glass Experiment",waterHelp:"Glänzende Tropfen an ausgewählten Karten.",waterOn:"Glaseffekt anzeigen",toolsTitle:"Neue Werkzeuge",toolsHelp:"Profil-Widgets, Editor und LAB.",widgetLink:"Widgets anpassen",editorLink:"Code-Editor",motionSystem:"System",motionReduce:"Weniger Bewegung",
    densityTitle:"Katalogdichte",densityHelp:"Kompakte Karten und kleinere Abstände.",comfortable:"Normal",compact:"Kompakt",
    fontTitle:"Schriftgröße",fontHelp:"Größerer Text in wichtigen Bereichen.",normal:"Normal",large:"Größer",
    contrastTitle:"Kontrast",contrastHelp:"Deutlichere Ränder und Hinweise.",contrastNormal:"Normal",contrastHigh:"Hoch",
@@ -79,7 +79,7 @@
    close:"設定を閉じる",appearance:"外観",interface:"表示と操作",data:"データ",
    themeTitle:"テーマ",themeHelp:"システム設定に合わせて自動で切り替えます。",system:"システム",light:"ライト",dark:"ダーク",
    pinkNote:"フェムボーイ言語では常にピンクと黒の配色になります。",
-   motionTitle:"アニメーション",motionHelp:"端末の設定に従うか動きを減らします。",motionSystem:"システム",motionReduce:"動きを減らす",
+   motionTitle:"アニメーション",motionHelp:"動きありと動きなしの違いを表示します。",motionPreviewOn:"なめらか",motionPreviewOff:"アニメーションなし",privacyTitle:"プライバシーモード",privacyHelp:"画面上の個人情報をぼかします。",privacyOn:"個人情報を隠す",waterTitle:"リキッドグラス実験",waterHelp:"カードの縁に流れる光沢のある水滴。",waterOn:"液体の光沢を表示",toolsTitle:"新しいツール",toolsHelp:"ウィジェット、エディター、LAB。",widgetLink:"ウィジェット",editorLink:"コードエディター",motionSystem:"システム",motionReduce:"動きを減らす",
    densityTitle:"カードの密度",densityHelp:"カードと余白をコンパクトにします。",comfortable:"標準",compact:"コンパクト",
    fontTitle:"文字サイズ",fontHelp:"主な画面の文字を大きくします。",normal:"標準",large:"大きめ",
    contrastTitle:"コントラスト",contrastHelp:"境界線と補助テキストを見やすくします。",contrastNormal:"標準",contrastHigh:"高コントラスト",
@@ -100,7 +100,7 @@
    close:"Закрыть настройки",appearance:"Оформление ♡",interface:"Интерфейс ♡",data:"Мои данные",
    themeTitle:"Тема сайта ♡",themeHelp:"Можно следовать системе или выбрать светлую/тёмную тему.",system:"Как в системе",light:"Светлая",dark:"Тёмная",
    pinkNote:"Розово-чёрные оттенки остаются с этим языком всегда ♡",
-   motionTitle:"Анимации ♡",densityTitle:"Карточки ♡",fontTitle:"Текст ♡",contrastTitle:"Контраст ♡",
+   motionTitle:"Анимации ♡",motionPreviewOn:"Плавненько ♡",motionPreviewOff:"Без движения",privacyTitle:"Приватность ♡",privacyOn:"Скрыть личное ♡",waterTitle:"Глянцевая водичка ♡",waterOn:"Включить глянец ♡",toolsTitle:"Мои инструменты ♡",densityTitle:"Карточки ♡",fontTitle:"Текст ♡",contrastTitle:"Контраст ♡",
    languageTitle:"Мой язык ♡",badgeTitle:"Уведомления ♡",storedTitle:"Мои данные ♡",
    saved:"Сохранилось ♡",exported:"Файлик готов ♡",cleared:"Списки очищены ♡",resetDone:"Настройки сброшены ♡"
   }
@@ -115,6 +115,8 @@
   const value={...defaults};
   for(const k of Object.keys(choices))if(choices[k].includes(obj[k]))value[k]=obj[k];
   if(typeof obj.badge==="boolean")value.badge=obj.badge;
+  if(typeof obj.privacy==="boolean")value.privacy=obj.privacy;
+  if(typeof obj.water==="boolean")value.water=obj.water;
   return value;
  }
  let prefs=read();
@@ -127,6 +129,9 @@
   root.dataset.prefFont=prefs.font;
   root.dataset.prefContrast=prefs.contrast;
   root.dataset.prefBadge=prefs.badge?"on":"off";
+  root.dataset.vionaPrivate=prefs.privacy?"on":"off";
+  root.classList.toggle("vst-privacy-active",prefs.privacy);
+  root.dataset.prefWater=prefs.water?"on":"off";
   root.dataset.prefStart=prefs.start;
  }
  apply();
@@ -137,7 +142,12 @@
  function create(){
   const l=copy();
   const theme=window.VionaTheme?.current?.()||"auto";
-  const motion=segmented("motion",[["system",l.motionSystem],["reduce",l.motionReduce]],prefs.motion);
+  const motionPreview='<div class="vs-motion-preview" aria-label="'+escape(l.motionTitle)+'">'+
+    [['system',l.motionSystem,l.motionPreviewOn||'Плавные переходы','animated'],['reduce',l.motionReduce,l.motionPreviewOff||'Мгновенно','static']].map(([value,label,description,mode])=>
+     '<button type="button" class="vs-preview-card" data-preview="'+mode+'" data-settings-motion="'+value+'" aria-pressed="'+(prefs.motion===value)+'">'+
+     '<span class="vs-preview-demo" aria-hidden="true"><span class="vs-preview-line"></span><span class="vs-preview-line short"></span><span class="vs-preview-switch"></span></span>'+
+     '<strong>'+escape(label)+'</strong><small>'+escape(description)+'</small></button>').join("")+'</div>';
+   const motion=motionPreview+segmented("motion",[["system",l.motionSystem],["reduce",l.motionReduce]],prefs.motion);
   const density=segmented("density",[["comfortable",l.comfortable],["compact",l.compact]],prefs.density);
   const font=segmented("font",[["normal",l.normal],["large",l.large]],prefs.font);
   const contrast=segmented("contrast",[["normal",l.contrastNormal],["high",l.contrastHigh]],prefs.contrast);
@@ -151,9 +161,15 @@
    group(l.densityTitle,l.densityHelp,density,"▦")+
    group(l.fontTitle,l.fontHelp,font,"Aa")+
    group(l.contrastTitle,l.contrastHelp,contrast,"◑");
-  const general=group(l.languageTitle,l.languageHelp,languageSelect,"◎")+
+  const privateSwitch='<label class="vs-switch"><input id="vionaSettingsPrivacy" type="checkbox"'+(prefs.privacy?" checked":"")+'><span class="vs-switch-track" aria-hidden="true"></span><span>'+escape(l.privacyOn||'Скрывать личные данные на экране')+'</span></label>';
+   const waterSwitch='<label class="vs-switch"><input id="vionaSettingsWater" type="checkbox"'+(prefs.water?" checked":"")+'><span class="vs-switch-track" aria-hidden="true"></span><span>'+escape(l.waterOn||'Стеклянные потёки на избранных карточках')+'</span></label>';
+   const experimentLinks='<div class="vs-extra-links"><a class="vs-action" href="/studio?view=dashboard">'+escape(l.widgetLink||'Мой профиль / виджеты')+' ↗</a><a class="vs-action" href="/studio?view=editor">'+escape(l.editorLink||'Редактор кода')+' ↗</a><a class="vs-action" href="/studio?view=lab">VIONA LAB ↗</a></div>';
+   const general=group(l.languageTitle,l.languageHelp,languageSelect,"◎")+
    group(l.startTitle,l.startHelp,start,"⌂")+
-   group(l.badgeTitle,l.badgeHelp,badge,"◉");
+   group(l.badgeTitle,l.badgeHelp,badge,"◉")+
+    group(l.privacyTitle||"Приватный режим",l.privacyHelp||"Скрывает персональные данные на экране, не удаляя их.",privateSwitch,"◌")+
+    group(l.toolsTitle||"Персонализация VIONA",l.toolsHelp||"Рабочие пространства, виджеты и редактор кода.",experimentLinks,"▦")+
+    group(l.waterTitle||"Эксперимент: жидкий глянец",l.waterHelp||"Включает декоративные потёки воды по краям некоторых карточек.",waterSwitch,"◈");
   const data=group(l.exportTitle,l.exportHelp,'<button class="vs-action" type="button" data-settings-command="export">'+escape(l.export)+' <span aria-hidden="true">↓</span></button>',"↓")+
    group(l.clearTitle,l.clearHelp,'<button class="vs-action vs-danger" type="button" data-settings-command="clear">'+escape(l.clear)+'</button>',"⌫")+
    group(l.resetTitle,l.resetHelp,'<button class="vs-action" type="button" data-settings-command="reset">'+escape(l.reset)+'</button>',"↺");
@@ -270,7 +286,9 @@
  document.addEventListener("change",e=>{
   if(!opened||!overlay?.contains(e.target))return;
   if(e.target.id==="vionaSettingsLanguage")languageChange(e.target.value);
-  if(e.target.id==="vionaSettingsBadge"){
+  if(e.target.id==="vionaSettingsPrivacy"){prefs.privacy=e.target.checked;persist();apply();status(copy().saved)}
+   if(e.target.id==="vionaSettingsWater"){prefs.water=e.target.checked;persist();apply();status(copy().saved)}
+   if(e.target.id==="vionaSettingsBadge"){
    prefs.badge=e.target.checked;persist();apply();status(copy().saved);
   }
  });
