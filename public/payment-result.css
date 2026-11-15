@@ -95,3 +95,10 @@ body.vr-result-active>.overlay,body.vr-result-active>.panel,body.vr-result-activ
 @media(max-width:950px){.vr-grid{grid-template-columns:minmax(0,1fr)}.vr-aside{position:static;grid-row:1}.vr-hero{padding:26px}}
 @media(max-width:600px){.vr-bar{padding:16px 18px}.vr-logo{font-size:26px}.vr-bar-badge{font-size:8px;padding:8px}.vr-wrap{padding:20px 14px 50px}.vr-hero{flex-direction:column;align-items:start;gap:16px;padding:23px;border-radius:18px}.vr-hero-icon{width:66px;height:66px;border-radius:19px;font-size:38px}.vr-root h1{font-size:37px}.vr-box{padding:18px;border-radius:17px}.vr-item{padding:12px;gap:12px}.vr-item-icon{width:55px;height:55px;border-radius:12px}.vr-item-icon .viona-catalog-svg{width:49px;height:49px}.vr-item-title{flex-direction:column;gap:4px}.vr-receipt-row{gap:10px}.vr-message{padding:25px}.vr-footer{flex-direction:column;align-items:start;padding:22px 20px;font-size:9px}.vr-hero-actions{gap:7px}.vr-primary-link,.vr-secondary-link,.vr-text-link{font-size:10px;min-height:42px;padding:10px 12px}}
 @media(prefers-reduced-motion:reduce){.vr-page,.vr-hero-icon,.vr-spinner{animation:none!important}.vr-primary-link,.vr-secondary-link,.vr-text-link{transition:none!important}}
+
+/* Verified demo delivery: only shown once admin marks a paid order completed. */
+.vr-delivery{border-color:#a2efcf65;background:linear-gradient(140deg,#16362f,#101e29)}
+.vr-delivery .vr-box-title>span{color:#d3fff2}
+.vr-delivery p{color:#b8d3d4;font-size:12px;line-height:1.7}
+.vr-delivery .vr-file-name{margin-top:14px;overflow-wrap:anywhere;color:#add6e6}
+.vr-delivery .vr-primary-link{background:linear-gradient(110deg,#b7efd5,#8be5d3);color:#15312f!important}
