@@ -31,7 +31,7 @@ test("all Studio pages expose working local UUID paths and safe reload routes",(
  assert.match(studio,/crypto\.randomUUID/);
  assert.match(studio,/function setStudioRoute/);
  assert.match(studio,/\/studio\/bots\//);
- assert.match(studio,/\/studio\/projects/);
+ assert.match(studio,/\?"projects":"boards"/);
  assert.match(studio,/uuid\.test/);
  assert.match(bot,/routeId/);
  assert.match(server,/app\.get\("\/studio\/:kind\/:id"/);
