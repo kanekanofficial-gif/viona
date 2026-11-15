@@ -25,7 +25,7 @@ test("settings dialog is accessible and keyboard-operable",()=>{
  assert.match(logic,/aria-selected/);
  assert.match(logic,/aria-labelledby/);
  assert.match(logic,/e\.key==="Escape"/);
- assert.match(logic,/e\.key==="Tab"/);
+ assert.match(logic,/e\.key!=="Tab"/);
  assert.match(logic,/e\.key==="ArrowRight"/);
  assert.match(logic,/e\.key==="ArrowLeft"/);
  assert.match(logic,/el\.inert=true/);
