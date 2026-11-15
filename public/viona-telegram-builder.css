@@ -146,3 +146,13 @@ html[data-world="femboy"] .vb-app .vb-btn.primary,html[data-theme="dark"] .vb-ap
 @media(prefers-reduced-motion:reduce){.vb-panel,.vb-chat-bubble{animation:none!important}
  .vb-app *,.vb-app *::before,.vb-app *::after{transition:none!important}}
 html[data-pref-motion="reduce"] .vb-panel,html[data-pref-motion="reduce"] .vb-chat-bubble{animation:none!important}
+
+/* Actual locally uploaded images in bot demo, not sent to Telegram or orders. */
+.vb-upload>input[type="file"]{padding:10px;font-size:11px;cursor:pointer}
+.vb-upload>small{color:var(--vb-muted);font-size:10px;font-weight:650;line-height:1.5}
+.vb-image-preview{display:flex;align-items:center;flex-wrap:wrap;gap:13px;padding:12px;
+ border:1px solid var(--vb-border);border-radius:13px;background:var(--vb-soft)}
+.vb-image-preview img{display:block;max-width:200px;max-height:155px;object-fit:contain;border-radius:10px}
+.vb-image-preview img[hidden]{display:none!important}
+.vb-chat-photo{display:block;max-width:100%;max-height:225px;object-fit:contain;border-radius:10px;
+ margin-bottom:10px;border:1px solid var(--vb-border);background:var(--vb-soft)}
