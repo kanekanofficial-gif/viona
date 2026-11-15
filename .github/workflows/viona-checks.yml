@@ -23,6 +23,7 @@ jobs:
           node --check public/viona-theme.js
           node --check public/viona-settings.js
           node --check public/viona-studio.js
+          node --check public/viona-telegram-builder.js
           node --check public/viona-command.js
           node --check public/viona-glass27.js
           node --check public/viona-editor-prefs.js

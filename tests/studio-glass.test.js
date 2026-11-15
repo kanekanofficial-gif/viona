@@ -13,14 +13,14 @@ test("all agreed Studio tools are linked from homepage",()=>{
   assert.match(studio,new RegExp('data-vst-tab="'+view+'"'));
  }
  assert.match(server,/app.get\("\/studio"/);
- assert.match(studio,/viona-studio\.js\?v=1/);
+ assert.match(studio,/viona-studio\.js\?v=2/);
  assert.match(studio,/VIONA Studio/);
  assert.match(studio,/code-edit/);
  assert.match(site,/window\.VionaStudio/);
 });
 test("LAB demo and project builder remain safe and interactive",()=>{
  assert.match(site,/function renderLab/);
- assert.match(site,/data-vst-demo/);
+ assert.match(site,/VionaBotBuilder/);
  assert.match(site,/data-vst-site/);
  assert.match(site,/data-vst-game/);
  assert.match(site,/function renderBuilder/);
@@ -91,7 +91,7 @@ test("command center works on all pages and is keyboard accessible",()=>{
  for(const page of [home,studio,codeEdit])assert.match(page,/viona-command\.js\?v=1/);
 });
 test("offline cache references Studio and all visual assets",()=>{
- assert.match(sw,/viona-reboot-v33/);
- for(const path of ["/studio.html","/viona-glass27.css?v=1","/viona-studio.js?v=1","/viona-command.js?v=1","/viona-editor-prefs.js?v=1"])assert.ok(sw.includes('"'+path+'"'));
+ assert.match(sw,/viona-reboot-v34/);
+ for(const path of ["/studio.html","/viona-glass27.css?v=1","/viona-studio.js?v=2","/viona-command.js?v=1","/viona-editor-prefs.js?v=1"])assert.ok(sw.includes('"'+path+'"'));
  assert.match(home,/viona-glass27\.css\?v=1/);
 });

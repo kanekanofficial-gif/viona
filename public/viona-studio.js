@@ -43,8 +43,7 @@
   const current=state.lab;
   let body="";
   if(current==="telegram"){
-   body='<div class="vst-chat" role="log" aria-label="Telegram bot demo"><span class="vst-bubble">VIONA demo bot · /start</span><span class="vst-bubble">'+esc(labMessage)+'</span></div>'+
-   '<div class="vst-actions">'+button("/start",'data-vst-demo="/start"')+button("/help",'data-vst-demo="/help"')+button("/about",'data-vst-demo="/about"')+'</div>';
+   body=window.VionaBotBuilder?.markup()||'<p class="vst-note">Конструктор Telegram-бота не загрузился. Обнови страницу.</p>';
   }else if(current==="website"){
    body='<div class="vst-preview-web"><header><span>'+ (demoSite==="landing"?"VIONA / LANDING":"VIONA / PORTFOLIO")+'</span><span>● ● ●</span></header><div class="vst-preview-hero"><h3>'+(demoSite==="landing"?"Твой следующий проект.":"Мои работы и идеи.")+'</h3><p>'+(demoSite==="landing"?"Современный макет: адаптация, чистая типографика, готовые секции.":"Интерактивный пример портфолио для разработчика или дизайнера.")+'</p><span class="vst-tag">DEMO ONLY</span></div></div><div class="vst-actions">'+button("Лендинг",'data-vst-site="landing"')+button("Портфолио",'data-vst-site="portfolio"')+'</div>';
   }else{
@@ -52,9 +51,9 @@
   }
   ROOT.innerHTML=title("VIONA LAB","Работающие интерактивные демо-интерфейсы. Это не доступ к реальным ботам и не выполнение кода.")+
   '<div class="vst-grid">'+[
-   ["telegram","Telegram Bot","Попробуй команды демо-бота."],["website","Website / Portfolio","Переключай готовые макеты."],["game","Game UI","Пример панели игрового проекта."]
+   ["telegram","Telegram Bot Builder","Создай свои команды, кнопки и ответы."],["website","Website / Portfolio","Переключай готовые макеты."],["game","Game UI","Пример панели игрового проекта."]
   ].map(([id,t,p])=>section(t,p,button(id===current?"Открыто":"Открыть",'data-vst-lab="'+id+'"',id===current?"primary":""),id===current?"fluid-edge":"")).join("")+'</div>'+
-  '<div class="vst-card vg-glass-panel" style="margin-top:16px"><h3>Интерактивный предпросмотр · '+esc(current.toUpperCase())+'</h3>'+body+'</div>';
+  (current==="telegram"?body:'<div class="vst-card vg-glass-panel" style="margin-top:16px"><h3>Интерактивный предпросмотр · '+esc(current.toUpperCase())+'</h3>'+body+'</div>');
  }
  function renderBuilder(){
   ROOT.innerHTML=title("Конструктор проекта","Собери техническое задание, сохрани черновик в Workspace и при необходимости отправь запрос на оценку.")+
