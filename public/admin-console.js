@@ -1,6 +1,8 @@
 "use strict";
 /* VIONA private dashboard. All write/read access is checked by the server. */
 (()=>{
+ const theme=()=>{const mode=localStorage.getItem("viona-theme")||"auto",dark=window.matchMedia("(prefers-color-scheme: dark)").matches;const actual=mode==="dark"?"dark":mode==="light"?"light":dark?"dark":"light";document.documentElement.dataset.theme=actual;document.querySelector('meta[name="theme-color"]')?.setAttribute("content",actual==="dark"?"#0b1119":"#f4f9fc")};
+ theme();window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change",theme);window.addEventListener("storage",e=>{if(e.key==="viona-theme")theme()});
  const $=q=>document.querySelector(q);
  const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
  const state={orders:[],detail:null,id:null,filter:"all",busy:false};
