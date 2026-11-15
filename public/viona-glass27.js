@@ -4,7 +4,7 @@
  const doc=document.documentElement,qs=(s,root=document)=>root.querySelector(s);
  const host=document.body;
  const reduce=()=>matchMedia("(prefers-reduced-motion: reduce)").matches||doc.dataset.prefMotion==="reduce";
- const safe=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;":"&quot;","'":"&#39;"}[c]));
+ const safe=s=>String(s??"").replace(/[&<>"\']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]||(c.charCodeAt(0)===34?"&quot;":"&#39;")));
  function fluid(target,delay){
   if(!target||target.dataset.vgWater)return;
   target.dataset.vgWater="1";target.dataset.vgDelay=delay;
