@@ -3,7 +3,7 @@
    Never accept or persist Google account passwords. */
 const crypto=require("node:crypto");
 const path=require("node:path");
-const express=require("express");
+// Load Express when registering routes so pure security checks can be unit tested without server dependencies.
 const {publicOrder,reconcile}=require("./payment-order");
 const ADMIN_EMAIL="support.viona.space@gmail.com";
 const SESSION_COOKIE="viona_admin_session";
@@ -42,6 +42,7 @@ function download(res,row){
  return res.send(row.contents);
 }
 function registerAdminConsole(app,pool,{bank,configured}={}){
+ const express=require("express");
  const base="/api/admin";
  const raw=express.raw({type:"application/octet-stream",limit:"1mb"});
  const sameOrigin=req=>req.get("origin")===PUBLIC_SITE();
