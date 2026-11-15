@@ -134,7 +134,7 @@ function registerPaymentOrders(app,pool,bank,configured){
    if(!q.rowCount)return res.status(404).json({error:"Файл пока недоступен. Открой заказ после завершения работы."});
    const item=q.rows[0];
    const fallback="viona-code-result";
-   res.set("Content-Disposition",'attachment; filename="'+fallback+'"; filename*=UTF-8\\'\\''+encodeURIComponent(item.filename));
+   res.set("Content-Disposition", "attachment; filename=\"viona-code-result\"; filename*=UTF-8''"+encodeURIComponent(item.filename));
    res.type("application/octet-stream");
    res.send(item.contents);
   }catch(e){console.error("VIONA private code delivery:",e.message);res.status(503).json({error:"Не удалось скачать файл."})}
