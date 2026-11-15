@@ -46,6 +46,11 @@ test("templates, demo roles, named variables and media placeholders",()=>{
  assert.match(bot,/photo/);
  assert.match(bot,/document/);
  assert.match(bot,/Пример фото/);
+ assert.match(bot,/PHOTO_MAX_BYTES=150000/);
+ assert.match(bot,/trustedImageURI/);
+ assert.match(bot,/vbMediaFile/);
+ assert.match(bot,/new FileReader/);
+ assert.match(css,/vb-chat-photo/);
 });
 test("validation finds unreachable commands and broken button references",()=>{
  assert.match(bot,/function check\(\)/);

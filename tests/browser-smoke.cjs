@@ -155,6 +155,18 @@ const {chromium}=require("playwright");
     await page.locator('#vbChatForm [name="message"]').fill("/shop");
     await page.locator('#vbChatForm button[type="submit"]').click();
     assert.match(await page.locator("#vbChatLog").innerText(),/Каталог для Алекс/);
+    await page.locator('#vbCommandForm [name="name"]').fill("/photo");
+    await page.locator('#vbCommandForm [name="reply"]').fill("Вот демонстрационное фото.");
+    await page.locator('#vbCommandForm [name="media"]').selectOption("photo");
+    await page.locator("#vbMediaFile").setInputFiles({
+      name:"tiny.png",mimeType:"image/png",
+      buffer:Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+/qB0AAAAASUVORK5CYII=","base64")
+    });
+    await page.waitForFunction(()=>document.querySelector("#vbImageUploadStatus")?.textContent.includes("Фото готово"),null,{timeout:6000});
+    await page.locator('#vbCommandForm button[type="submit"]').click();
+    await page.locator('#vbChatForm [name="message"]').fill("/photo");
+    await page.locator('#vbChatForm button[type="submit"]').click();
+    await page.locator(".vb-chat-photo").last().waitFor({state:"visible",timeout:5000});
     await page.locator('.vb-nav [data-vb-panel="buttons"]').click();
     await page.locator('#vbSelectedCommand').selectOption("/start");
     await page.locator('#vbButtonForm [name="label"]').fill("Магазин");
