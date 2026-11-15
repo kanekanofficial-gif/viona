@@ -106,7 +106,15 @@
   showDashboard(false);
   try{
    const cfg=await api("/config");
-   if(!cfg.enabled){say("Пока нет доступа: настрой PostgreSQL и GOOGLE_CLIENT_ID в Render. Пароль Gmail сюда вводить не нужно.",true);return}
+   if(!cfg.enabled){
+     const help=cfg.databaseReady===false
+      ?"База данных PostgreSQL недоступна. Проверь DATABASE_URL и логи Render, затем повтори попытку."
+      :cfg.googleClientReady===false
+      ?"База данных готова. Осталось создать Google OAuth Client ID и добавить GOOGLE_CLIENT_ID в Render → Environment, затем обновить страницу."
+      :"Админ-панель ещё не настроена. Проверь GOOGLE_CLIENT_ID и DATABASE_URL в Render.";
+     say(help+" Пароль Gmail на сайте VIONA вводить не нужно.",true);
+     return;
+    }
    const current=await api("/session").catch(e=>{if(e.status===401)return null;throw e});
    if(current?.authenticated){showDashboard(true);await loadOrders();say("Панель готова к работе.")}
    else{
