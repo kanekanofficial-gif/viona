@@ -167,6 +167,8 @@
    '<div class="vb-fields-two">'+
    field("Тип медиа (демо)",'<select name="media">'+[["none","Только текст"],["photo","Фото-заглушка"],["document","Документ-заглушка"]].map(([v,t])=>option(v,t,existing?.media||"none")).join("")+'</select>')+
    field("Подпись к медиа",input("mediaCaption","Описание фото или файла",existing?.mediaCaption||"",350))+'</div>'+
+   '<label class="vb-field vb-upload"><span>Локальное фото (PNG, JPG, WebP, до 150 КБ)</span><input type="file" id="vbMediaFile" accept="image/png,image/jpeg,image/webp"></label>'+
+   (imageData&&trustedImageURI(imageData)?'<div class="vb-image-preview"><img src="'+escapeHTML(imageData)+'" alt="Предпросмотр изображения">'+button("Убрать фото",'data-vb-action="clear-image"')+'</div>':'<p class="vb-subtle">Фото хранится только в этом браузере. Для реального заказа изображение потребуется передать отдельно.</p>')+
    '<div class="vst-actions"><button type="submit" class="vb-btn primary">'+(existing?"Сохранить изменения":"Добавить команду")+'</button>'+
    (editing?button("Отменить редактирование",'data-vb-action="cancel-edit"'):"")+'</div></form>';
  }
@@ -304,7 +306,9 @@
    '<div class="vb-chat-msgs" id="vbChatLog" role="log" aria-label="Диалог с демонстрационным ботом">'+chat.map(m=>{
     if(m.type==="system")return '<div class="vb-chat-system">'+escapeHTML(m.text)+'</div>';
     return '<div class="vb-chat-bubble '+(m.type==="user"?"vb-user":"vb-bot")+'">'+
-     (m.media!=="none"?'<div class="vb-attachment"><span aria-hidden="true">'+(m.media==="photo"?"▧":"▤")+'</span><small>'+(m.media==="photo"?"Пример фото":"Пример документа")+'</small></div>':"")+
+     (m.media==="photo"&&trustedImageURI(m.mediaData)?
+      '<img class="vb-chat-photo" src="'+escapeHTML(m.mediaData)+'" alt="Изображение в симуляторе">':
+      m.media!=="none"?'<div class="vb-attachment"><span aria-hidden="true">'+(m.media==="photo"?"▧":"▤")+'</span><small>'+(m.media==="photo"?"Пример фото":"Пример документа")+'</small></div>':"")+
      '<div class="vb-message-text">'+escapeHTML(m.text)+'</div>'+
      (m.caption?'<p class="vb-msg-caption">'+escapeHTML(m.caption)+'</p>':"")+
      (m.type==="bot"&&m.buttons?.length?'<div class="vb-inline-buttons">'+m.buttons.map(b=>
