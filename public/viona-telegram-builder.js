@@ -40,7 +40,7 @@
     sample("/help","Доступные команды:\n{commands}"),
     sample("/catalog","Наш демонстрационный каталог. Товары и цены добавятся при разработке.","all",[{label:"Оформить заявку",kind:"command",target:"/order"}]),
     sample("/order","Заявка по товару {product} пока является примером. Реальные заказы потребуют интеграции."),
-    sample("/support","Напиши нам, и менеджер ответит. Это только пример интерфейса.")
+    sample("/support","Поддержка VIONA: support.viona.space@gmail.com. Это демонстрация: бот не отправляет обращения.")
    ],
    triggers:[{keyword:"цена",match:"contains",reply:"Стоимость уточняется после настройки магазина."}]
   })},
@@ -49,8 +49,8 @@
    commands:[
     sample("/start","Привет, {name}! Чем тебе помочь?","all",[{label:"Задать вопрос",kind:"command",target:"/ticket"},{label:"Справка",kind:"command",target:"/faq"}]),
     sample("/help","Доступные команды:\n{commands}"),
-    sample("/ticket","Опиши проблему. Это демонстрация; обращения не отправляются."),
-    sample("/faq","Частые вопросы: оплата, доступ, настройки."),
+    sample("/ticket","Опиши проблему в письме на support.viona.space@gmail.com. Это демонстрация; обращения ботом не отправляются."),
+    sample("/faq","Частые вопросы: оплата, доступ, настройки. Поддержка VIONA: support.viona.space@gmail.com"),
     sample("/queue","Список обращений доступен модераторам в будущей версии.","moderator")
    ],
    triggers:[{keyword:"помощь",match:"contains",reply:"Открой /faq или /ticket."}]
@@ -150,12 +150,13 @@
  }
  function notify(text){draftStatus=text;const node=ROOT.querySelector("#vbStatus");if(node)node.textContent=text}
  const heading=(title,desc)=>'<div class="vb-heading"><h3>'+escapeHTML(title)+'</h3><p>'+escapeHTML(desc)+'</p></div>';
- const button=(text,attr="",cls="")=>'<button type="button" class="vb-btn '+cls+'" '+attr+'>'+escapeHTML(text)+'</button>';
+ const button=(text,attr="",cls="",graphic="")=>'<button type="button" class="vb-btn '+cls+'" '+attr+'>'+(graphic?vector(graphic):"")+escapeHTML(text)+'</button>';
  const field=(text,input)=>'<label class="vb-field"><span>'+escapeHTML(text)+'</span>'+input+'</label>';
  const input=(name,placeholder,value="",max=100,required=false)=>'<input name="'+name+'" maxlength="'+max+'" placeholder="'+escapeHTML(placeholder)+'" value="'+escapeHTML(value)+'"'+(required?" required":"")+'>';
  const area=(name,placeholder,value="",max=2400)=>'<textarea name="'+name+'" maxlength="'+max+'" placeholder="'+escapeHTML(placeholder)+'" rows="5">'+escapeHTML(value)+'</textarea>';
  const option=(value,label,current)=>'<option value="'+escapeHTML(value)+'"'+(value===current?" selected":"")+'>'+escapeHTML(label)+'</option>';
- const icon={commands:"⌨",buttons:"▦",triggers:"◎",scenarios:"◇",check:"✓",order:"↗"};
+ const vector=n=>'<svg class="vb-svg" aria-hidden="true"><use href="/assets/studio-icons.svg#'+n+'"></use></svg>';
+ const icon={commands:vector("command"),buttons:vector("buttons"),triggers:vector("triggers"),scenarios:vector("scenarios"),check:vector("check"),order:vector("order")};
  function renderEditor(){
   const existing=editing?getCommand(editing):null;
   const imageData=pendingMedia!==null?pendingMedia:existing?.mediaData||"";
@@ -302,19 +303,19 @@
    '<p id="vbOrderStatus" role="status" aria-live="polite">'+escapeHTML(requestFeedback)+'</p></form></div>';
  }
  function renderChat(){
-  return '<section class="vb-chat-section"><div class="vb-phone"><div class="vb-phone-top"><span class="vb-phone-icon">✦</span><div><strong>'+escapeHTML(bot.name)+'</strong><small>@'+escapeHTML(bot.username)+' · Локальный симулятор</small></div><span class="vb-phone-dots">•••</span></div>'+
+  return '<section class="vb-chat-section"><div class="vb-phone"><div class="vb-phone-top"><span class="vb-phone-icon">'+vector("telegram")+'</span><div><strong>'+escapeHTML(bot.name)+'</strong><small>@'+escapeHTML(bot.username)+' · Локальный симулятор</small></div><span class="vb-phone-dots">•••</span></div>'+
    '<div class="vb-chat-msgs" id="vbChatLog" role="log" aria-label="Диалог с демонстрационным ботом">'+chat.map(m=>{
     if(m.type==="system")return '<div class="vb-chat-system">'+escapeHTML(m.text)+'</div>';
     return '<div class="vb-chat-bubble '+(m.type==="user"?"vb-user":"vb-bot")+'">'+
      (m.media==="photo"&&trustedImageURI(m.mediaData)?
       '<img class="vb-chat-photo" src="'+escapeHTML(m.mediaData)+'" alt="Изображение в симуляторе">':
-      m.media!=="none"?'<div class="vb-attachment"><span aria-hidden="true">'+(m.media==="photo"?"▧":"▤")+'</span><small>'+(m.media==="photo"?"Пример фото":"Пример документа")+'</small></div>':"")+
+      m.media!=="none"?'<div class="vb-attachment"><span aria-hidden="true">'+(m.media==="photo"?vector("photo"):vector("document"))+'</span><small>'+(m.media==="photo"?"Пример фото":"Пример документа")+'</small></div>':"")+
      '<div class="vb-message-text">'+escapeHTML(m.text)+'</div>'+
      (m.caption?'<p class="vb-msg-caption">'+escapeHTML(m.caption)+'</p>':"")+
      (m.type==="bot"&&m.buttons?.length?'<div class="vb-inline-buttons">'+m.buttons.map(b=>
       '<button type="button" data-vb-run="'+escapeHTML(b.kind)+'" data-vb-target="'+escapeHTML(b.target)+'" class="vb-inline-btn">'+escapeHTML(b.label)+'</button>').join("")+'</div>':"")+
     '</div>';
-   }).join("")+'</div><form id="vbChatForm" class="vb-chat-compose"><input name="message" maxlength="800" placeholder="Введи /help, /shop или любое сообщение" autocomplete="off" required aria-label="Команда или сообщение"><button class="vb-send" type="submit" aria-label="Отправить">➤</button></form></div>'+
+   }).join("")+'</div><form id="vbChatForm" class="vb-chat-compose"><input name="message" maxlength="800" placeholder="Введи /help, /shop или любое сообщение" autocomplete="off" required aria-label="Команда или сообщение"><button class="vb-send" type="submit" aria-label="Отправить">'+vector("send")+'</button></form></div>'+
    '<div class="vb-chat-extras"><label class="vb-field"><span>Тестируемая роль</span><select id="vbSimRole">'+[["all","Обычный пользователь"],["moderator","Модератор"],["admin","Администратор"]].map(([v,t])=>option(v,t,role)).join("")+'</select></label>'+
    '<form id="vbPersonaForm" class="vb-form" style="margin-top:12px"><div class="vb-fields-two">'+
    field("Имя клиента",input("name","Имя",persona.name,60,true))+
@@ -332,8 +333,8 @@
   };
   return '<section class="vb-app" id="vionaBotBuilder">'+
    '<div class="vb-top"><div><p class="vst-eyebrow">VIONA LAB / TELEGRAM BOT BUILDER</p><h3>Собери своего Telegram-бота.</h3><p>Создавай команды, кнопки и сценарии. Проверяй их в настоящем интерактивном симуляторе перед заказом.</p></div>'+
-   '<div class="vb-toolbar">'+button("↶ Отменить",'data-vb-action="undo"'+(history.past.length?'':' disabled'))+
-   button("↷ Повторить",'data-vb-action="redo"'+(history.future.length?'':' disabled'))+'</div></div>'+
+   '<div class="vb-toolbar">'+button("Отменить",'data-vb-action="undo"'+(history.past.length?'':' disabled'),"","undo")+
+   button("Повторить",'data-vb-action="redo"'+(history.future.length?'':' disabled'),"","redo")+'</div></div>'+
    '<div class="vb-identity vb-card"><form id="vbIdentityForm"><div class="vb-fields-three">'+
    field("Название",input("name","Название бота",bot.name,70,true))+
    field("Username без @",input("username","my_bot",bot.username,33,true))+
@@ -342,7 +343,7 @@
    '<label class="vb-template-label">Шаблон <select id="vbTemplate">'+Object.entries(TEMPLATES).map(([id,t])=>option(id,t.title,templateChoice)).join("")+'</select></label>'+
    button("Загрузить шаблон",'data-vb-action="apply-template"')+'</div></form></div>'+
    '<div class="vb-layout"><div class="vb-workbench"><nav class="vb-nav" role="tablist" aria-label="Разделы конструктора">'+tabs.map(([id,text])=>
-    '<button type="button" role="tab" data-vb-panel="'+id+'" aria-selected="'+(panel===id)+'" tabindex="'+(panel===id?"0":"-1")+'">'+escapeHTML(text)+'</button>').join("")+'</nav>'+
+    '<button type="button" role="tab" data-vb-panel="'+id+'" aria-selected="'+(panel===id)+'" tabindex="'+(panel===id?"0":"-1")+'">'+icon[id]+' '+escapeHTML(text)+'</button>').join("")+'</nav>'+
    '<section class="vb-panel" role="tabpanel">'+controls[panel]()+'</section><p class="vb-status" id="vbStatus" role="status">'+escapeHTML(draftStatus||"Черновик сохраняется только в этом браузере.")+'</p></div>'+
    renderChat()+'</div></section>';
  }
