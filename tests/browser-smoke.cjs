@@ -314,15 +314,15 @@ const {chromium}=require("playwright");
      const b=getComputedStyle(document.querySelector(".vr-hero"));
      return {box:a.backgroundImage,hero:b.backgroundImage,text:a.color};
     });
-    assert.match(darkColors.box,/rgb\\(22, 37, 59\\)/,"dark order box did not use its dark palette");
-    assert.match(darkColors.hero,/rgb\\(25, 42, 66\\)/,"dark order hero did not use its dark palette");
+    assert.match(darkColors.box,/rgb\(22, 37, 59\)/,"dark order box did not use its dark palette");
+    assert.match(darkColors.hero,/rgb\(25, 42, 66\)/,"dark order hero did not use its dark palette");
     assert.equal(darkColors.text,"rgb(237, 246, 252)");
     await page.evaluate(()=>window.VionaTheme.choose("light"));
     const lightColors=await page.evaluate(()=>{
      const a=getComputedStyle(document.querySelector(".vr-box"));
      return {box:a.backgroundImage,text:a.color};
     });
-    assert.match(lightColors.box,/rgb\\(255, 255, 255\\)/,"light order box did not use its light palette");
+    assert.match(lightColors.box,/rgb\(255, 255, 255\)/,"light order box did not use its light palette");
     assert.equal(lightColors.text,"rgb(28, 64, 84)");
    }
    assert.deepEqual(pageErrors,[],"uncaught page errors: "+pageErrors.join(" | "));
