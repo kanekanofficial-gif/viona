@@ -333,7 +333,7 @@
    if(!response.ok)throw Error("catalog unavailable");const data=await response.json();
    products=(Array.isArray(data)?data:Array.isArray(data.products)?data.products:[]).map(p=>({...p,id:Number(p.id)}));
   }catch{products=[];toast("Каталог пока недоступен. Остальные разделы работают локально.")}
-  render();
+  render();setStudioRoute(tab);
  }
  const langCode={ru:"RU",en:"EN",de:"DE",ja:"JP",femboy:"♡"}[doc.dataset.world]||"RU";
  if($("#vstLangLabel"))$("#vstLangLabel").textContent=langCode;
