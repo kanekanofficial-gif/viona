@@ -22,6 +22,13 @@ const {chromium}=require("playwright");
       productCount:document.querySelectorAll(".product").length,lang:document.documentElement.lang};
    });
    console.log(label+" layout: "+JSON.stringify(layout));
+   if(layout.scrollWidth>width+1){
+    const overflow=await page.evaluate(()=>[...document.querySelectorAll("body *")].map(el=>{
+     const r=el.getBoundingClientRect();
+     return{tag:el.tagName.toLowerCase(),id:el.id,className:typeof el.className==="string"?el.className.slice(0,80):"",right:r.right,left:r.left};
+    }).filter(x=>x.right>innerWidth+1||x.left< -1).slice(0,20));
+    console.log(label+" overflow: "+JSON.stringify(overflow));
+   }
    assert.ok(layout.scrollWidth<=width+1,label+" has horizontal scroll");
    assert.ok(layout.copy&&layout.screen,"hero regions missing");
    assert.ok(layout.productCount>=5,label+" catalog did not load demo products");
@@ -42,15 +49,55 @@ const {chromium}=require("playwright");
     await page.locator("#sortTrigger").click();
     await page.locator("#sortList [data-sort=\"price-asc\"]").click();
     assert.ok((await page.locator(".product").count())>=5,"sort did not preserve product cards");
+    
+    const theme=page.locator("#vionaThemeMode");
+    await theme.selectOption("dark");
+    assert.equal(await page.locator("html").getAttribute("data-theme"),"dark","dark theme did not activate");
+    await theme.selectOption("light");
+    assert.equal(await page.locator("html").getAttribute("data-theme"),"light","light theme did not activate");
+    await page.emulateMedia({colorScheme:"dark"});
+    await theme.selectOption("auto");
+    assert.equal(await page.locator("html").getAttribute("data-theme"),"dark","system dark mode not detected");
+    await page.emulateMedia({colorScheme:"light"});
+    await page.waitForFunction(()=>document.documentElement.dataset.theme==="light",{timeout:3000});
+    assert.equal(await page.locator("html").getAttribute("data-theme"),"light","system light mode not detected");
+    assert.equal(await page.locator(".nx-requirements").count(),await page.locator(".product").count(),"all products need requirement lists");
+    await page.locator(".product .nx-requirements summary").first().click();
+    assert.ok(await page.locator(".product .nx-customize-form").first().isVisible(),"customization request form missing");
     await page.locator("#langTrigger").click();
     assert.ok(await page.locator("#langList").isVisible(),"language selector didn't open");
     await page.locator('[data-lang="en"]').click();
     await page.waitForLoadState("domcontentloaded");
     await page.waitForTimeout(350);
     assert.equal(await page.locator("html").getAttribute("lang"),"en","language did not switch");
+
+    await page.locator(".product-actions button[data-action='cart']").first().click();
     await page.locator("#cartOpen").click();
     await page.waitForTimeout(300);
     assert.ok(await page.locator("#panel").evaluate(e=>e.classList.contains("open")),"cart drawer failed to open");
+    const checkoutOpen=page.locator("#checkoutOpen");
+    assert.ok(await checkoutOpen.isVisible(),"checkout button missing");
+    await checkoutOpen.click();
+    assert.ok(await page.locator(".vx-checkout").isVisible(),"checkout did not open");
+    await page.waitForTimeout(100);
+    assert.match(await page.locator(".vx-title").innerText(),/Checkout/i,"English checkout title not translated");
+    assert.match(await page.locator(".vx-card-method").innerText(),/Bank card/,"payment labels not translated");
+    assert.match(await page.locator("#vionaSberFallback").innerText(),/T-Bank/i,"SberPay fallback link not translated");
+    await page.locator("#v15Close").click();
+    await page.locator("#langTrigger").click();
+    await page.locator('[data-lang="femboy"]').click();
+    await page.waitForLoadState("domcontentloaded");
+    await page.waitForTimeout(350);
+    assert.equal(await page.locator("html").getAttribute("data-world"),"femboy");
+    const pink=await page.evaluate(()=>getComputedStyle(document.documentElement).getPropertyValue("--vt-accent").trim());
+    assert.equal(pink,"#ff70b7","femboy theme must be pink-black");
+    await page.goto("http://127.0.0.1:4173/code-edit",{waitUntil:"domcontentloaded"});
+    await page.waitForTimeout(250);
+    assert.ok(await page.locator("#codeEditForm").isVisible(),"separate code-edit page unavailable");
+    assert.equal(await page.locator("html").getAttribute("data-world"),"femboy","code-edit locale not shared");
+    const serviceAccentResolved=await page.evaluate(()=>getComputedStyle(document.documentElement).getPropertyValue("--vt-accent").trim());
+    assert.equal(serviceAccentResolved,"#ff70b7","code-edit page must use pink femboy accent");
+
    }
    assert.deepEqual(pageErrors,[],"uncaught page errors: "+pageErrors.join(" | "));
    await page.close();
