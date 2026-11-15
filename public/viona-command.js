@@ -2,7 +2,7 @@
 /* Cmd+K / Ctrl+K: safe, searchable navigation; no account access by bypass. */
 (()=>{
  const locale=()=>{try{return JSON.parse(localStorage.getItem("viona-world"))||"ru"}catch{return"ru"}};
- const EN=locale()==="en",escape=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;":"&quot;","'":"&#39;"}[c]));
+ const EN=locale()==="en",escape=v=>String(v??"").replace(/[&<>"\']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]||(c.charCodeAt(0)===34?"&quot;":"&#39;")));
  const text={title:EN?"Search or type a command…":"Поиск действий или разделов…",empty:EN?"Nothing found":"Ничего не найдено",close:EN?"Esc to close":"Esc — закрыть",choose:EN?"Enter to select":"Enter — выбрать"};
  const commands=[
   {id:"catalog",title:EN?"Catalog":"Каталог",hint:EN?"Browse digital products":"Цифровые товары",icon:"◫",url:"/#catalog",keywords:"товары продукты поиск catalog"},
