@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="ru" data-theme="dark">
+<head>
+ <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+ <meta name="robots" content="noindex,nofollow,noarchive">
+ <meta name="referrer" content="no-referrer">
+ <meta name="description" content="VIONA — закрытое управление тестовыми заказами.">
+ <meta name="theme-color" content="#0b1119">
+ <title>VIONA — защищённое управление заказами</title>
+ <link rel="icon" href="/favicon.svg?v=30" type="image/svg+xml">
+ <link rel="stylesheet" href="/admin-console.css?v=1">
+ <script src="https://accounts.google.com/gsi/client" async defer></script>
+ <script src="/admin-console.js?v=1" defer></script>
+</head>
+<body>
+<header class="ad-top"><a href="/" class="ad-brand"><span class="ad-mark">V</span><span><strong>VIONA</strong><small>ORDER CONTROL</small></span></a><span class="ad-top-label">T-BANK · DEMO ONLY</span></header>
+<main class="ad-main">
+ <div class="ad-heading"><span class="ad-kicker">VIONA / PRIVATE WORKSPACE</span><h1>Управление заказами<span>.</span></h1><p>Только подтверждённые тестовые платежи и реальные обновления по заказам. Каждый статус меняет администратор.</p></div>
+ <div id="adminNotice" role="status" aria-live="polite"></div>
+ <section id="adminLogin" class="ad-login ad-card">
+  <span class="ad-label">SECURE SIGN IN</span><h2>Доступ только для команды VIONA</h2>
+  <p>Для входа используй разрешённый Google-аккаунт. Пароль Google вводится только на стороне Google, не на сайте VIONA.</p>
+  <div id="googleSignInButton" class="ad-google"></div>
+  <small>Если вход недоступен, проверь настройку Google Client ID и PostgreSQL на сервере.</small>
+ </section>
+ <section id="adminDashboard" hidden>
+  <div class="ad-toolbar"><div><span class="ad-label">DASHBOARD / LIVE ORDERS</span><p id="adminEmail"></p></div><div class="ad-tools"><button type="button" id="adminReload">Обновить</button><button type="button" id="adminLogout" class="secondary">Выйти</button></div></div>
+  <div class="ad-stats" id="adminStats" aria-label="Сводка заказов"></div>
+  <div class="ad-layout">
+   <section class="ad-card ad-list-panel"><div class="ad-panel-head"><h2>Все заказы</h2><small>Последние 100 тестовых оформлений</small></div>
+    <div class="ad-filters" id="adminFilters"><button type="button" data-filter="all" aria-pressed="true">Все</button><button type="button" data-filter="paid">Оплачены</button><button type="button" data-filter="pending">Ожидают</button><button type="button" data-filter="completed">Готовые</button></div>
+    <div id="adminOrders" class="ad-order-list" aria-live="polite"></div>
+   </section>
+   <section class="ad-card ad-detail-panel" id="adminDetail"><div class="ad-empty">Выбери заказ слева, чтобы посмотреть товары, обновить этап и прикрепить файл.</div></section>
+  </div>
+ </section>
+ <p class="ad-foot">Защита доступа проверяется сервером. URL страницы не является авторизацией. Реальные платежи здесь не проводятся.</p>
+</main>
+</body></html>

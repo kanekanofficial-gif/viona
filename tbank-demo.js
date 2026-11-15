@@ -258,4 +258,4 @@ function registerTestPayments(app,pool,getCatalog){
  });
  registerPaymentOrders(app,pool,bank,configured);
 }
-module.exports={registerTestPayments};
+module.exports={registerTestPayments,bank,configured};

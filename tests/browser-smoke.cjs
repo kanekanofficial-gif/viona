@@ -292,6 +292,13 @@ const {chromium}=require("playwright");
     assert.match(await page.locator("#vbChatLog").innerText(),/Доступные команды:/);
     await page.screenshot({path:"screenshots/bot-builder-"+label+".png",fullPage:true});
    }
+   /* An unlisted admin page never reveals orders before Google authentication. */
+   await page.goto("http://127.0.0.1:4173/admin-console",{waitUntil:"domcontentloaded"});
+   await page.waitForFunction(()=>document.querySelector("#adminNotice")?.textContent?.length>0,null,{timeout:8000});
+   assert.ok(await page.locator("#adminLogin").isVisible(),"Google admin login screen missing");
+   assert.ok(!await page.locator("#adminDashboard").isVisible(),"admin orders must be private");
+   assert.match(await page.locator("h1").first().innerText(),/Управление заказами/);
+   if(width===1440)await page.screenshot({path:"screenshots/admin-login.png"});
    assert.deepEqual(pageErrors,[],"uncaught page errors: "+pageErrors.join(" | "));
    await page.close();
   }
