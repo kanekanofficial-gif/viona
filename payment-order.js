@@ -5,9 +5,6 @@ const UUID=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const FINISHED=new Set(["CONFIRMED","REFUNDED","REVERSED"]);
 const FAILED=new Set(["REJECTED","AUTH_FAIL","CANCELED","DEADLINE_EXPIRED","REFUNDED","REVERSED"]);
 const ALLOWED_BANK=new Set(["NEW","FORM_SHOWED","AUTHORIZING","AUTHORIZED","CONFIRMED","AUTH_FAIL","REJECTED","CANCELED","DEADLINE_EXPIRED","REFUNDED","REVERSED","CONFIRMING"]);
-const PROGRESSION={queued:"in_progress",in_progress:"ready",ready:"completed"};
-const publicSite=()=>(process.env.PUBLIC_BASE_URL||"https://viona.space").replace(/\/$/,"");
-const isAdmin=user=>Boolean(user && String(process.env.VIONA_ADMIN_TELEGRAM_IDS||"").split(",").map(v=>v.trim()).filter(Boolean).includes(String(user.id)));
 const safeText=(input,max=500)=>typeof input==="string"?input.trim().slice(0,max):"";
 
 function bankMatches(remote,row){
@@ -86,7 +83,9 @@ function publicOrder(row,canManage){
   paidAt:confirmed?row.paid_at:null,
   stageUpdatedAt:row.stage_updated_at,
   demo:true,
-  canManage:Boolean(canManage&&confirmed)
+  fileAvailable:Boolean(confirmed&&stage==="completed"&&row.filename),
+  fileName:confirmed&&stage==="completed"&&row.filename?safeText(row.filename,180):null,
+  canManage:false
  };
 }
 function registerPaymentOrders(app,pool,bank,configured){
@@ -100,11 +99,11 @@ function registerPaymentOrders(app,pool,bank,configured){
   if(!pool||!configured())return res.status(503).json({error:"Сервис проверки оплаты временно недоступен."});
   if(!UUID.test(req.params.id))return res.status(400).json({error:"Некорректный номер заказа."});
   try{
-   const p=await pool.query("SELECT * FROM viona_demo_payments WHERE order_id=$1 AND telegram_id=$2",[req.params.id,user.id]);
+   const p=await pool.query("SELECT p.*,f.filename FROM viona_demo_payments p LEFT JOIN viona_demo_order_files f ON f.order_id=p.order_id WHERE p.order_id=$1 AND p.telegram_id=$2",[req.params.id,user.id]);
    if(!p.rowCount)return res.status(404).json({error:"Заказ не найден в этом аккаунте."});
    const row=await reconcile(p.rows[0],pool,bank);
    const events=await pool.query("SELECT stage,message,created_at FROM viona_demo_order_events WHERE order_id=$1 ORDER BY id ASC LIMIT 60",[req.params.id]);
-   res.json({order:publicOrder(row,isAdmin(user)),events:events.rows.map(e=>({stage:safeText(e.stage,35),message:safeText(e.message,500),createdAt:e.created_at}))});
+   res.json({order:publicOrder(row,false),events:events.rows.map(e=>({stage:safeText(e.stage,35),message:safeText(e.message,500),createdAt:e.created_at}))});
   }catch(e){
    console.error("VIONA order details:",e.message);
    res.status(503).json({error:"Не удалось получить данные заказа."});
@@ -116,45 +115,30 @@ function registerPaymentOrders(app,pool,bank,configured){
   if(!user)return res.status(401).json({error:"Требуется вход через Telegram."});
   if(!pool||!configured())return res.status(503).json({error:"История тестовых покупок недоступна."});
   try{
-   const r=await pool.query("SELECT * FROM viona_demo_payments WHERE telegram_id=$1 ORDER BY created_at DESC LIMIT 40",[user.id]);
+   const r=await pool.query("SELECT p.*,f.filename FROM viona_demo_payments p LEFT JOIN viona_demo_order_files f ON f.order_id=p.order_id WHERE p.telegram_id=$1 ORDER BY p.created_at DESC LIMIT 40",[user.id]);
    res.json({orders:r.rows.map(row=>publicOrder(row,false))});
   }catch(e){console.error("VIONA purchase history:",e.message);res.status(503).json({error:"История заказов недоступна."})}
  });
- function requireAdmin(req,res){
+
+ // Only the purchasing Telegram account can download, and only after verified CONFIRMED and admin completion.
+ app.get("/api/payments/test/order/:id/file",async(req,res)=>{
+  res.set({"Cache-Control":"private, no-store","X-Content-Type-Options":"nosniff","Content-Security-Policy":"sandbox"});
   const user=getUser(req);
-  if(!user || !isAdmin(user))return false;
-  const origin=req.get("origin");
-  return origin===publicSite() && req.is("application/json");
- }
- app.patch("/api/payments/test/order/:id/stage",async(req,res)=>{
-  res.set("Cache-Control","no-store");
-  if(!requireAdmin(req,res))return res.status(403).json({error:"Нет доступа к управлению заказами."});
-  if(!pool||!configured())return res.sendStatus(503);
+  if(!user)return res.status(401).json({error:"Войди через Telegram для скачивания результата."});
+  if(!pool)return res.sendStatus(503);
   if(!UUID.test(req.params.id))return res.sendStatus(400);
-  const next=safeText(req.body?.stage,35),note=safeText(req.body?.note,500);
-  if(!["in_progress","ready","completed"].includes(next))return res.status(400).json({error:"Недопустимый этап заказа."});
-  const previous=Object.keys(PROGRESSION).find(stage=>PROGRESSION[stage]===next);
   try{
-   const r=await pool.query(
-    "UPDATE viona_demo_payments SET fulfillment_status=$3,fulfillment_note=$4,stage_updated_at=NOW(),updated_at=NOW() " +
-    "WHERE order_id=$1 AND telegram_id IS NOT NULL AND status='CONFIRMED' AND fulfillment_status=$2 RETURNING *",
-    [req.params.id,previous,next,note]
-   );
-   if(!r.rowCount)return res.status(409).json({error:"Этап заказа изменился или платёж ещё не подтверждён."});
-   res.json({order:publicOrder(r.rows[0],true)});
-  }catch(e){console.error("VIONA fulfillment stage:",e.message);res.status(503).json({error:"Не удалось обновить этап заказа."})}
+   const q=await pool.query(`SELECT f.filename,f.contents FROM viona_demo_order_files f
+    JOIN viona_demo_payments p ON p.order_id=f.order_id
+    WHERE p.order_id=$1 AND p.telegram_id=$2 AND p.status='CONFIRMED' AND p.fulfillment_status='completed'`,[req.params.id,user.id]);
+   if(!q.rowCount)return res.status(404).json({error:"Файл пока недоступен. Открой заказ после завершения работы."});
+   const item=q.rows[0];
+   const fallback="viona-code-result";
+   res.set("Content-Disposition",'attachment; filename="'+fallback+'"; filename*=UTF-8\\'\\''+encodeURIComponent(item.filename));
+   res.type("application/octet-stream");
+   res.send(item.contents);
+  }catch(e){console.error("VIONA private code delivery:",e.message);res.status(503).json({error:"Не удалось скачать файл."})}
  });
- app.post("/api/payments/test/order/:id/message",async(req,res)=>{
-  res.set("Cache-Control","no-store");
-  if(!requireAdmin(req,res))return res.status(403).json({error:"Нет доступа к сообщениям."});
-  if(!pool||!configured())return res.sendStatus(503);
-  if(!UUID.test(req.params.id))return res.sendStatus(400);
-  const message=safeText(req.body?.message,500);
-  if(message.length<3)return res.status(400).json({error:"Сообщение слишком короткое."});
-  try{
-   const r=await pool.query("INSERT INTO viona_demo_order_events(order_id,stage,message) SELECT order_id,'message',$2 FROM viona_demo_payments WHERE order_id=$1 AND status='CONFIRMED' RETURNING id",[req.params.id,message]);
-   res.status(r.rowCount?201:404).json({ok:Boolean(r.rowCount)});
-  }catch(e){console.error("VIONA fulfillment message:",e.message);res.status(503).json({error:"Не удалось отправить сообщение."})}
- });
+
 }
-module.exports={registerPaymentOrders,bankMatches,publicOrder};
+module.exports={registerPaymentOrders,bankMatches,publicOrder,reconcile};
