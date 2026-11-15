@@ -167,7 +167,7 @@
    '<div class="vb-fields-two">'+
    field("Тип медиа (демо)",'<select name="media">'+[["none","Только текст"],["photo","Фото-заглушка"],["document","Документ-заглушка"]].map(([v,t])=>option(v,t,existing?.media||"none")).join("")+'</select>')+
    field("Подпись к медиа",input("mediaCaption","Описание фото или файла",existing?.mediaCaption||"",350))+'</div>'+
-   '<label class="vb-field vb-upload"><span>Локальное фото (PNG, JPG, WebP, до 150 КБ)</span><input type="file" id="vbMediaFile" accept="image/png,image/jpeg,image/webp"></label>'+
+   '<label class="vb-field vb-upload"><span>Локальное фото (PNG, JPG, WebP, до 150 КБ)</span><input type="file" id="vbMediaFile" accept="image/png,image/jpeg,image/webp"><small id="vbImageUploadStatus">Файл не выбран.</small></label>'+
    (imageData&&trustedImageURI(imageData)?'<div class="vb-image-preview"><img src="'+escapeHTML(imageData)+'" alt="Предпросмотр изображения">'+button("Убрать фото",'data-vb-action="clear-image"')+'</div>':'<p class="vb-subtle">Фото хранится только в этом браузере. Для реального заказа изображение потребуется передать отдельно.</p>')+
    '<div class="vst-actions"><button type="submit" class="vb-btn primary">'+(existing?"Сохранить изменения":"Добавить команду")+'</button>'+
    (editing?button("Отменить редактирование",'data-vb-action="cancel-edit"'):"")+'</div></form>';
@@ -354,9 +354,10 @@
   const log=ROOT.querySelector("#vbChatLog");if(log)log.scrollTop=log.scrollHeight;
  }
  function action(name){
-  if(name==="undo"||name==="redo"){restore(name);return}
+  if(name==="undo"||name==="redo"){pendingMedia=null;restore(name);return}
+  if(name==="clear-image"){pendingMedia="";const image=ROOT.querySelector(".vb-image-preview img");if(image)image.hidden=true;notify("Фото будет убрано после сохранения команды.");return}
   if(name==="clear-chat"){chat=[{type:"system",text:"Чат очищен. Введи команду для проверки."}];repaint();return}
-  if(name==="cancel-edit"){editing=null;panel="commands";repaint();return}
+  if(name==="cancel-edit"){editing=null;pendingMedia=null;panel="commands";repaint();return}
   if(name==="download"){
    const blob=new Blob([brief()],{type:"text/plain;charset=utf-8"}),url=URL.createObjectURL(blob),a=document.createElement("a");
    a.href=url;a.download="viona-telegram-bot-brief.txt";document.body.append(a);a.click();a.remove();
@@ -364,7 +365,7 @@
   }
   if(name==="apply-template"){
    if(!window.confirm("Заменить текущий черновик выбранным шаблоном? Предыдущую версию можно вернуть через «Отменить»."))return;
-   change(()=>{bot=TEMPLATES[templateChoice].make();selected=bot.commands[0]?.name||"/start";editing=null;panel="commands";chat=[{type:"system",text:"Шаблон применён. Попробуй /start."}]});
+   change(()=>{bot=TEMPLATES[templateChoice].make();selected=bot.commands[0]?.name||"/start";editing=null;pendingMedia=null;panel="commands";chat=[{type:"system",text:"Шаблон применён. Попробуй /start."}]});
    repaint();return;
   }
  }
@@ -386,6 +387,7 @@
   finally{requestBusy=false;repaint()}
  }
  function submitCommand(form){
+  if(uploadingImage){notify("Дождись завершения чтения фотографии.");return}
   const fields=new FormData(form),name=trim(fields.get("name"),33).toLowerCase(),reply=trim(fields.get("reply"),2400),roleValue=fields.get("role");
   if(!validCommand(name)){notify("Имя команды должно начинаться с / и содержать латинские буквы, цифры или _. До 32 символов.");return}
   if(!reply){notify("Напиши ответ для этой команды.");return}
@@ -396,13 +398,14 @@
    const current=oldName?getCommand(oldName):null;
    const record={name,reply,role:roles.includes(roleValue)?roleValue:"all",
     media:["none","photo","document"].includes(media)?media:"none",mediaCaption,
+    mediaData:media==="photo"?(pendingMedia!==null?pendingMedia:current?.mediaData||""):"",
     buttons:current?.buttons||[]};
    if(current){
     Object.assign(current,record);
     if(oldName!==name)for(const cmd of bot.commands)for(const b of cmd.buttons)if(b.kind==="command"&&b.target===oldName)b.target=name;
    }else bot.commands.push(record);
   });
-  selected=name;editing=null;notify("Команда "+name+" сохранена.");repaint();
+  selected=name;editing=null;pendingMedia=null;notify("Команда "+name+" сохранена.");repaint();
  }
  function submitButton(form){
   const current=currentCommand();if(!current){notify("Сначала добавь команду.");return}
@@ -457,12 +460,36 @@
   if(e.target.id==="vbTemplate"){templateChoice=e.target.value;return}
   if(e.target.id==="vbSelectedCommand"){selected=e.target.value;repaint();return}
   if(e.target.id==="vbSimRole"){role=e.target.value;repaint();return}
+  if(e.target.id==="vbMediaFile"){
+   const file=e.target.files?.[0];if(!file)return;
+   const status=ROOT.querySelector("#vbImageUploadStatus");
+   if(!["image/png","image/jpeg","image/webp"].includes(file.type)||file.size>PHOTO_MAX_BYTES){
+    if(status)status.textContent="Нужен PNG/JPEG/WebP размером до 150 КБ.";
+    notify("Уменьши изображение до 150 КБ и попробуй ещё раз.");e.target.value="";return;
+   }
+   const otherPhotos=bot.commands.reduce((n,c)=>n+(c.mediaData?.length||0),0)-(editing?getCommand(editing)?.mediaData?.length||0:0);
+   if(otherPhotos+Math.ceil(file.size*1.4)>700000){
+    if(status)status.textContent="Лимит фото черновика исчерпан.";
+    notify("Уменьши изображения: общий лимит около 500 КБ.");e.target.value="";return;
+   }
+   uploadingImage=true;if(status)status.textContent="Читаем локальное фото…";
+   const reader=new FileReader();
+   reader.onload=()=>{
+    uploadingImage=false;
+    if(!trustedImageURI(reader.result)){if(status)status.textContent="Не удалось прочитать изображение.";return}
+    pendingMedia=reader.result;
+    if(status)status.textContent="Фото готово. Выбери «Фото-заглушка» в типе медиа и сохрани команду.";
+   };
+   reader.onerror=()=>{uploadingImage=false;if(status)status.textContent="Ошибка чтения изображения."};
+   reader.readAsDataURL(file);return;
+  }
+
  });
  ROOT.addEventListener("click",e=>{
   const node=e.target.closest("#vionaBotBuilder button");if(!node)return;
   if(node.dataset.vbPanel){panel=node.dataset.vbPanel;repaint();return}
   if(node.dataset.vbAction){action(node.dataset.vbAction);return}
-  if(node.dataset.vbEdit){editing=node.dataset.vbEdit;selected=editing;panel="commands";repaint();return}
+  if(node.dataset.vbEdit){editing=node.dataset.vbEdit;pendingMedia=null;selected=editing;panel="commands";repaint();return}
   if(node.dataset.vbDelete){
    if(!window.confirm("Удалить команду "+node.dataset.vbDelete+"? Связанные кнопки останутся, но проверка покажет их ошибки."))return;
    change(()=>{bot.commands=bot.commands.filter(c=>c.name!==node.dataset.vbDelete)});
