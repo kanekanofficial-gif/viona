@@ -23,15 +23,17 @@
  }
  let state=normalize(read(KEY,null));
  let editor=Object.assign({font:13,wrap:false,tabs:2,theme:"dark",numbers:true},read(EDITOR,{}));
- const segments=location.pathname.split("/").filter(Boolean),pathView=segments[1]==="projects"?"workspace":segments[1];
+ const segments=location.pathname.split("/").filter(Boolean),pathView=segments[1]==="projects"?"workspace":segments[1]==="bots"?"lab":segments[1];
  if(segments[1]==="projects"&&state.projects.some(p=>p.id===segments[2]))state.selectedProject=segments[2];
  if(segments[1]==="boards"&&state.boards.some(x=>x.id===segments[2]))state.selectedBoard=segments[2];
+ if(segments[1]==="bots")state.lab="telegram";
  const effectiveTheme=()=>doc.dataset.theme==="dark"?"dark":"light";editor.theme=effectiveTheme();
  let products=[],tab=pathView||new URLSearchParams(location.search).get("view")||"lab",labMessage="Введи /start, чтобы увидеть демонстрацию.",demoSite="landing";
  const tabs=new Set(["lab","builder","workspace","diff","bundles","boards","dashboard","editor","support"]);
  const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
  function setStudioRoute(view=tab){const record=view==="workspace"?selectedProject():view==="boards"?selectedBoard():null;
-  const path=record&&uuid.test(record.id)?"/studio/"+(view==="workspace"?"projects":"boards")+"/"+record.id:"/studio/"+view;
+  const botId=view==="lab"&&state.lab==="telegram"?window.VionaBotBuilder?.id?.():null;
+  const path=record&&uuid.test(record.id)?"/studio/"+(view==="workspace"?"projects":"boards")+"/"+record.id:botId&&uuid.test(botId)?"/studio/bots/"+botId:"/studio/"+view;
   if(location.pathname!==path||location.search)history.replaceState(history.state,"",path);
  }
  const vector=n=>'<svg class="vst-svg" aria-hidden="true"><use href="/assets/studio-icons.svg#'+n+'"></use></svg>';
@@ -277,7 +279,7 @@
   const x=e.target.closest("button,[data-vst-tab]");if(!x)return;
   if(x.dataset.vstTab){navigate(x.dataset.vstTab);return}
   if(x.hasAttribute("data-vst-copy-support")){if(!navigator.clipboard?.writeText){toast("Выдели адрес поддержки и скопируй вручную.");return}navigator.clipboard.writeText("support.viona.space@gmail.com").then(()=>toast("Адрес поддержки скопирован.")).catch(()=>toast("Не удалось скопировать. Выдели адрес вручную."));return}
-  if(x.dataset.vstLab){state.lab=x.dataset.vstLab;save();renderLab();return}
+  if(x.dataset.vstLab){state.lab=x.dataset.vstLab;save();renderLab();setStudioRoute("lab");return}
   if(x.dataset.vstDemo){const v=x.dataset.vstDemo;labMessage=v==="/start"?"Привет! Это интерактивная демонстрация бота VIONA.":v==="/help"?"Команды: /start, /help, /about.": "VIONA Bot Starter — макет для будущего проекта.";renderLab();return}
   if(x.dataset.vstSite){demoSite=x.dataset.vstSite;renderLab();return}
   if(x.hasAttribute("data-vst-run-diff")){diffInputs.left=$("#vstDiffBefore").value;diffInputs.right=$("#vstDiffAfter").value;paintDiff();return}
