@@ -193,6 +193,7 @@ const {chromium}=require("playwright");
     await page.locator('#vbOrderForm [name="contact"]').fill("@viona_test");
     await page.locator('#vbOrderForm [name="agreement"]').check();
     await page.locator('#vbOrderForm button[type="submit"]').click();
+    await page.waitForFunction(()=>document.querySelector("#vbOrderStatus")?.textContent.includes("НЕ сохранил заявку"),null,{timeout:10000});
     assert.match(await page.locator("#vbOrderStatus").innerText(),/НЕ сохранил заявку/);
     await page.unroute("**/api/request");
 
