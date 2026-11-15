@@ -1,0 +1,121 @@
+/* VIONA payment return: honor the same light/dark preference as the main store.
+   Loaded after historical reset/theme CSS to prevent white cards + white text. */
+html[data-theme="dark"] #vionaResultRoot.vr-root{
+ color-scheme:dark;color:#edf6fc!important;
+ background:radial-gradient(ellipse 55% 45% at 85% -5%,#29477355,transparent 75%),
+ radial-gradient(ellipse 40% 35% at 2% 55%,#164b5338,transparent 75%),#08101d!important;
+}
+html[data-theme="dark"] #vionaResultRoot.vr-root .vr-hero{
+ color:#edf6fc!important;
+ background:radial-gradient(ellipse at 100% 0%,#5274ad30,transparent 65%),linear-gradient(140deg,#192a42,#101b2c)!important;
+ border-color:#b3d5f73c!important;
+}
+html[data-theme="dark"] #vionaResultRoot.vr-root .vr-box{
+ color:#edf6fc!important;
+ background:linear-gradient(148deg,#16253b,#0c1728)!important;
+ border-color:#9cbbdf33!important;
+}
+html[data-theme="dark"] #vionaResultRoot.vr-root .vr-delivery{
+ background:linear-gradient(140deg,#173930,#101f29)!important;
+ border-color:#a2efcf65!important;
+}
+html[data-theme="light"] #vionaResultRoot.vr-root{
+ color-scheme:light;
+ --vr-muted:#506f81;--vr-blue:#176b91;--vr-teal:#0c795f;--vr-line:#b5d7e4;
+ color:#1a3c4f!important;
+ background:radial-gradient(ellipse 55% 45% at 85% -5%,#d2eaf65c,transparent 75%),
+ radial-gradient(ellipse 40% 35% at 2% 55%,#d8f1ee88,transparent 75%),#f1f8fc!important;
+}
+html[data-theme="light"] #vionaResultRoot.vr-root .vr-hero{
+ background:radial-gradient(ellipse at 100% 0%,#daebfa,transparent 65%),linear-gradient(140deg,#fff,#eef6fc)!important;
+ color:#1c4054!important;border-color:#bbd6e4!important;box-shadow:0 15px 38px #2d567022!important;
+}
+html[data-theme="light"] #vionaResultRoot.vr-root .vr-box{
+ background:linear-gradient(148deg,#fff,#f4f9fc)!important;
+ color:#1c4054!important;border-color:#c7deea!important;box-shadow:0 12px 40px #2d567018!important;
+}
+html[data-theme="light"] #vionaResultRoot.vr-root .vr-delivery{
+ background:linear-gradient(145deg,#effbf6,#f6fcfd)!important;border-color:#9ccdb9!important;
+}
+html[data-theme="light"] #vionaResultRoot.vr-root .vr-bar{
+ border-bottom-color:#c8dfeb;
+}
+html[data-theme="light"] #vionaResultRoot.vr-root .vr-logo,
+html[data-theme="light"] #vionaResultRoot.vr-root h1,
+html[data-theme="light"] #vionaResultRoot.vr-root .vr-box-title>span,
+html[data-theme="light"] #vionaResultRoot.vr-root .vr-item-title strong,
+html[data-theme="light"] #vionaResultRoot.vr-root .vr-step-active strong,
+html[data-theme="light"] #vionaResultRoot.vr-root .vr-follow>strong,
+html[data-theme="light"] #vionaResultRoot.vr-root .vr-event strong,
+html[data-theme="light"] #vionaResultRoot.vr-root .vr-receipt-row strong,
+html[data-theme="light"] #vionaResultRoot.vr-root .vr-help>span{
+ color:#173a4d!important;
+}
+html[data-theme="light"] #vionaResultRoot.vr-root .vr-hero-text>p,
+html[data-theme="light"] #vionaResultRoot.vr-root .vr-item-main p,
+html[data-theme="light"] #vionaResultRoot.vr-root .vr-step small,
+html[data-theme="light"] #vionaResultRoot.vr-root .vr-step>div,
+html[data-theme="light"] #vionaResultRoot.vr-root .vr-follow p,
+html[data-theme="light"] #vionaResultRoot.vr-root .vr-box-title>small,
+html[data-theme="light"] #vionaResultRoot.vr-root .vr-receipt-row span,
+html[data-theme="light"] #vionaResultRoot.vr-root .vr-event p,
+html[data-theme="light"] #vionaResultRoot.vr-root .vr-event time,
+html[data-theme="light"] #vionaResultRoot.vr-root .vr-empty,
+html[data-theme="light"] #vionaResultRoot.vr-root .vr-help p,
+html[data-theme="light"] #vionaResultRoot.vr-root .vr-delivery p,
+html[data-theme="light"] #vionaResultRoot.vr-root .vr-footer,
+html[data-theme="light"] #vionaResultRoot.vr-root .vr-verified{
+ color:#496b7e!important;
+}
+html[data-theme="light"] #vionaResultRoot.vr-root .vr-step strong,
+html[data-theme="light"] #vionaResultRoot.vr-root .vr-tags span,
+html[data-theme="light"] #vionaResultRoot.vr-root .vr-receipt-total span,
+html[data-theme="light"] #vionaResultRoot.vr-root .vr-current-note{
+ color:#315a71!important;
+}
+html[data-theme="light"] #vionaResultRoot.vr-root .vr-eyebrow,
+html[data-theme="light"] #vionaResultRoot.vr-root .vr-text-link,
+html[data-theme="light"] #vionaResultRoot.vr-root .vr-help a{
+ color:#08758f!important;
+}
+html[data-theme="light"] #vionaResultRoot.vr-root .vr-receipt-total strong,
+html[data-theme="light"] #vionaResultRoot.vr-root .vr-item-title span{
+ color:#087764!important;
+}
+html[data-theme="light"] #vionaResultRoot.vr-root .vr-item,
+html[data-theme="light"] #vionaResultRoot.vr-root .vr-verified,
+html[data-theme="light"] #vionaResultRoot.vr-root .vr-tags span,
+html[data-theme="light"] #vionaResultRoot.vr-root .vr-current-note{
+ background:#e8f3f8!important;border-color:#c8dfeb!important;
+}
+html[data-theme="light"] #vionaResultRoot.vr-root .vr-receipt-row,
+html[data-theme="light"] #vionaResultRoot.vr-root .vr-event{
+ border-color:#cedfe8!important;
+}
+html[data-theme="light"] #vionaResultRoot.vr-root .vr-step-number{
+ background:#e0edf4!important;color:#31566b!important;border-color:#bed3e0!important;
+}
+html[data-theme="light"] #vionaResultRoot.vr-root .vr-step-active .vr-step-number{
+ background:linear-gradient(130deg,#acf1e0,#acd7f8)!important;color:#163c46!important;
+}
+html[data-theme="light"] #vionaResultRoot.vr-root .vr-step-done .vr-step-number{
+ background:#d3f5e9!important;color:#12624a!important;border-color:#8fd9bb!important;
+}
+html[data-theme="light"] #vionaResultRoot.vr-root .vr-verified span{
+ color:#0e785d!important;
+}
+html[data-theme="light"] #vionaResultRoot.vr-root .vr-bar-badge{
+ color:#0b735d!important;border-color:#8cc9b8!important;background:#e2f7ef!important;
+}
+html[data-theme="light"] #vionaResultRoot.vr-root .vr-secondary-link{
+ color:#1f5369!important;background:#e8f3f9!important;border-color:#b7d6e4!important;
+}
+html[data-theme="light"] #vionaResultRoot.vr-root .vr-help{
+ background:#f3f9fb!important;border-color:#c3dce7!important;
+}
+html[data-theme="light"] #vionaResultRoot.vr-root .vr-dot{
+ color:#078cab!important;
+}
+html[data-theme="light"] #vionaResultRoot.vr-root .vr-signal{
+ background:#0a9a72;
+}
