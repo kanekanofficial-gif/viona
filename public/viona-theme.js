@@ -19,7 +19,7 @@
   const effective=mode==="auto"?(media.matches?"dark":"light"):mode;
   root.dataset.theme=effective;
   root.dataset.themeChoice=mode;
-  root.style.colorScheme=locale()==="femboy"?"dark":effective;
+  root.style.colorScheme=effective;
   const select=document.querySelector("#vionaThemeMode");
   const label=document.querySelector("#vionaThemeLabel");
   const words=labels[locale()]||labels.ru;

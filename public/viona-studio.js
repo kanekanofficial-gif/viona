@@ -12,7 +12,7 @@
  const esc=x=>String(x??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
  const read=(key,fallback)=>{try{return JSON.parse(localStorage.getItem(key))??fallback}catch{return fallback}};
  const clean=(s,n=300)=>String(s??"").trim().slice(0,n);
- const uid=()=>crypto?.randomUUID?.()||"vst-"+Date.now()+"-"+Math.floor(Math.random()*100000);
+ const uid=()=>{if(globalThis.crypto?.randomUUID)return crypto.randomUUID();const b=new Uint8Array(16);crypto.getRandomValues(b);b[6]=(b[6]&15)|64;b[8]=(b[8]&63)|128;const h=[...b].map(x=>x.toString(16).padStart(2,"0")).join("");return [h.slice(0,8),h.slice(8,12),h.slice(12,16),h.slice(16,20),h.slice(20)].join("-")};
  const stamp=()=>new Date().toISOString();
  const defaults=()=>({projects:[],boards:[],bundle:[],widgetOrder:["projects","orders","boards","catalog","lab"],lab:"telegram",selectedProject:null,selectedBoard:null});
  function normalize(s){
@@ -23,15 +23,27 @@
  }
  let state=normalize(read(KEY,null));
  let editor=Object.assign({font:13,wrap:false,tabs:2,theme:"dark",numbers:true},read(EDITOR,{}));
- let products=[],tab=new URLSearchParams(location.search).get("view")||"lab",labMessage="Введи /start, чтобы увидеть демонстрацию.",demoSite="landing";
- const tabs=new Set(["lab","builder","workspace","diff","bundles","boards","dashboard","editor"]);
+ const segments=location.pathname.split("/").filter(Boolean),pathView=segments[1]==="projects"?"workspace":segments[1]==="bots"?"lab":segments[1];
+ if(segments[1]==="projects"&&state.projects.some(p=>p.id===segments[2]))state.selectedProject=segments[2];
+ if(segments[1]==="boards"&&state.boards.some(x=>x.id===segments[2]))state.selectedBoard=segments[2];
+ if(segments[1]==="bots")state.lab="telegram";
+ const effectiveTheme=()=>doc.dataset.theme==="dark"?"dark":"light";editor.theme=effectiveTheme();
+ let products=[],tab=pathView||new URLSearchParams(location.search).get("view")||"lab",labMessage="Введи /start, чтобы увидеть демонстрацию.",demoSite="landing";
+ const tabs=new Set(["lab","builder","workspace","diff","bundles","boards","dashboard","editor","support"]);
+ const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+ function setStudioRoute(view=tab){const record=view==="workspace"?selectedProject():view==="boards"?selectedBoard():null;
+  const botId=view==="lab"&&state.lab==="telegram"?window.VionaBotBuilder?.id?.():null;
+  const path=record&&uuid.test(record.id)?"/studio/"+(view==="workspace"?"projects":"boards")+"/"+record.id:botId&&uuid.test(botId)?"/studio/bots/"+botId:"/studio/"+view;
+  if(location.pathname!==path||location.search)history.replaceState(history.state,"",path);
+ }
+ const vector=n=>'<svg class="vst-svg" aria-hidden="true"><use href="/assets/studio-icons.svg#'+n+'"></use></svg>';
  if(!tabs.has(tab))tab="lab";
  let diffInputs={left:"function hello() {\n  return 'Hello';\n}",right:"function hello(name) {\n  return 'Hello, ' + name;\n}"};
  const toast=message=>{const t=$("#vstToast");if(!t)return;t.textContent=message;t.classList.add("show");clearTimeout(toast.timer);toast.timer=setTimeout(()=>t.classList.remove("show"),3300)};
  function save(){
   try{localStorage.setItem(KEY,JSON.stringify(state));return true}catch{toast("Не удалось сохранить данные: возможно, переполнено хранилище браузера.");return false}
  }
- const asset=id=>{const known={1:"⌘",2:"▦",3:"◆",4:"◈",5:"▣",6:"⌨",7:"◎"};return known[id]||"✦"};
+ const asset=id=>{const known={1:"telegram",2:"dashboard",3:"builder",4:"triggers",5:"workspace",6:"editor",7:"buttons"};return vector(known[id]||"bundles")};
  const selectedProject=()=>state.projects.find(p=>p.id===state.selectedProject)||state.projects[0];
  const selectedBoard=()=>state.boards.find(b=>b.id===state.selectedBoard)||state.boards[0];
  const price=x=>Number(x||0).toLocaleString("ru-RU")+" ₽";
@@ -71,7 +83,7 @@
  }
  const stages=[["idea","Идея"],["brief","Техническое задание"],["design","Дизайн"],["build","Разработка"],["test","Тестирование"],["release","Релиз"]];
  function renderWorkspace(){
-  const p=selectedProject();if(p)state.selectedProject=p.id;
+  const p=selectedProject();if(p)state.selectedProject=p.id;setStudioRoute("workspace");
   const list='<div class="vst-list">'+(state.projects.length?state.projects.map(x=>'<div class="vst-list-item"><div><strong class="vst-private">'+esc(x.title)+'</strong><small>'+esc(x.kind)+' · '+new Date(x.createdAt).toLocaleDateString("ru-RU")+'</small></div>'+button(x.id===p?.id?"Открыт":"Открыть",'data-vst-open-project="'+esc(x.id)+'"',x.id===p?.id?"primary":"")+'</div>').join(""):'<div class="vst-empty">Пока нет проектов. Создай первый в Конструкторе.</div>')+'</div>';
   let details=note("Этапы отмечает сам пользователь. Это не статусы разработки от команды VIONA и не подтверждённые заказы.");
   if(p){
@@ -124,7 +136,7 @@
    '<div class="vst-card vg-glass-panel" style="margin-top:15px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px"><div><h3>Состав набора: '+set.size+' товара</h3><strong>'+price(total)+'</strong></div>'+button("Добавить набор в корзину",'data-vst-add-bundle',set.size?"primary":"")+'</div>';
  }
  function renderBoards(){
-  const b=selectedBoard();if(b)state.selectedBoard=b.id;
+  const b=selectedBoard();if(b)state.selectedBoard=b.id;setStudioRoute("boards");
   ROOT.innerHTML=title("Доски идей","Собирай заметки и закрепляй товары в личных подборках. Доски доступны в этом браузере.")+
   '<div class="vst-grid two"><div class="vst-card"><h3>Мои доски</h3><form id="vstBoardForm" class="vst-actions"><input class="vst-input" name="board" placeholder="Название новой доски" required maxlength="70"><button class="vst-btn primary" type="submit">Создать доску</button></form><div class="vst-list" style="margin-top:15px">'+
   (state.boards.length?state.boards.map(x=>'<div class="vst-list-item"><strong class="vst-private">'+esc(x.title)+'</strong>'+button(x.id===b?.id?"Открыта":"Открыть",'data-vst-open-board="'+esc(x.id)+'"',x.id===b?.id?"primary":"")+'</div>').join(""):'<div class="vst-empty">Нет досок. Создай новую.</div>')+
@@ -151,10 +163,11 @@
   }).join("")+'</div>';
  }
  function renderEditor(){
+  editor.theme=effectiveTheme();
   ROOT.innerHTML=title("Редактор кода","Настраиваемый редактор с номерами строк, размером шрифта, переносом и табуляцией. Код остаётся в браузере.")+
   '<div class="vst-grid two"><article class="vst-card">'+
   '<label class="vst-field">Размер шрифта<select data-vst-editor="font">'+[12,13,14,16,18].map(n=>'<option value="'+n+'"'+(editor.font===n?" selected":"")+'>'+n+' px</option>').join("")+'</select></label>'+
-  '<label class="vst-field">Тема редактора<select data-vst-editor="theme"><option value="dark"'+(editor.theme==="dark"?" selected":"")+'>Тёмная</option><option value="light"'+(editor.theme==="light"?" selected":"")+'>Светлая</option></select></label>'+
+  '<label class="vst-field">Тема VIONA и редактора<select data-vst-editor="theme"><option value="dark"'+(editor.theme==="dark"?" selected":"")+'>Тёмная</option><option value="light"'+(editor.theme==="light"?" selected":"")+'>Светлая</option></select></label>'+
   '<label class="vst-field">Отступ Tab<select data-vst-editor="tabs">'+[2,4,8].map(n=>'<option value="'+n+'"'+(editor.tabs===n?" selected":"")+'>'+n+' пробела</option>').join("")+'</select></label>'+
   '<label class="vst-check"><input type="checkbox" data-vst-editor="wrap"'+(editor.wrap?" checked":"")+'> Перенос длинных строк</label>'+
   '<label class="vst-check"><input type="checkbox" data-vst-editor="numbers"'+(editor.numbers?" checked":"")+'> Нумерация строк</label>'+
@@ -172,15 +185,31 @@
   nums.hidden=!editor.numbers;wrap.style.gridTemplateColumns=editor.numbers?"40px minmax(0,1fr)":"minmax(0,1fr)";
   nums.textContent=Array.from({length:code.value.split("\n").length},(_,i)=>i+1).join("\n");
  }
+ function renderSupport(){
+  const email="support.viona.space@gmail.com";
+  const faq=(q,a)=>'<details class="vst-faq"><summary>'+q+'</summary><p>'+a+'</p></details>';
+  ROOT.innerHTML=title("Поддержка и вопросы","Связь с командой VIONA по проектам, заказам и работе Studio.")+
+  '<div class="vst-grid two"><article class="vst-card"><h3>'+vector("mail")+' VIONA Support</h3>'+
+  '<p>Опиши вопрос или проблему и укажи номер заказа, если он есть. Никогда не присылай пароли, токены и платёжные данные.</p>'+
+  '<div class="vst-support-contact"><strong class="vst-support-address">'+email+'</strong><div class="vst-support-actions">'+
+  '<a class="vst-btn primary" href="mailto:'+email+'?subject=VIONA%20%E2%80%94%20%D0%BF%D0%BE%D0%B4%D0%B4%D0%B5%D1%80%D0%B6%D0%BA%D0%B0">'+vector("mail")+' Написать письмо</a>'+
+  button(vector("copy")+' Скопировать адрес','data-vst-copy-support')+'</div></div>'+
+  '<p class="vst-note">Письмо откроется в почтовом приложении. Это не онлайн-чат, отправка через сайт не происходит.</p></article>'+
+  '<article class="vst-card"><h3>'+vector("info")+' Частые вопросы</h3>'+
+  faq("Как отправить заявку?","Собери проект в Конструкторе или LAB и используй «Отправить на оценку». Отправка подтверждается только при сохранении заявки сервером.")+
+  faq("Где хранятся черновики?","В браузере на этом устройстве. Черновики не синхронизируются с другими устройствами.")+
+  faq("Зачем UUID в адресе?","Уникальный адрес помогает найти черновик на этом устройстве, но не является публичной ссылкой на облачный проект.")+
+  faq("Как спросить о заказе?","Напиши на support.viona.space@gmail.com и укажи номер заказа, если он есть. Пароли и секретные ключи не нужны.")+
+  '</article></div>';
+ }
  function render(){
   $$("#vstTabs [data-vst-tab]").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.vstTab===tab)));
-  const renderers={lab:renderLab,builder:renderBuilder,workspace:renderWorkspace,diff:renderDiff,bundles:renderBundles,boards:renderBoards,dashboard:renderDashboard,editor:renderEditor};
+  const renderers={lab:renderLab,builder:renderBuilder,workspace:renderWorkspace,diff:renderDiff,bundles:renderBundles,boards:renderBoards,dashboard:renderDashboard,editor:renderEditor,support:renderSupport};
   renderers[tab]();
  }
  function navigate(id){
   if(!tabs.has(id))return;tab=id;
-  history.replaceState(history.state,"",location.pathname+"?view="+id);
-  render();$("#vstTabs")?.scrollIntoView({block:"start",behavior:doc.dataset.prefMotion==="reduce"?"instant":"smooth"});
+  render();setStudioRoute(id);$("#vstTabs")?.scrollIntoView({block:"start",behavior:doc.dataset.prefMotion==="reduce"?"instant":"smooth"});
  }
  async function submitBuilder(form,intent,clickedButton){
   if(!form.reportValidity())return;
@@ -237,7 +266,7 @@
   const el=e.target;
   if(el.id==="vstStage"){const p=selectedProject();if(p&&stages.some(x=>x[0]===el.value)){p.stage=el.value;p.notes.push({at:stamp(),text:"Этап изменён вручную: "+stages.find(x=>x[0]===el.value)[1]});save();renderWorkspace()}}
   if(el.matches("[data-vst-bundle]")){const id=el.dataset.vstBundle,idx=state.bundle.indexOf(id);if(el.checked&&idx<0)state.bundle.push(id);else if(!el.checked&&idx>=0)state.bundle.splice(idx,1);save();renderBundles()}
-  if(el.matches("[data-vst-editor]")){const key=el.dataset.vstEditor;editor[key]=el.type==="checkbox"?el.checked:["font","tabs"].includes(key)?Number(el.value):el.value;localStorage.setItem(EDITOR,JSON.stringify(editor));updateEditorPreview()}
+  if(el.matches("[data-vst-editor]")){const key=el.dataset.vstEditor;if(key==="theme"){window.VionaTheme?.choose?.(el.value);editor.theme=effectiveTheme()}else editor[key]=el.type==="checkbox"?el.checked:["font","tabs"].includes(key)?Number(el.value):el.value;localStorage.setItem(EDITOR,JSON.stringify(editor));updateEditorPreview()}
   if(el.id==="vstFile"){
    const file=el.files?.[0],p=selectedProject();if(!file||!p)return;
    if(file.size>35000){toast("Файл слишком большой. Максимум 35 КБ.");return}
@@ -249,7 +278,8 @@
  ROOT.addEventListener("click",e=>{
   const x=e.target.closest("button,[data-vst-tab]");if(!x)return;
   if(x.dataset.vstTab){navigate(x.dataset.vstTab);return}
-  if(x.dataset.vstLab){state.lab=x.dataset.vstLab;save();renderLab();return}
+  if(x.hasAttribute("data-vst-copy-support")){if(!navigator.clipboard?.writeText){toast("Выдели адрес поддержки и скопируй вручную.");return}navigator.clipboard.writeText("support.viona.space@gmail.com").then(()=>toast("Адрес поддержки скопирован.")).catch(()=>toast("Не удалось скопировать. Выдели адрес вручную."));return}
+  if(x.dataset.vstLab){state.lab=x.dataset.vstLab;save();renderLab();setStudioRoute("lab");return}
   if(x.dataset.vstDemo){const v=x.dataset.vstDemo;labMessage=v==="/start"?"Привет! Это интерактивная демонстрация бота VIONA.":v==="/help"?"Команды: /start, /help, /about.": "VIONA Bot Starter — макет для будущего проекта.";renderLab();return}
   if(x.dataset.vstSite){demoSite=x.dataset.vstSite;renderLab();return}
   if(x.hasAttribute("data-vst-run-diff")){diffInputs.left=$("#vstDiffBefore").value;diffInputs.right=$("#vstDiffAfter").value;paintDiff();return}
@@ -303,8 +333,13 @@
    if(!response.ok)throw Error("catalog unavailable");const data=await response.json();
    products=(Array.isArray(data)?data:Array.isArray(data.products)?data.products:[]).map(p=>({...p,id:Number(p.id)}));
   }catch{products=[];toast("Каталог пока недоступен. Остальные разделы работают локально.")}
-  render();
+  render();setStudioRoute(tab);
  }
+ const langCode={ru:"RU",en:"EN",de:"DE",ja:"JP",femboy:"♡"}[doc.dataset.world]||"RU";
+ if($("#vstLangLabel"))$("#vstLangLabel").textContent=langCode;
+ const langFlag=$("#vstLanguage img");if(langFlag)langFlag.hidden=doc.dataset.world!=="ru";
+ new MutationObserver(()=>{const next=effectiveTheme();if(editor.theme!==next){editor.theme=next;const el=ROOT.querySelector('[data-vst-editor="theme"]');if(el)el.value=next;updateEditorPreview()}})
+  .observe(doc,{attributes:true,attributeFilter:["data-theme"]});
  window.VionaStudio={navigate,openView:navigate,editor:()=>({...editor})};
  loadProducts();
 })();

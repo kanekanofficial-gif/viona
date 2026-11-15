@@ -137,7 +137,9 @@
  apply();
  const themeOptions=[["auto","system"],["light","light"],["dark","dark"]];
  const langOptions=[["ru","Русский"],["en","English"],["ja","日本語"],["de","Deutsch"],["femboy","♡ Femboy"]];
- const group=(text,detail,controls,icon)=>'<section class="vs-group"><div class="vs-group-head"><span class="vs-group-icon" aria-hidden="true">'+icon+'</span><div><h3>'+escape(text)+'</h3><p>'+escape(detail)+'</p></div></div>'+controls+'</section>';
+ const vector=name=>'<svg class="vs-svg" aria-hidden="true"><use href="/assets/studio-icons.svg#'+name+'"></use></svg>';
+ const graphic=glyph=>{const icons={"◐":"moon","✦":"triggers","▦":"builder","◑":"sun","◎":"languages","⌂":"workspace","◉":"privacy","◌":"privacy","◈":"lab","↓":"document","⌫":"close","↺":"undo","⚙":"settings","▤":"document"};return icons[glyph]?vector(icons[glyph]):escape(glyph)};
+ const group=(text,detail,controls,icon)=>'<section class="vs-group"><div class="vs-group-head"><span class="vs-group-icon" aria-hidden="true">'+graphic(icon)+'</span><div><h3>'+escape(text)+'</h3><p>'+escape(detail)+'</p></div></div>'+controls+'</section>';
  const segmented=(name,items,current)=>'<div class="vs-segments" role="group" aria-label="'+escape(name)+'">'+items.map(item=>'<button type="button" class="vs-segment" data-settings-'+escape(name)+'="'+escape(item[0])+'" aria-pressed="'+(item[0]===current)+'">'+escape(item[1])+'</button>').join("")+'</div>';
  function create(){
   const l=copy();
@@ -174,9 +176,9 @@
    group(l.clearTitle,l.clearHelp,'<button class="vs-action vs-danger" type="button" data-settings-command="clear">'+escape(l.clear)+'</button>',"⌫")+
    group(l.resetTitle,l.resetHelp,'<button class="vs-action" type="button" data-settings-command="reset">'+escape(l.reset)+'</button>',"↺");
   return '<div class="vs-scrim" data-settings-dismiss></div><section class="vs-dialog" role="dialog" aria-modal="true" aria-labelledby="vionaSettingsTitle" aria-describedby="vionaSettingsSubtitle" tabindex="-1">'+
-   '<header class="vs-header"><div><small>'+escape(l.eyebrow)+'</small><h2 id="vionaSettingsTitle">'+escape(l.title)+'</h2><p id="vionaSettingsSubtitle">'+escape(l.subtitle)+'</p></div><button type="button" class="vs-close" aria-label="'+escape(l.close)+'" data-settings-dismiss>×</button></header>'+
+   '<header class="vs-header"><div><small>'+escape(l.eyebrow)+'</small><h2 id="vionaSettingsTitle">'+escape(l.title)+'</h2><p id="vionaSettingsSubtitle">'+escape(l.subtitle)+'</p></div><button type="button" class="vs-close" aria-label="'+escape(l.close)+'" data-settings-dismiss>'+vector("close")+'</button></header>'+
    '<div class="vs-frame"><nav class="vs-tabs" role="tablist" aria-label="'+escape(l.tabHint)+'">'+
-   [["appearance",l.appearance,"◐"],["interface",l.interface,"⚙"],["data",l.data,"▤"]].map(([id,title,icon],i)=>'<button type="button" role="tab" id="vsTab-'+id+'" data-settings-tab="'+id+'" aria-controls="vsPanel-'+id+'" aria-selected="'+(i===0)+'" tabindex="'+(i===0?"0":"-1")+'"><span aria-hidden="true">'+icon+'</span>'+escape(title)+'</button>').join("")+
+   [["appearance",l.appearance,"◐"],["interface",l.interface,"⚙"],["data",l.data,"▤"]].map(([id,title,icon],i)=>'<button type="button" role="tab" id="vsTab-'+id+'" data-settings-tab="'+id+'" aria-controls="vsPanel-'+id+'" aria-selected="'+(i===0)+'" tabindex="'+(i===0?"0":"-1")+'"><span aria-hidden="true">'+graphic(icon)+'</span>'+escape(title)+'</button>').join("")+
    '</nav><div class="vs-panels">'+
    '<section id="vsPanel-appearance" role="tabpanel" aria-labelledby="vsTab-appearance">'+appearance+'</section>'+
    '<section id="vsPanel-interface" role="tabpanel" aria-labelledby="vsTab-interface" hidden>'+general+'</section>'+

@@ -42,6 +42,15 @@ app.post("/api/request",async(req,res)=>{
 });
 app.get("/code-edit",(_req,res)=>res.sendFile(path.join(__dirname,"public","code-edit.html")));
 app.get("/studio",(_req,res)=>res.sendFile(path.join(__dirname,"public","studio.html")));
+app.get("/studio/:view", (req,res,next)=>{
+ const allowed=new Set(["lab","builder","workspace","diff","bundles","boards","dashboard","editor","support"]);
+ if(!allowed.has(req.params.view))return next();
+ return res.sendFile(path.join(__dirname,"public","studio.html"));
+});
+app.get("/studio/:kind/:id", (req,res,next)=>{
+ if(!["projects","boards","bots"].includes(req.params.kind)||!/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(req.params.id))return next();
+ return res.sendFile(path.join(__dirname,"public","studio.html"));
+});
 app.get("*path",(_req,res)=>res.sendFile(path.join(__dirname,"public","index.html")));
 app.listen(PORT,()=>console.log("VIONA listening on "+PORT));
 };
