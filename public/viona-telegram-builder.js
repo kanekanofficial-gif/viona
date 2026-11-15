@@ -88,6 +88,12 @@
    description:trim(data.description,450),commands:unique.length?unique:base.commands,triggers
   };
  }
+ const routeKey="viona-telegram-bot-route-id-v1";
+ const uuidV4=/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+ const idBytes=new Uint8Array(16);
+ const makeId=()=>{if(globalThis.crypto?.randomUUID)return crypto.randomUUID();crypto.getRandomValues(idBytes);idBytes[6]=(idBytes[6]&15)|64;idBytes[8]=(idBytes[8]&63)|128;const h=[...idBytes].map(v=>v.toString(16).padStart(2,"0")).join("");return [h.slice(0,8),h.slice(8,12),h.slice(12,16),h.slice(16,20),h.slice(20)].join("-")};
+ let routeId=read(routeKey);if(!uuidV4.test(String(routeId)))routeId=makeId();
+ try{localStorage.setItem(routeKey,JSON.stringify(routeId))}catch{}
  let bot=normalize(read(KEY));
  let history=read(HISTORY_KEY);
  if(!history||!Array.isArray(history.past)||!Array.isArray(history.future))history={past:[],future:[]};
@@ -516,5 +522,5 @@
  });
  function scrollChat(){const log=ROOT.querySelector("#vbChatLog");if(log)log.scrollTop=log.scrollHeight}
  const info=()=>({commands:bot.commands.length,triggers:bot.triggers.length,buttons:bot.commands.reduce((n,c)=>n+c.buttons.length,0)});
- window.VionaBotBuilder={markup,repaint,check,brief,info};
+ window.VionaBotBuilder={markup,repaint,check,brief,info,id:()=>routeId};
 })();
