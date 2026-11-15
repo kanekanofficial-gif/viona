@@ -1,0 +1,149 @@
+/* VIONA / Glass 27 — restored optical depth and performant liquid highlights.
+   CSS-only glass and droplets; no image filters, canvas, or remote scripts. */
+:root{--vg27-glass:#fffffff0;--vg27-border:#ffffffc4;--vg27-highlight:#ffffffd9;--vg27-shadow:#164c6f19;--vg27-ripple:#ffffff83;--vg27-water:#a3f4ff;--vg27-water-shadow:#2fc5f4}
+html[data-theme="dark"]{--vg27-glass:#24282cc9;--vg27-border:#58616c80;--vg27-highlight:#ffffff5c;--vg27-shadow:#0008;--vg27-ripple:#d9effd52;--vg27-water:#c3eaf2;--vg27-water-shadow:#8ed6ec}
+html[data-world="femboy"]{--vg27-glass:#241823c8;--vg27-border:#ffb9dc6b;--vg27-highlight:#ffb9e4ad;--vg27-shadow:#0009;--vg27-ripple:#ff9ed77e;--vg27-water:#ffd1eb;--vg27-water-shadow:#fa62b6}
+html:not([data-world="femboy"]):not([data-theme="dark"]){--vg27-glass:#ffffffcd;--vg27-border:#ffffffcf}
+/* Preserve palette from Light/Dark/Femboy; add truly translucent material. */
+html[data-world] :is(.nx-hero-copy,.nx-metrics>div,.product,.studio-grid article,.nx-code-promo,.contact form,.nx-result-pill,.nx-topbar .tool-button,.nx-theme-picker,.lang-trigger,.v15-dialog,.v16-workspace-inner,.vs-dialog,.vst-card){
+ -webkit-backdrop-filter:blur(18px) saturate(1.35)!important;
+ backdrop-filter:blur(18px) saturate(1.35)!important;
+ border-color:var(--vg27-border)!important;
+ box-shadow:inset 0 1px 0 var(--vg27-highlight),inset 1px 0 0 #ffffff32,0 15px 42px var(--vg27-shadow)!important;
+}
+html[data-world] :is(.nx-hero-copy,.nx-metrics>div,.product,.studio-grid article,.nx-code-promo,.contact form,.nx-result-pill){
+ background:var(--vg27-glass)!important;
+}
+html:is([data-theme="dark"],[data-world="femboy"]) :is(.nx-hero-copy,.nx-metrics>div,.product,.studio-grid article,.nx-code-promo,.contact form,.nx-result-pill,.v16-workspace-inner){
+ background:var(--vg27-glass)!important;
+}
+/* Keep product images crisp: no animation/blur on original image pixels. */
+html[data-world] .product{position:relative;isolation:isolate;transition:transform .46s cubic-bezier(.22,1,.36,1),box-shadow .46s cubic-bezier(.22,1,.36,1),border-color .46s!important}
+html[data-world] .product:hover,
+html[data-world] .product:focus-within{transform:translateY(-7px) scale(1.008)!important;box-shadow:inset 0 1px 0 var(--vg27-highlight),0 23px 48px var(--vg27-shadow)!important}
+html[data-world] :is(.nx-hero-copy,.nx-code-promo,.studio-grid article,.vst-card){transition:transform .55s cubic-bezier(.22,1,.36,1),box-shadow .55s cubic-bezier(.22,1,.36,1),border-color .4s!important}
+html[data-world] :is(.studio-grid article,.vst-card):hover{transform:translateY(-4px);box-shadow:inset 0 1px 0 var(--vg27-highlight),0 24px 48px var(--vg27-shadow)!important}
+html[data-world] :is(.nx-hero-copy,.nx-hero-screen,.nx-code-promo,.vst-card,.vst-hero,.vs-dialog){isolation:isolate}
+/* Specular highlight traveling across selected surfaces. */
+.vg-gloss{position:relative;overflow:hidden}
+.vg-gloss .vg-shimmer{position:absolute;z-index:2;pointer-events:none;inset:-35% auto -35% -110%;width:70%;transform:translateX(-130%) rotate(18deg);opacity:0;background:linear-gradient(90deg,transparent,#ffffff0a 27%,#ffffff63 49%,#ffffff0a 68%,transparent);mix-blend-mode:screen;transition:transform 1s cubic-bezier(.18,.8,.22,1),opacity .5s}
+.vg-gloss:hover .vg-shimmer,.vg-gloss:focus-within .vg-shimmer{transform:translateX(480%) rotate(18deg);opacity:.8}
+/* Clear boundary with directional glass reflection and refractive droplets. */
+.fluid-edge{position:relative!important;isolation:isolate}
+.fluid-edge>.vg-waterline{
+ position:absolute!important;z-index:4;pointer-events:none;display:block!important;
+ right:0;top:-24%;width:4px;height:49%;border-radius:90% 20% 70% 30%;
+ background:linear-gradient(180deg,transparent,var(--vg27-water) 28%,#ffffffec 47%,var(--vg27-water) 70%,transparent);
+ box-shadow:-1px 0 4px #fff9,0 0 12px var(--vg27-water-shadow),-5px 0 18px var(--vg27-water-shadow);
+ opacity:.65;filter:blur(.3px);animation:vg27-rivulet 8.2s cubic-bezier(.43,.04,.46,.98) infinite;
+}
+.fluid-edge>.vg-drop{
+ position:absolute!important;z-index:5;pointer-events:none;display:block!important;
+ right:-1px;top:-18%;height:13px;width:8px;border-radius:64% 37% 68% 37%;
+ background:radial-gradient(circle at 28% 24%,#fff 0 9%,#d7fffff2 12% 21%,var(--vg27-water) 47%,#56addb 88%);
+ box-shadow:inset -1px -2px 3px #15799c77,0 0 7px #fff9,0 0 12px var(--vg27-water-shadow);
+ transform:rotate(18deg);opacity:0;animation:vg27-droplet 8.2s cubic-bezier(.25,.1,.64,1) infinite;
+}
+.fluid-edge>.vg-waterfall-shine{
+ position:absolute!important;z-index:3;pointer-events:none;display:block!important;
+ right:0;top:0;bottom:0;width:20px;background:linear-gradient(90deg,transparent,#ffffff0d 55%,#ffffff7a 91%,transparent);
+ opacity:.55;mask-image:linear-gradient(180deg,transparent,#000 24%,#000 80%,transparent)
+}
+.fluid-edge[data-vg-delay="2"]>.vg-waterline,
+.fluid-edge[data-vg-delay="2"]>.vg-drop{animation-delay:-2.2s}
+.fluid-edge[data-vg-delay="4"]>.vg-waterline,
+.fluid-edge[data-vg-delay="4"]>.vg-drop{animation-delay:-4.4s}
+@keyframes vg27-rivulet{0%{transform:translateY(-40%) scaleX(.5);opacity:0}12%{opacity:.78}54%{transform:translateY(135%) scaleX(1);opacity:.8}82%{transform:translateY(290%) scaleX(.7);opacity:.5}95%,100%{transform:translateY(350%);opacity:0}}
+@keyframes vg27-droplet{0%,13%{top:10%;opacity:0;transform:scale(.5)}25%{top:28%;opacity:.98;transform:scale(1)}55%{top:58%;opacity:.98;transform:scale(.95)}72%{top:90%;opacity:1;transform:scaleY(1.5)}83%{top:103%;opacity:.75;transform:scale(.8)}98%,100%{top:119%;opacity:0;transform:scale(.3)}}
+/* Card reveal and spring-like transitions without layout jank. */
+html[data-world] .nx-motion-ready .nx-reveal.nx-visible{
+ animation:vg27-reveal .85s cubic-bezier(.16,1,.3,1) both!important
+}
+@keyframes vg27-reveal{from{opacity:.15;transform:translateY(23px) scale(.977)}65%{opacity:1}to{opacity:1;transform:translateY(0) scale(1)}}
+html[data-world] :is(.nx-topbar button,.nx-hero a,.product-actions button,.product-view,.nx-code-promo-link,.vst-btn,.vs-action){
+ transition:transform .32s cubic-bezier(.2,1.5,.4,1),filter .25s,background-color .32s,border-color .32s,box-shadow .32s!important
+}
+html[data-world] :is(.nx-topbar button,.nx-hero a,.product-actions button,.product-view,.nx-code-promo-link,.vst-btn,.vs-action):active{transform:translateY(1px) scale(.96)!important}
+html[data-world] :is(.nx-topbar button,.nx-hero a,.product-actions button,.product-view,.nx-code-promo-link,.vst-btn,.vs-action):focus-visible{
+ outline:2px solid var(--vg27-water-shadow)!important;outline-offset:4px!important;box-shadow:0 0 0 6px #5ab6c21e!important
+}
+.vg-ripple-host{position:relative;overflow:hidden}.vg-ripple{
+ position:absolute;z-index:30;pointer-events:none;border-radius:50%;
+ width:16px;height:16px;left:var(--vg-x);top:var(--vg-y);background:radial-gradient(circle,var(--vg27-ripple),transparent 66%);
+ transform:translate(-50%,-50%) scale(.2);opacity:.65;animation:vg27-ripple .8s ease-out forwards;
+}
+@keyframes vg27-ripple{to{opacity:0;transform:translate(-50%,-50%) scale(12)}}
+/* Command center, accessible focus */
+.vgc-overlay{position:fixed;inset:0;z-index:950;display:grid;place-items:start center;padding:clamp(40px,10vh,120px) 16px 16px;background:#07141fb5;backdrop-filter:blur(12px)}
+.vgc-dialog{width:min(600px,100%);border:1px solid var(--vg27-border);border-radius:22px;background:var(--vg27-glass);color:var(--vt-text,#184150);backdrop-filter:blur(32px) saturate(1.5);box-shadow:inset 0 1px var(--vg27-highlight),0 30px 85px #0006;overflow:hidden;animation:vg27-modal .5s cubic-bezier(.2,1,.25,1)}
+.vgc-dialog input{display:block;width:100%;padding:20px 23px;border:0;border-bottom:1px solid var(--vg27-border);background:transparent;color:inherit;font:750 15px "Manrope",sans-serif;outline:0}
+.vgc-options{max-height:52vh;overflow:auto;padding:9px}.vgc-option{display:flex;align-items:center;gap:12px;width:100%;padding:14px;border:0;border-radius:12px;background:transparent;color:inherit;text-align:left;cursor:pointer}
+.vgc-option span:first-child{width:28px;height:28px;display:grid;place-items:center;border:1px solid var(--vg27-border);border-radius:8px}
+.vgc-option strong{display:block}.vgc-option small{display:block;opacity:.7;font-size:10px}
+.vgc-option[aria-selected="true"],.vgc-option:hover{background:#76b7ca27}.vgc-footer{padding:12px 18px;border-top:1px solid var(--vg27-border);font-size:10px;opacity:.8}
+@keyframes vg27-modal{from{opacity:0;transform:translateY(19px) scale(.965);filter:blur(4px)}to{opacity:1;transform:none;filter:none}}
+/* Quick action bar intentionally above mobile navigation, never covering it. */
+.vg-quickbar{position:fixed;z-index:175;left:50%;bottom:18px;display:flex;align-items:center;gap:7px;transform:translateX(-50%);
+ padding:8px;background:var(--vg27-glass);border:1px solid var(--vg27-border);border-radius:17px;
+ box-shadow:inset 0 1px var(--vg27-highlight),0 18px 40px var(--vg27-shadow);backdrop-filter:blur(20px) saturate(1.4)}
+.vg-quickbar a,.vg-quickbar button{display:flex;align-items:center;justify-content:center;gap:7px;min-height:37px;padding:8px 12px;border:1px solid transparent;border-radius:10px;color:var(--vt-text,#244553);font-size:10px;font-weight:850;background:transparent;white-space:nowrap}
+.vg-quickbar a:hover,.vg-quickbar button:hover{border-color:var(--vg27-border);background:#76b6c528}
+.vg-quickbar :focus-visible{outline:2px solid var(--vg27-water-shadow)}
+html[data-world="femboy"] .vg-quickbar a,html[data-world="femboy"] .vg-quickbar button,
+html[data-theme="dark"] .vg-quickbar a,html[data-theme="dark"] .vg-quickbar button{color:var(--vt-text)}
+/* Rich hover product preview, not an overlay on original image. */
+.vg-product-preview{position:fixed;z-index:200;pointer-events:none;min-width:200px;max-width:min(290px,80vw);padding:16px;border:1px solid var(--vg27-border);
+ border-radius:16px;background:var(--vg27-glass);box-shadow:inset 0 1px var(--vg27-highlight),0 14px 34px #0003;backdrop-filter:blur(20px);color:var(--vt-text,#214656);
+ animation:vg27-modal .28s ease-out both}
+.vg-product-preview strong{display:block;font-size:13px;line-height:1.45}.vg-product-preview p{margin:7px 0;color:var(--vt-muted,#607e8b);font-size:11px}
+.vg-product-preview small{font:800 10px "IBM Plex Mono",monospace;color:var(--vt-accent,#0e879c)}
+/* Main home feature hub */
+.vg-feature-hub{padding:65px 0 16px}.vg-hub-title{display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:22px}
+.vg-hub-title h2{font:800 clamp(26px,2.7vw,35px) "Unbounded",sans-serif;color:var(--vt-heading,#153847);letter-spacing:-.055em}.vg-hub-title p{color:var(--vt-muted,#567988);font-size:12px}
+.vg-hub-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:15px}
+.vg-hub-card{position:relative;min-height:160px;padding:23px;border:1px solid var(--vg27-border);border-radius:20px;background:var(--vg27-glass);color:var(--vt-text,#184053);backdrop-filter:blur(20px);box-shadow:inset 0 1px var(--vg27-highlight),0 10px 28px var(--vg27-shadow);display:flex;flex-direction:column;justify-content:space-between;gap:18px;text-decoration:none!important;transition:transform .5s cubic-bezier(.2,1,.3,1),box-shadow .5s!important;overflow:hidden}
+.vg-hub-card:hover{transform:translateY(-6px);box-shadow:inset 0 1px var(--vg27-highlight),0 20px 45px var(--vg27-shadow)}
+.vg-hub-card span{font:750 10px "IBM Plex Mono",monospace;color:var(--vt-accent,#0b849d)}
+.vg-hub-card strong{display:block;margin-top:8px;font-size:14px;color:inherit}.vg-hub-card p{font-size:11px;color:var(--vt-muted,#64818d);margin:7px 0}
+.vg-hub-card small{align-self:flex-end;font-size:20px;color:var(--vt-accent,#0b849d)}
+/* Skeletons appear only during asynchronous catalog fetch, never replace live results. */
+.vg-skeleton{border:1px solid var(--vg27-border);border-radius:22px;padding:22px;background:var(--vg27-glass);min-height:318px}
+.vg-skeleton span{display:block;margin:12px 0;border-radius:8px;background:linear-gradient(110deg,#d5e8ee44 20%,#fff9 42%,#d5e8ee44 65%);background-size:230% 100%;animation:vg27-skeleton 1.7s linear infinite}
+.vg-skeleton span:nth-child(1){height:82px;width:82px;border-radius:18px}.vg-skeleton span:nth-child(2){height:17px;width:70%}.vg-skeleton span:nth-child(3){height:11px;width:95%}.vg-skeleton span:nth-child(4){height:11px;width:58%}
+@keyframes vg27-skeleton{to{background-position:-230% 0}}
+/* Full settings glass interactions + animated vs static previews */
+.vs-overlay .vs-scrim{animation:vg27-scrim .35s ease-out both}
+.vs-overlay .vs-dialog{animation:vg27-modal .53s cubic-bezier(.18,1,.25,1) both}
+@keyframes vg27-scrim{from{opacity:0}to{opacity:1}}
+.vs-overlay .vs-panels [role="tabpanel"]:not([hidden]){animation:vg27-panel .38s cubic-bezier(.17,.88,.27,1) both}
+@keyframes vg27-panel{from{opacity:.12;transform:translateX(11px)}to{opacity:1;transform:none}}
+.vs-overlay .vs-tabs button,.vs-overlay .vs-segment,.vs-overlay .vs-close{transition:background-color .34s,border-color .34s,color .34s,transform .45s cubic-bezier(.22,1.6,.32,1)!important}
+.vs-overlay .vs-tabs button[aria-selected="true"]{transform:translateX(3px)}
+.vs-overlay .vs-segment[aria-pressed="true"]{transform:translateY(-2px)}
+.vs-overlay .vs-switch-track:after{transition:transform .43s cubic-bezier(.2,1.55,.3,1)!important}
+.vs-motion-preview{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:10px 0 16px}
+.vs-preview-card{position:relative;display:flex;flex-direction:column;gap:9px;align-items:stretch;border:1px solid var(--vs-border);border-radius:14px;background:var(--vs-soft);padding:13px;color:var(--vs-ink);cursor:pointer;min-width:0;text-align:left}
+.vs-preview-card[aria-pressed="true"]{border-color:var(--vs-accent);box-shadow:inset 0 0 0 1px var(--vs-accent)}
+.vs-preview-demo{display:flex;flex-direction:column;justify-content:center;gap:7px;height:80px;padding:12px;border-radius:11px;background:var(--vs-paper);overflow:hidden}
+.vs-preview-line{display:block;width:70%;height:9px;background:var(--vs-accent);opacity:.35;border-radius:8px}
+.vs-preview-line.short{width:43%;opacity:.21}
+.vs-preview-switch{display:block;width:40px;height:20px;background:var(--vs-tint);border:1px solid var(--vs-border);border-radius:20px;padding:3px}
+.vs-preview-switch:before{content:"";display:block;width:12px;height:12px;border-radius:50%;background:var(--vs-accent)}
+.vs-preview-card[data-preview="animated"] .vs-preview-demo{animation:vg27-demo-slide 2.8s ease-in-out infinite}
+.vs-preview-card[data-preview="animated"] .vs-preview-line{animation:vg27-demo-shimmer 2.8s ease-in-out infinite}
+.vs-preview-card[data-preview="animated"] .vs-preview-switch:before{animation:vg27-demo-switch 2.8s cubic-bezier(.2,.85,.2,1) infinite}
+.vs-preview-card strong{color:var(--vs-ink);font-size:11px}.vs-preview-card small{color:var(--vs-muted);font-size:10px}
+@keyframes vg27-demo-slide{0%,100%{transform:translateY(7px);opacity:.5}45%,75%{transform:none;opacity:1}}
+@keyframes vg27-demo-shimmer{0%,100%{transform:scaleX(.7);transform-origin:left}45%,75%{transform:scaleX(1)}}
+@keyframes vg27-demo-switch{0%,27%,100%{transform:translateX(0)}43%,72%{transform:translateX(18px)}}
+html[data-pref-motion="reduce"] :is(.vg-waterline,.vg-drop,.vg-shimmer,.vs-preview-demo,.vs-preview-line,.vs-preview-switch:before){animation:none!important;transition:none!important}
+html[data-pref-motion="reduce"] .vg-waterline{opacity:.4;top:24%}
+html[data-pref-motion="reduce"] .vg-drop{opacity:.45;top:63%}
+@media(max-width:980px){.vg-hub-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:740px){.vg-quickbar{bottom:87px;max-width:calc(100vw - 20px);padding:5px;gap:3px}.vg-quickbar a,.vg-quickbar button{padding:7px 8px;font-size:9px;min-height:35px}}
+@media(max-width:510px){.vg-hub-grid{grid-template-columns:1fr}.vg-hub-card{min-height:136px}.vg-quickbar{bottom:82px}.vg-quickbar .vg-short-label{display:none}.vs-motion-preview{gap:7px}.vs-preview-card{padding:9px}}
+@media(prefers-reduced-motion:reduce){.fluid-edge>.vg-waterline,.fluid-edge>.vg-drop,.vg-skeleton span,.vst-skeleton span,
+ .vs-preview-card[data-preview="animated"] .vs-preview-demo,.vs-preview-card[data-preview="animated"] .vs-preview-line,.vs-preview-card[data-preview="animated"] .vs-preview-switch:before,
+ .nx-motion-ready .nx-reveal,.vs-overlay .vs-dialog,.vs-overlay .vs-scrim{animation:none!important;transition:none!important}
+ .vg-shimmer,.vg-ripple{display:none!important}
+}
