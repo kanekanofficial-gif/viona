@@ -64,6 +64,51 @@ const {chromium}=require("playwright");
     assert.equal(await page.locator(".nx-requirements").count(),await page.locator(".product").count(),"all products need requirement lists");
     await page.locator(".product .nx-requirements summary").first().click();
     assert.ok(await page.locator(".product .nx-customize-form").first().isVisible(),"customization request form missing");
+
+    /* VIONA ID preferences: local profile, theme, density, accessibility and tabs. */
+    await page.locator("#profileOpen").click();
+    await page.locator("#vionaSettingsEntryLocal").click();
+    assert.ok(await page.locator("#vionaSettingsOverlay").isVisible(),"settings dialog did not open");
+    assert.equal(await page.locator('#vionaSettingsOverlay [role="tab"]').count(),3);
+    await page.locator('[data-settings-theme="dark"]').click();
+    assert.equal(await page.locator("html").getAttribute("data-theme"),"dark");
+    assert.equal(await page.locator("#vionaThemeMode").inputValue(),"dark","header theme selector wasn't updated");
+    await page.locator('[data-settings-density="compact"]').click();
+    assert.equal(await page.locator("html").getAttribute("data-pref-density"),"compact");
+    await page.locator('[data-settings-font="large"]').click();
+    assert.equal(await page.locator("html").getAttribute("data-pref-font"),"large");
+    await page.locator('[data-settings-contrast="high"]').click();
+    assert.equal(await page.locator("html").getAttribute("data-pref-contrast"),"high");
+    await page.locator('[data-settings-motion="reduce"]').click();
+    assert.equal(await page.locator("html").getAttribute("data-pref-motion"),"reduce");
+    await page.locator('[data-settings-tab="interface"]').click();
+    await page.locator("#vionaSettingsBadge").uncheck();
+    assert.equal(await page.locator("html").getAttribute("data-pref-badge"),"off");
+    await page.locator('[data-settings-start="catalog"]').click();
+    assert.equal(await page.locator("html").getAttribute("data-pref-start"),"catalog");
+    await page.locator('[data-settings-tab="data"]').click();
+    const downloadPromise=page.waitForEvent("download");
+    await page.locator('[data-settings-command="export"]').click();
+    const exportData=await downloadPromise;
+    assert.equal(exportData.suggestedFilename(),"viona-local-preferences.json");
+    await page.locator(".vs-close").click();
+    assert.ok(!await page.locator("#vionaSettingsOverlay").count(),"settings dialog not removed");
+    await page.locator("#v15Close").click();
+    await page.reload({waitUntil:"domcontentloaded"});
+    assert.equal(await page.locator("html").getAttribute("data-theme"),"dark","theme wasn't persisted");
+    assert.equal(await page.locator("html").getAttribute("data-pref-density"),"compact","density wasn't persisted");
+    assert.equal(await page.locator("html").getAttribute("data-pref-font"),"large","font size wasn't persisted");
+    assert.equal(await page.locator("html").getAttribute("data-pref-badge"),"off","badge preference wasn't persisted");
+    await page.locator("#profileOpen").click();
+    await page.locator("#vionaSettingsEntryLocal").click();
+    await page.locator('[data-settings-theme="auto"]').click();
+    await page.locator('[data-settings-density="comfortable"]').click();
+    await page.locator('[data-settings-font="normal"]').click();
+    await page.locator('[data-settings-contrast="normal"]').click();
+    await page.locator('[data-settings-motion="system"]').click();
+    await page.locator(".vs-close").click();
+    await page.locator("#v15Close").click();
+
     await page.locator("#langTrigger").click();
     assert.ok(await page.locator("#langList").isVisible(),"language selector didn't open");
     await page.locator('[data-lang="en"]').click();
@@ -98,6 +143,20 @@ const {chromium}=require("playwright");
     const serviceAccentResolved=await page.evaluate(()=>getComputedStyle(document.documentElement).getPropertyValue("--vt-accent").trim());
     assert.equal(serviceAccentResolved,"#ff70b7","code-edit page must use pink femboy accent");
 
+   }
+
+   if(width===390){
+    await page.locator("#profileOpen").click();
+    await page.locator("#vionaSettingsEntryLocal").click();
+    assert.ok(await page.locator("#vionaSettingsOverlay .vs-dialog").isVisible(),"mobile preferences not visible");
+    const ui=await page.evaluate(()=>{
+     const dlg=document.querySelector("#vionaSettingsOverlay .vs-dialog").getBoundingClientRect();
+     return{left:dlg.left,right:dlg.right,windowWidth:innerWidth,scrollWidth:document.documentElement.scrollWidth};
+    });
+    assert.ok(ui.left>=-1&&ui.right<=ui.windowWidth+1,"settings overflow on mobile");
+    await page.screenshot({path:"screenshots/settings-mobile.png"});
+    await page.locator(".vs-close").click();
+    await page.locator("#v15Close").click();
    }
    assert.deepEqual(pageErrors,[],"uncaught page errors: "+pageErrors.join(" | "));
    await page.close();

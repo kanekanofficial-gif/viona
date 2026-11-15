@@ -21,6 +21,7 @@ jobs:
           node --check public/viona-icons.js
           node --check public/viona-reset-motion.js
           node --check public/viona-theme.js
+          node --check public/viona-settings.js
           node --check public/viona-checkout-i18n.js
           node --check public/viona-requirements.js
           node --check public/code-edit.js
