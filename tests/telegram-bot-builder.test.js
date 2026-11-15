@@ -1,0 +1,78 @@
+"use strict";
+const test=require("node:test");
+const assert=require("node:assert/strict");
+const fs=require("node:fs");
+const path=require("node:path");
+const src=p=>fs.readFileSync(path.resolve(__dirname,"..",p),"utf8");
+const bot=src("public/viona-telegram-builder.js"),css=src("public/viona-telegram-builder.css");
+const studio=src("public/viona-studio.js"),html=src("public/studio.html"),sw=src("public/sw.js");
+test("Telegram bot constructor is wired into VIONA LAB and offline assets",()=>{
+ assert.match(studio,/VionaBotBuilder\?\.markup/);
+ assert.match(html,/viona-telegram-builder\.js\?v=1/);
+ assert.match(html,/viona-telegram-builder\.css\?v=1/);
+ assert.ok(html.indexOf("viona-telegram-builder.js")<html.indexOf("viona-studio.js"),"constructor must load first");
+ assert.match(sw,/viona-reboot-v34/);
+ for(const name of ["viona-telegram-builder.js","viona-telegram-builder.css"])assert.ok(sw.includes(name));
+});
+test("commands are editable, persisted and validated",()=>{
+ assert.match(bot,/vbCommandForm/);
+ assert.match(bot,/validCommand/);
+ assert.match(bot,/getCommand\(name\)/);
+ assert.match(bot,/MAX_COMMANDS=40/);
+ assert.match(bot,/localStorage\.setItem\(KEY/);
+ assert.match(bot,/viona-tg-bot-builder-v1/);
+ assert.match(bot,/editing=null/);
+ assert.match(bot,/bot\.commands\.filter/);
+ assert.match(bot,/history\.past/);
+ assert.match(bot,/history\.future/);
+});
+test("buttons and plain text triggers are functional in sandbox",()=>{
+ assert.match(bot,/vbButtonForm/);
+ assert.match(bot,/vbTriggerForm/);
+ assert.match(bot,/data-vb-run/);
+ assert.match(bot,/kind==="command"/);
+ assert.match(bot,/kind==="url"/);
+ assert.match(bot,/validWebURL/);
+ assert.match(bot,/response=msg/);
+ assert.match(bot,/chat\.push\(response\)/);
+ assert.match(bot,/getCommand\(name\)/);
+});
+test("templates, demo roles, named variables and media placeholders",()=>{
+ for(const item of ["basic:","shop:","support:","community:"])assert.ok(bot.includes(item),item);
+ for(const item of ["{commands}","{name}","{bot}","{order_id}"])assert.ok(bot.includes(item),item);
+ assert.match(bot,/vbPersonaForm/);
+ assert.match(bot,/vbSimRole/);
+ assert.match(bot,/rolesAllowed/);
+ assert.match(bot,/photo/);
+ assert.match(bot,/document/);
+ assert.match(bot,/Пример фото/);
+});
+test("validation finds unreachable commands and broken button references",()=>{
+ assert.match(bot,/function check\(\)/);
+ assert.match(bot,/reached\.has\(name\)/);
+ assert.match(bot,/отсутствующую команду/);
+ assert.match(bot,/HTTPS-ссылки/);
+ assert.match(bot,/Повторяется правило/);
+ assert.match(bot,/Нет пути|нет пути/);
+});
+test("quote request is real, correctly reports demo storage and never charges",()=>{
+ assert.match(bot,/vbOrderForm/);
+ assert.match(bot,/fetch\("\/api\/request"/);
+ assert.match(bot,/response\.status===201/);
+ assert.match(bot,/response\.status===202/);
+ assert.match(bot,/НЕ сохранил заявку/);
+ assert.match(bot,/new Blob\(\[brief\(\)\]/);
+ assert.match(bot,/ТЕХНИЧЕСКОЕ ЗАДАНИЕ/);
+ assert.doesNotMatch(bot,/\beval\s*\(|new Function\s*\(/);
+ assert.doesNotMatch(bot,/\/api\/payments/);
+ assert.doesNotMatch(bot,/BotFather.*token/i);
+});
+test("Glass 27 layout keeps mobile/accessible motion and readable chat",()=>{
+ assert.match(css,/backdrop-filter:blur/);
+ assert.match(css,/vb-chat-msgs/);
+ assert.match(css,/vb-inline-buttons/);
+ assert.match(css,/vb-message-in/);
+ assert.match(css,/@media\(max-width:480px\)/);
+ assert.match(css,/prefers-reduced-motion:reduce/);
+ assert.match(css,/data-pref-motion="reduce"/);
+});

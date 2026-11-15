@@ -145,10 +145,57 @@ const {chromium}=require("playwright");
 
     /* VIONA Studio end-to-end: demos, builder, workspace, boards, code diff, bundles and editor. */
     await page.goto("http://127.0.0.1:4173/studio?view=lab",{waitUntil:"domcontentloaded"});
-    await page.waitForFunction(()=>document.querySelector('#vstContent [data-vst-demo]')!==null,{timeout:10000});
+    await page.waitForFunction(()=>document.querySelector('#vionaBotBuilder #vbChatForm')!==null,{timeout:10000});
     assert.ok(await page.locator("#vstTabs [data-vst-tab]").count()>=8);
-    await page.locator('[data-vst-demo="/help"]').click();
-    assert.match(await page.locator(".vst-chat").innerText(),/Команды:/);
+    /* The Telegram simulation accepts user-typed commands and saves editable blueprints. */
+    await page.locator('#vbCommandForm [name="name"]').fill("/shop");
+    await page.locator('#vbCommandForm [name="reply"]').fill("Каталог для {name}. Выбирай товары.");
+    await page.locator('#vbCommandForm button[type="submit"]').click();
+    assert.match(await page.locator(".vb-command-list").first().innerText(),/\/shop/);
+    await page.locator('#vbChatForm [name="message"]').fill("/shop");
+    await page.locator('#vbChatForm button[type="submit"]').click();
+    assert.match(await page.locator("#vbChatLog").innerText(),/Каталог для Алекс/);
+    await page.locator('.vb-nav [data-vb-panel="buttons"]').click();
+    await page.locator('#vbSelectedCommand').selectOption("/start");
+    await page.locator('#vbButtonForm [name="label"]').fill("Магазин");
+    await page.locator('#vbButtonForm [name="target"]').fill("/shop");
+    await page.locator('#vbButtonForm button[type="submit"]').click();
+    await page.locator('[data-vb-demo="/start"]').click();
+    await page.locator('#vbChatLog [data-vb-target="/shop"]').last().click();
+    assert.match(await page.locator("#vbChatLog").innerText(),/Каталог для Алекс/);
+    await page.locator('.vb-nav [data-vb-panel="triggers"]').click();
+    await page.locator('#vbTriggerForm [name="keyword"]').fill("скидка");
+    await page.locator('#vbTriggerForm [name="reply"]').fill("Скидку согласуем отдельно.");
+    await page.locator('#vbTriggerForm button[type="submit"]').click();
+    await page.locator('#vbChatForm [name="message"]').fill("Есть скидка?");
+    await page.locator('#vbChatForm button[type="submit"]').click();
+    assert.match(await page.locator("#vbChatLog").innerText(),/Скидку согласуем отдельно/);
+    await page.locator('[data-vb-action="undo"]').click();
+    assert.ok(!(await page.locator("#vionaBotBuilder").innerText()).includes("Скидку согласуем отдельно."));
+    await page.locator('[data-vb-action="redo"]').click();
+    assert.match(await page.locator("#vionaBotBuilder").innerText(),/Скидку согласуем отдельно/);
+    await page.locator('.vb-nav [data-vb-panel="scenarios"]').click();
+    assert.match(await page.locator(".vb-flow-map").innerText(),/\/shop/);
+    await page.locator('.vb-nav [data-vb-panel="check"]').click();
+    assert.match(await page.locator(".vb-brief").innerText(),/\/shop/);
+    const briefDownload=page.waitForEvent("download");
+    await page.locator('[data-vb-action="download"]').click();
+    const briefFile=await briefDownload;
+    assert.equal(briefFile.suggestedFilename(),"viona-telegram-bot-brief.txt");
+    await page.screenshot({path:"screenshots/bot-builder-"+label+".png",fullPage:true});
+    await page.reload({waitUntil:"domcontentloaded"});
+    await page.waitForFunction(()=>document.querySelector('#vionaBotBuilder')!==null,{timeout:10000});
+    assert.match(await page.locator(".vb-command-list").first().innerText(),/\/shop/,"bot command not persisted");
+    await page.locator('.vb-nav [data-vb-panel="order"]').click();
+    await page.route("**/api/request",route=>route.fulfill({
+      status:202,contentType:"application/json",body:JSON.stringify({message:"Демо: не сохранено"})
+    }));
+    await page.locator('#vbOrderForm [name="contact"]').fill("@viona_test");
+    await page.locator('#vbOrderForm [name="agreement"]').check();
+    await page.locator('#vbOrderForm button[type="submit"]').click();
+    assert.match(await page.locator("#vbOrderStatus").innerText(),/НЕ сохранил заявку/);
+    await page.unroute("**/api/request");
+
     await page.locator('#vstTabs [data-vst-tab="builder"]').click();
     await page.locator('#vstBuildForm [name="title"]').fill("Тестовый проект VIONA");
     await page.locator('#vstBuildForm [name="details"]').fill("Подключить меню команд и базу данных");
