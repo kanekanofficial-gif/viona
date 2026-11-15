@@ -282,6 +282,16 @@ const {chromium}=require("playwright");
     await page.locator(".vs-close").click();
     await page.locator("#v15Close").click();
    }
+   if(width===820||width===390){
+    await page.goto("http://127.0.0.1:4173/studio?view=lab",{waitUntil:"domcontentloaded"});
+    await page.waitForFunction(()=>document.querySelector("#vionaBotBuilder #vbChatForm")!==null,{timeout:10000});
+    const docWidth=await page.evaluate(()=>document.documentElement.scrollWidth);
+    assert.ok(docWidth<=width+1,label+" Telegram Builder has horizontal overflow ("+docWidth+")");
+    await page.locator('#vbChatForm [name="message"]').fill("/help");
+    await page.locator('#vbChatForm button[type="submit"]').click();
+    assert.match(await page.locator("#vbChatLog").innerText(),/Доступные команды:/);
+    await page.screenshot({path:"screenshots/bot-builder-"+label+".png",fullPage:true});
+   }
    assert.deepEqual(pageErrors,[],"uncaught page errors: "+pageErrors.join(" | "));
    await page.close();
   }
