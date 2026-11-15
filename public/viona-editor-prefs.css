@@ -1,0 +1,13 @@
+/* Editor controls on the code-edit submission page. */
+.vst-form-editor-controls{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 9px;font-size:10px;font-weight:800}
+.vst-form-editor-controls label{display:flex!important;align-items:center;gap:7px!important;flex-direction:row!important;margin:0;padding:8px 9px;border:1px solid var(--border,#ccdce4);border-radius:9px;color:var(--text,#143747);background:var(--surface,#f3fafb)}
+.vst-form-editor-controls label select{width:auto!important;min-width:65px;font-size:10px!important;padding:5px!important}
+.vst-form-editor-controls label input[type=checkbox]{width:16px;height:16px;accent-color:var(--accent,#0c86a1)}
+#vstLiveEditor{display:grid;grid-template-columns:40px minmax(0,1fr);min-height:290px;overflow:hidden;border:1px solid var(--border,#c6dfe5);border-radius:13px}
+#vstLiveEditor #codeSource{min-height:290px!important;border:0!important;border-radius:0!important;max-width:100%;width:100%;margin:0;padding:11px 13px!important;resize:vertical}
+#vstLiveEditor .vst-line-nums{margin:0;overflow:hidden;padding:11px 4px;text-align:right;color:var(--muted,#66838c);background:var(--surface,#eef5f7);font:500 13px/1.7 "IBM Plex Mono",monospace;user-select:none}
+#vstLiveEditor .vst-code{font-family:"IBM Plex Mono",monospace}
+#vstLiveEditor .vst-editor-dark{background:#141a23!important;color:#e4edf3!important}
+#vstLiveEditor .vst-editor-light{background:#f8fafc!important;color:#192e39!important}
+html[data-pref-font="large"] #vstLiveEditor .vst-code{font-size:16px}
+html[data-pref-motion="reduce"] #vstLiveEditor *{animation:none!important;transition:none!important}
