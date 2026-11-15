@@ -198,17 +198,9 @@ const {chromium}=require("playwright");
     await page.locator("#profileOpen").click();
     await page.locator("#vionaSettingsEntryLocal").click();
     assert.equal(await page.locator(".vs-preview-card").count(),2,"motion previews missing");
-    const settingDiag=await page.evaluate(()=>{
-      const outer=document.querySelector("#vionaSettingsOverlay");
-      const dialog=outer?.querySelector(".vs-dialog");
-      const box=dialog?.getBoundingClientRect();
-      const a=outer&&getComputedStyle(outer),b=dialog&&getComputedStyle(dialog);
-      return{outer:{visible:!!outer,z:a?.zIndex,position:a?.position,display:a?.display,opacity:a?.opacity},
-       dialog:{z:b?.zIndex,position:b?.position,display:b?.display,opacity:b?.opacity,rect:box&&{x:box.x,y:box.y,w:box.width,h:box.height}},
-       top:document.elementFromPoint(innerWidth/2,innerHeight/2)?.id||document.elementFromPoint(innerWidth/2,innerHeight/2)?.className};
-    });
-    console.log("VIONA SETTINGS VISUAL: "+JSON.stringify(settingDiag));
-    assert.ok(await page.locator("#vionaSettingsOverlay .vs-dialog").isVisible(),"settings dialog was not visible");
+    await page.locator("#vionaSettingsOverlay .vs-dialog").waitFor({state:"visible"});
+    await page.waitForFunction(()=>Number(getComputedStyle(document.querySelector("#vionaSettingsOverlay .vs-dialog")).opacity)>.99,null,{timeout:5000});
+    assert.ok(await page.locator("#vionaSettingsOverlay .vs-dialog").isVisible());
     await page.screenshot({path:"screenshots/settings-glass.png"});
     await page.locator(".vs-close").click();
     await page.locator("#v15Close").click();
@@ -220,6 +212,7 @@ const {chromium}=require("playwright");
     await page.locator("#profileOpen").click();
     await page.locator("#vionaSettingsEntryLocal").click();
     assert.ok(await page.locator("#vionaSettingsOverlay .vs-dialog").isVisible(),"mobile preferences not visible");
+    await page.waitForFunction(()=>Number(getComputedStyle(document.querySelector("#vionaSettingsOverlay .vs-dialog")).opacity)>.99,null,{timeout:5000});
     const ui=await page.evaluate(()=>{
      const dlg=document.querySelector("#vionaSettingsOverlay .vs-dialog").getBoundingClientRect();
      return{left:dlg.left,right:dlg.right,windowWidth:innerWidth,scrollWidth:document.documentElement.scrollWidth};
