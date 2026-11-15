@@ -11,7 +11,7 @@ test("Telegram bot constructor is wired into VIONA LAB and offline assets",()=>{
  assert.match(html,/viona-telegram-builder\.js\?v=1/);
  assert.match(html,/viona-telegram-builder\.css\?v=1/);
  assert.ok(html.indexOf("viona-telegram-builder.js")<html.indexOf("viona-studio.js"),"constructor must load first");
- assert.match(sw,/viona-reboot-v35/);
+ assert.match(sw,/viona-reboot-v36/);
  for(const name of ["viona-telegram-builder.js","viona-telegram-builder.css"])assert.ok(sw.includes(name));
 });
 test("commands are editable, persisted and validated",()=>{
