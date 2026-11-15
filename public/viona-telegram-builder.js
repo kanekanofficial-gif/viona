@@ -5,7 +5,8 @@
  const ROOT=document.getElementById("vstContent");
  if(!ROOT)return;
  const KEY="viona-tg-bot-builder-v1",HISTORY_KEY="viona-tg-bot-history-v1";
- const MAX_COMMANDS=40,MAX_BUTTONS=8,MAX_TRIGGERS=30,MAX_VERSIONS=15;
+ const MAX_COMMANDS=40,MAX_BUTTONS=8,MAX_TRIGGERS=30,MAX_VERSIONS=15,PHOTO_MAX_BYTES=150000;
+ const trustedImageURI=value=>typeof value==="string"&&value.length<210000&&/^data:image\/(?:png|jpeg|webp);base64,[A-Za-z0-9+/=]+$/.test(value);
  const escapeHTML=value=>String(value??"").replace(/[&<>"']/g,c=>({
   "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
  })[c]);
@@ -17,7 +18,7 @@
  const roles=["all","moderator","admin"];
  const roleNames={all:"Все пользователи",moderator:"Модераторы и админы",admin:"Только админы"};
  function sample(name="/start",reply="Привет, {name}! Добро пожаловать.",role="all",buttons=[]){
-  return{name,reply,role,media:"none",mediaCaption:"",buttons};
+  return{name,reply,role,media:"none",mediaCaption:"",mediaData:"",buttons};
  }
  function defaultBot(){
   return{
@@ -73,7 +74,7 @@
    name:trim(x.name,33).toLowerCase(),reply:trim(x.reply,2400),
    role:roles.includes(x.role)?x.role:"all",
    media:["none","photo","document"].includes(x.media)?x.media:"none",
-   mediaCaption:trim(x.mediaCaption,350),
+   mediaCaption:trim(x.mediaCaption,350),mediaData:trustedImageURI(x.mediaData)?x.mediaData:"",
    buttons:Array.isArray(x.buttons)?x.buttons.slice(0,MAX_BUTTONS).filter(b=>b&&typeof b==="object").map(b=>({
     label:trim(b.label,45),kind:["command","url","message"].includes(b.kind)?b.kind:"command",target:trim(b.target,450)
    })):[]
@@ -92,6 +93,7 @@
  if(!history||!Array.isArray(history.past)||!Array.isArray(history.future))history={past:[],future:[]};
  history.past=history.past.slice(-MAX_VERSIONS);history.future=history.future.slice(-MAX_VERSIONS);
  let panel="commands",selected=bot.commands[0]?.name||"/start",editing=null,editButton=-1,role="all";
+ let pendingMedia=null,uploadingImage=false;
  let persona={name:"Алекс",username:"alex_demo",product:"Demo Product",order_id:"DEMO-001"};
  let chat=[{type:"system",text:"Здесь можно вводить свои команды и сообщения. Ничего не отправляется в Telegram."}];
  let requestBusy=false,requestFeedback="",draftStatus="",templateChoice="basic";
@@ -100,7 +102,7 @@
  const rolesAllowed={all:["all","moderator","admin"],moderator:["moderator","admin"],admin:["admin"]};
  const isAllowed=(minRole)=>rolesAllowed[minRole||"all"]?.includes(role)??true;
  const getCommand=(name)=>bot.commands.find(c=>c.name===name);
- const msg=(type,text,buttons=[],media="none",caption="")=>({type,text:trim(text,2600),buttons,media,caption});
+ const msg=(type,text,buttons=[],media="none",caption="",mediaData="")=>({type,text:trim(text,2600),buttons,media,caption,mediaData:trustedImageURI(mediaData)?mediaData:""});
  const format=(raw)=>{
   const vars={
    name:persona.name,username:"@"+persona.username,bot:bot.name,
@@ -119,7 +121,7 @@
    const command=getCommand(name);
    if(!command)response=msg("bot","Неизвестная команда. Проверь список команд через /help.");
    else if(!isAllowed(command.role))response=msg("bot","Эта команда недоступна для роли: "+labelRoles()+".");
-   else response=msg("bot",format(command.reply),command.buttons,command.media,format(command.mediaCaption));
+   else response=msg("bot",format(command.reply),command.buttons,command.media,format(command.mediaCaption),command.mediaData);
   }else{
    const value=text.toLocaleLowerCase("ru");
    const trigger=bot.triggers.find(x=>x.match==="exact"?value===x.keyword.toLocaleLowerCase("ru"):value.includes(x.keyword.toLocaleLowerCase("ru")));
@@ -156,6 +158,7 @@
  const icon={commands:"⌨",buttons:"▦",triggers:"◎",scenarios:"◇",check:"✓",order:"↗"};
  function renderEditor(){
   const existing=editing?getCommand(editing):null;
+  const imageData=pendingMedia!==null?pendingMedia:existing?.mediaData||"";
   return heading(existing?"Изменить команду":"Добавить команду","Напиши команду и ответ. Переменные: {name}, {username}, {bot}, {product}, {order_id}, {commands}.")+
    '<form id="vbCommandForm" class="vb-form"><div class="vb-fields-two">'+
    field("Команда",input("name","/shop",existing?.name||"",33,true))+
@@ -249,7 +252,7 @@
   name:bot.name,username:bot.username,description:bot.description,
   commands:bot.commands.map(c=>({
    name:c.name,role:roleNames[c.role],reply:c.reply,
-   media:c.media,mediaCaption:c.mediaCaption,
+   media:c.media,mediaCaption:c.mediaCaption,hasLocalPhoto:!!c.mediaData,
    buttons:c.buttons.map(b=>({label:b.label,action:b.kind,target:b.target}))
   })),
   triggers:bot.triggers.map(x=>({...x}))
@@ -262,7 +265,7 @@
    "КОМАНДЫ ("+obj.commands.length+")"
   ];
   for(const c of obj.commands){
-   parts.push(c.name+" | "+c.role,"Ответ: "+c.reply,"Медиа: "+c.media+(c.mediaCaption?" / "+c.mediaCaption:""));
+   parts.push(c.name+" | "+c.role,"Ответ: "+c.reply,"Медиа: "+c.media+(c.mediaCaption?" / "+c.mediaCaption:"")+(c.hasLocalPhoto?" [локальное фото, переслать отдельно]":""));
    for(const b of c.buttons)parts.push("Кнопка: "+b.label+" | "+b.action+" → "+b.target);parts.push("");
   }
   parts.push("РЕАКЦИИ НА СООБЩЕНИЯ ("+obj.triggers.length+")");
