@@ -4,6 +4,10 @@
  const KEY="viona-studio-v1",EDITOR="viona-editor-v1",ROOT=document.getElementById("vstContent");
  if(!ROOT)return;
  const doc=document.documentElement;
+ try{
+  const saved=JSON.parse(localStorage.getItem("viona-world")||"null");
+  if(["ru","en","de","ja","femboy"].includes(saved)){doc.dataset.world=saved;doc.lang=saved==="femboy"?"ru":saved}
+ }catch{}
  const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
  const esc=x=>String(x??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
  const read=(key,fallback)=>{try{return JSON.parse(localStorage.getItem(key))??fallback}catch{return fallback}};
@@ -268,7 +272,7 @@
   if(x.hasAttribute("data-vst-add-bundle")){
    if(!state.bundle.length){toast("Выбери хотя бы один товар.");return}
    const valid=state.bundle.filter(id=>products.some(p=>String(p.id)===String(id)));
-   const basket=read("viona-halloween-v1",{}),cart=Array.isArray(basket?.cart)?basket.cart.map(String):[];
+   const storedBasket=read("viona-halloween-v1",{}),basket=storedBasket&&typeof storedBasket==="object"?storedBasket:{},cart=Array.isArray(basket.cart)?basket.cart.map(String):[];
    basket.cart=[...new Set([...cart,...valid])];
    try{localStorage.setItem("viona-halloween-v1",JSON.stringify(basket));toast("Добавлено в корзину. Открываем каталог…");setTimeout(()=>location.assign("/#catalog"),300)}catch{toast("Не удалось обновить корзину.")}return;
   }
@@ -288,7 +292,8 @@
  ROOT.addEventListener("dragstart",e=>{const node=e.target.closest("[data-vst-drag]");if(node){drag=node.dataset.vstDrag;e.dataTransfer?.setData("text/plain",drag)}});
  ROOT.addEventListener("dragover",e=>{if(drag&&e.target.closest("[data-vst-drag]"))e.preventDefault()});
  ROOT.addEventListener("drop",e=>{const dest=e.target.closest("[data-vst-drag]")?.dataset.vstDrag;if(!drag||!dest||drag===dest)return;e.preventDefault();const a=state.widgetOrder,i=a.indexOf(drag),j=a.indexOf(dest);if(i<0||j<0)return;a.splice(i,1);a.splice(j,0,drag);drag=null;save();renderDashboard()});
- const privacy=$("#vstPrivacy");privacy?.addEventListener("click",()=>{
+ const privacy=$("#vstPrivacy");if(privacy){privacy.setAttribute("aria-pressed",String(doc.dataset.vionaPrivate==="on"))}
+ privacy?.addEventListener("click",()=>{
   const enabled=!doc.classList.contains("vst-privacy-active");
   doc.classList.toggle("vst-privacy-active",enabled);doc.dataset.vionaPrivate=enabled?"on":"off";
   privacy.setAttribute("aria-pressed",String(enabled));toast(enabled?"Приватный режим включён":"Приватный режим выключен");
