@@ -79,7 +79,7 @@ const {chromium}=require("playwright");
     assert.equal(await page.locator("html").getAttribute("data-pref-font"),"large");
     await page.locator('[data-settings-contrast="high"]').click();
     assert.equal(await page.locator("html").getAttribute("data-pref-contrast"),"high");
-    await page.locator('[data-settings-motion="reduce"]').click();
+    await page.locator('.vs-segment[data-settings-motion="reduce"]').click();
     assert.equal(await page.locator("html").getAttribute("data-pref-motion"),"reduce");
     await page.locator('[data-settings-tab="interface"]').click();
     await page.locator("#vionaSettingsBadge").uncheck();
@@ -105,7 +105,7 @@ const {chromium}=require("playwright");
     await page.locator('[data-settings-density="comfortable"]').click();
     await page.locator('[data-settings-font="normal"]').click();
     await page.locator('[data-settings-contrast="normal"]').click();
-    await page.locator('[data-settings-motion="system"]').click();
+    await page.locator('.vs-segment[data-settings-motion="system"]').click();
     await page.locator(".vs-close").click();
     await page.locator("#v15Close").click();
 
