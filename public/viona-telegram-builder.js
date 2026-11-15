@@ -309,6 +309,12 @@
     '</div>';
    }).join("")+'</div><form id="vbChatForm" class="vb-chat-compose"><input name="message" maxlength="800" placeholder="Введи /help, /shop или любое сообщение" autocomplete="off" required aria-label="Команда или сообщение"><button class="vb-send" type="submit" aria-label="Отправить">➤</button></form></div>'+
    '<div class="vb-chat-extras"><label class="vb-field"><span>Тестируемая роль</span><select id="vbSimRole">'+[["all","Обычный пользователь"],["moderator","Модератор"],["admin","Администратор"]].map(([v,t])=>option(v,t,role)).join("")+'</select></label>'+
+   '<form id="vbPersonaForm" class="vb-form" style="margin-top:12px"><div class="vb-fields-two">'+
+   field("Имя клиента",input("name","Имя",persona.name,60,true))+
+   field("Товар",input("product","Название товара",persona.product,60))+
+   field("ID тестового заказа",input("order_id","DEMO-001",persona.order_id,40))+
+   field("Ник клиента",input("username","username",persona.username,40))+
+   '</div><button type="submit" class="vb-btn">Обновить переменные демо</button></form>'+
    '<div class="vb-samples">'+bot.commands.slice(0,8).map(c=>button(c.name,'data-vb-demo="'+escapeHTML(c.name)+'"')).join("")+'</div>'+
    button("Очистить чат",'data-vb-action="clear-chat"')+'</div></section>';
  }
@@ -411,7 +417,7 @@
  }
  ROOT.addEventListener("submit",event=>{
   const form=event.target;if(!form.closest("#vionaBotBuilder"))return;
-  if(!["vbIdentityForm","vbCommandForm","vbButtonForm","vbTriggerForm","vbChatForm","vbOrderForm"].includes(form.id))return;
+  if(!["vbIdentityForm","vbCommandForm","vbButtonForm","vbTriggerForm","vbChatForm","vbOrderForm","vbPersonaForm"].includes(form.id))return;
   event.preventDefault();
   if(!form.reportValidity())return;
   if(form.id==="vbIdentityForm"){
@@ -419,6 +425,17 @@
    if(!/^[A-Za-z][A-Za-z0-9_]{4,31}$/.test(username)){notify("Username должен содержать 5–32 латинских символа, цифры или _.");return}
    change(()=>{bot.name=name;bot.username=username;bot.description=trim(f.get("description"),450)});
    notify("Профиль бота обновлён.");repaint();return;
+  }
+  if(form.id==="vbPersonaForm"){
+   const data=new FormData(form);
+   persona={
+    name:trim(data.get("name"),60)||"Клиент",
+    username:trim(data.get("username"),40).replace(/^@/,"")||"client",
+    product:trim(data.get("product"),60)||"Товар",
+    order_id:trim(data.get("order_id"),40)||"DEMO-001"
+   };
+   chat.push(msg("system","Тестовые данные обновлены. Отправь команду повторно."));
+   repaint();return;
   }
   if(form.id==="vbCommandForm"){submitCommand(form);return}
   if(form.id==="vbButtonForm"){submitButton(form);return}
