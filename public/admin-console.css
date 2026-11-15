@@ -42,3 +42,13 @@ button:disabled{opacity:.55;cursor:not-allowed}button:focus-visible,a:focus-visi
 @media(max-width:950px){.ad-layout{grid-template-columns:1fr}.ad-order-list{max-height:420px}}
 @media(max-width:600px){.ad-main{padding-top:27px}.ad-stats{grid-template-columns:repeat(2,minmax(0,1fr))}.ad-list-panel,.ad-detail-panel{padding:17px}.ad-detail-fields{grid-template-columns:1fr}.ad-login{padding:21px}.ad-top-label{font-size:8px}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation:none!important;transition:none!important}}
+
+/* Admin console follows the global VIONA theme preference. */
+html[data-theme="light"]{color-scheme:light;--bg:#f4f9fc;--panel:#ffffff;--panel2:#eaf3f8;--line:#c6dbe6;--text:#1a3543;--muted:#4f6c7b;--accent:#0b708a;--teal:#176d51;--warn:#8f651c;--danger:#b33038}
+html[data-theme="light"] .ad-top{background:#fff}
+html[data-theme="light"] .ad-card{background:#fff;box-shadow:0 15px 45px #183a5114}
+html[data-theme="light"] .ad-field input,html[data-theme="light"] .ad-field textarea,html[data-theme="light"] .ad-field select{background:#fff}
+html[data-theme="light"] .ad-pill{background:#e4f6ed;border-color:#99c7b1}
+html[data-theme="light"] .ad-pill.pending{background:#fff5df;border-color:#d6bb77}
+html[data-theme="light"] .ad-pill.failed{background:#fff1f0;border-color:#d8a7ac}
+html[data-theme="light"] .ad-tools button:not(.secondary),html[data-theme="light"] .ad-actions button:not(.secondary){color:#fff}
