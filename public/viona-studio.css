@@ -61,3 +61,8 @@ button,input,textarea,select{font:inherit}button{cursor:pointer}a{color:inherit;
 @media(max-width:900px){.vst-hero{grid-template-columns:1fr}.vst-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:620px){.vst-head{margin:0;border-radius:0}.vst-main{padding-top:22px}.vst-hero{padding:22px;border-radius:18px}.vst-grid,.vst-grid.two,.vst-compare{grid-template-columns:1fr}.vst-section-head{display:block}.vst-tabs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.vst-tabs button{padding:9px}.vst-card{padding:17px}.vst-list-item{flex-direction:column;align-items:flex-start}.vst-top-nav{order:3;width:100%}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+
+/* Extra glass depth for Studio 27. */
+.vg-glass-panel{background:var(--vg27-glass,#ffffffcb);border:1px solid var(--vg27-border,#fff);box-shadow:inset 0 1px var(--vg27-highlight,#fff),0 18px 44px var(--vg27-shadow,#21384922);backdrop-filter:blur(22px) saturate(1.4)}
+.vst-card .vst-list-item,.vst-hero-meta{backdrop-filter:blur(12px)}
+html[data-pref-water="off"] .fluid-edge>.vg-waterline,html[data-pref-water="off"] .fluid-edge>.vg-drop,html[data-pref-water="off"] .fluid-edge>.vg-waterfall-shine{display:none!important}

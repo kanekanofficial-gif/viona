@@ -147,3 +147,10 @@ html[data-pref-motion="reduce"] .vg-drop{opacity:.45;top:63%}
  .nx-motion-ready .nx-reveal,.vs-overlay .vs-dialog,.vs-overlay .vs-scrim{animation:none!important;transition:none!important}
  .vg-shimmer,.vg-ripple{display:none!important}
 }
+
+/* Motion respects all accessibility preferences; extra privacy hides only visible on-screen text. */
+html[data-pref-water="off"] .vg-waterline,html[data-pref-water="off"] .vg-drop,html[data-pref-water="off"] .vg-waterfall-shine{display:none!important}
+html[data-viona-private="on"] :is(.v16-account strong,.v16-account small,.panel-item strong,.vx-line .vx-product-name,.vx-saved-card strong,.profile-card strong,.vst-private,.vst-sensitive){
+ filter:blur(8px)!important;user-select:none!important
+}
+html[data-viona-private="on"] :is(.v16-account strong,.v16-account small,.panel-item strong,.vx-line .vx-product-name,.vx-saved-card strong,.profile-card strong,.vst-private,.vst-sensitive):focus-visible{filter:none!important}
