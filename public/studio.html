@@ -7,14 +7,14 @@
 <link rel="icon" href="/favicon.svg?v=30" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Unbounded:wght@400;500;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/viona-theme.css?v=1"><link rel="stylesheet" href="/viona-studio.css?v=1"><link rel="stylesheet" href="/viona-glass27.css?v=1"><link rel="stylesheet" href="/viona-telegram-builder.css?v=1"><link rel="stylesheet" href="/viona-settings.css?v=1">
+<link rel="stylesheet" href="/viona-theme.css?v=1"><link rel="stylesheet" href="/viona-studio.css?v=1"><link rel="stylesheet" href="/viona-glass27.css?v=1"><link rel="stylesheet" href="/viona-telegram-builder.css?v=1"><link rel="stylesheet" href="/viona-settings.css?v=1"><link rel="stylesheet" href="/viona-studio-polish.css?v=1">
 <script defer src="/viona-theme.js?v=1"></script><script defer src="/viona-telegram-builder.js?v=1"></script><script defer src="/viona-studio.js?v=2"></script><script defer src="/viona-command.js?v=1"></script><script defer src="/viona-glass27.js?v=1"></script><script defer src="/viona-settings.js?v=1"></script>
 </head>
 <body class="vs-studio-page">
 <header class="vst-head vg-glass-panel">
  <a class="vst-logo" href="/" aria-label="VIONA home"><span class="vst-logo-mark">V</span><span>VIONA <small>STUDIO / 2026</small></span></a>
- <nav class="vst-top-nav" aria-label="Навигация"><a href="/">Главная</a><a href="/#catalog">Каталог</a><a href="/code-edit">Доработка кода</a></nav>
- <div class="vst-head-tools"><button type="button" id="vstPrivacy" class="vst-icon-button" aria-pressed="false" title="Скрыть личные данные">◉</button><button type="button" class="vst-icon-button" data-command-open title="Быстрые команды">⌘ K</button></div>
+ <nav class="vst-top-nav" aria-label="Навигация"><a href="/">Главная</a><a href="/#catalog">Каталог</a><a href="/code-edit">Доработка кода</a><a href="/studio/support">Поддержка и вопросы</a></nav>
+ <div class="vst-head-tools"><button type="button" class="vst-lang-badge viona-settings-entry" id="vstLanguage" title="Язык и настройки" aria-label="Язык и настройки"><img src="/assets/flag-ru.svg" alt=""><span id="vstLangLabel">RU</span></button><button type="button" id="vstPrivacy" class="vst-icon-button" aria-pressed="false" title="Скрыть личные данные"><svg class="vst-svg" aria-hidden="true"><use href="/assets/studio-icons.svg#privacy"></use></svg></button><button type="button" class="vst-icon-button" data-command-open title="Быстрые команды"><svg class="vst-svg" aria-hidden="true"><use href="/assets/studio-icons.svg#command"></use></svg> <span>Ctrl K</span></button></div>
 </header>
 <main class="vst-main">
  <section class="vst-hero fluid-edge">
@@ -22,16 +22,18 @@
   <aside class="vst-hero-meta vg-glass-panel"><small>WORKSPACE STATUS</small><strong>Build your next idea.</strong><span>LAB · BUILD · COMPARE · BOARDS</span></aside>
  </section>
  <nav class="vst-tabs" id="vstTabs" aria-label="Разделы VIONA Studio">
-  <button type="button" data-vst-tab="lab">◈ LAB</button>
-  <button type="button" data-vst-tab="builder">▦ Конструктор</button>
-  <button type="button" data-vst-tab="workspace">◷ Workspace</button>
-  <button type="button" data-vst-tab="diff">≠ До / После</button>
-  <button type="button" data-vst-tab="bundles">⊞ Наборы</button>
-  <button type="button" data-vst-tab="boards">◇ Доски идей</button>
-  <button type="button" data-vst-tab="dashboard">▤ Профиль</button>
-  <button type="button" data-vst-tab="editor">⌨ Редактор</button>
+  <button type="button" data-vst-tab="lab"><svg class="vst-svg" aria-hidden="true"><use href="/assets/studio-icons.svg#lab"></use></svg> LAB</button>
+  <button type="button" data-vst-tab="builder"><svg class="vst-svg" aria-hidden="true"><use href="/assets/studio-icons.svg#builder"></use></svg> Конструктор</button>
+  <button type="button" data-vst-tab="workspace"><svg class="vst-svg" aria-hidden="true"><use href="/assets/studio-icons.svg#workspace"></use></svg> Workspace</button>
+  <button type="button" data-vst-tab="diff"><svg class="vst-svg" aria-hidden="true"><use href="/assets/studio-icons.svg#diff"></use></svg> До / После</button>
+  <button type="button" data-vst-tab="bundles"><svg class="vst-svg" aria-hidden="true"><use href="/assets/studio-icons.svg#bundles"></use></svg> Наборы</button>
+  <button type="button" data-vst-tab="boards"><svg class="vst-svg" aria-hidden="true"><use href="/assets/studio-icons.svg#boards"></use></svg> Доски идей</button>
+  <button type="button" data-vst-tab="dashboard"><svg class="vst-svg" aria-hidden="true"><use href="/assets/studio-icons.svg#dashboard"></use></svg> Профиль</button>
+  <button type="button" data-vst-tab="editor"><svg class="vst-svg" aria-hidden="true"><use href="/assets/studio-icons.svg#editor"></use></svg> Редактор</button>
+  <button type="button" data-vst-tab="support"><svg class="vst-svg" aria-hidden="true"><use href="/assets/studio-icons.svg#support"></use></svg> Поддержка и вопросы</button>
  </nav>
  <section class="vst-content" id="vstContent" aria-live="off"><div class="vst-skeleton"><span></span><span></span><span></span></div></section>
+ <div class="vst-foot-contacts"><svg class="vst-svg" aria-hidden="true"><use href="/assets/studio-icons.svg#mail"></use></svg> <a href="mailto:support.viona.space@gmail.com">support.viona.space@gmail.com</a><span>·</span><button type="button" data-vst-tab="support" class="vst-btn">Поддержка и вопросы</button></div>
  <p class="vst-foot-note">Личные черновики и настройки Studio хранятся в этом браузере. Это не синхронизированное облачное хранилище. Заказы подтверждаются только через действующую систему VIONA.</p>
 </main>
 <div class="vst-toast" id="vstToast" role="status" aria-live="polite"></div>
