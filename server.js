@@ -48,7 +48,7 @@ app.get("/studio/:view", (req,res,next)=>{
  return res.sendFile(path.join(__dirname,"public","studio.html"));
 });
 app.get("/studio/:kind/:id", (req,res,next)=>{
- if(!["projects","boards"].includes(req.params.kind)||!/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(req.params.id))return next();
+ if(!["projects","boards","bots"].includes(req.params.kind)||!/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(req.params.id))return next();
  return res.sendFile(path.join(__dirname,"public","studio.html"));
 });
 app.get("*path",(_req,res)=>res.sendFile(path.join(__dirname,"public","index.html")));
