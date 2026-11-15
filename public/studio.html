@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="ru" data-world="ru">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#eef7f8"><meta name="description" content="VIONA Studio — LAB, рабочее пространство, конструкторы проектов и личные доски идей.">
+<title>VIONA Studio — Конструктор проектов</title>
+<link rel="icon" href="/favicon.svg?v=30" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Unbounded:wght@400;500;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/viona-theme.css?v=1"><link rel="stylesheet" href="/viona-studio.css?v=1"><link rel="stylesheet" href="/viona-glass27.css?v=1">
+<script defer src="/viona-theme.js?v=1"></script><script defer src="/viona-studio.js?v=1"></script><script defer src="/viona-command.js?v=1"></script><script defer src="/viona-glass27.js?v=1"></script>
+</head>
+<body class="vs-studio-page">
+<header class="vst-head vg-glass-panel">
+ <a class="vst-logo" href="/" aria-label="VIONA home"><span class="vst-logo-mark">V</span><span>VIONA <small>STUDIO / 2026</small></span></a>
+ <nav class="vst-top-nav" aria-label="Навигация"><a href="/">Главная</a><a href="/#catalog">Каталог</a><a href="/code-edit">Доработка кода</a></nav>
+ <div class="vst-head-tools"><button type="button" id="vstPrivacy" class="vst-icon-button" aria-pressed="false" title="Скрыть личные данные">◉</button><button type="button" class="vst-icon-button" data-command-open title="Быстрые команды">⌘ K</button></div>
+</header>
+<main class="vst-main">
+ <section class="vst-hero fluid-edge">
+  <div><p class="vst-kicker">VIONA / CREATIVE WORKSPACE</p><h1>Инструменты для <em>твоих идей.</em></h1><p>Пробуй демо, собирай проекты, веди заметки, сравнивай код. Никакого запуска чужих программ: только безопасный предпросмотр и твоя работа.</p></div>
+  <aside class="vst-hero-meta vg-glass-panel"><small>WORKSPACE STATUS</small><strong>Build your next idea.</strong><span>LAB · BUILD · COMPARE · BOARDS</span></aside>
+ </section>
+ <nav class="vst-tabs" id="vstTabs" aria-label="Разделы VIONA Studio">
+  <button type="button" data-vst-tab="lab">◈ LAB</button>
+  <button type="button" data-vst-tab="builder">▦ Конструктор</button>
+  <button type="button" data-vst-tab="workspace">◷ Workspace</button>
+  <button type="button" data-vst-tab="diff">≠ До / После</button>
+  <button type="button" data-vst-tab="bundles">⊞ Наборы</button>
+  <button type="button" data-vst-tab="boards">◇ Доски идей</button>
+  <button type="button" data-vst-tab="dashboard">▤ Профиль</button>
+  <button type="button" data-vst-tab="editor">⌨ Редактор</button>
+ </nav>
+ <section class="vst-content" id="vstContent" aria-live="off"><div class="vst-skeleton"><span></span><span></span><span></span></div></section>
+ <p class="vst-foot-note">Личные черновики и настройки Studio хранятся в этом браузере. Это не синхронизированное облачное хранилище. Заказы подтверждаются только через действующую систему VIONA.</p>
+</main>
+<div class="vst-toast" id="vstToast" role="status" aria-live="polite"></div>
+</body></html>
