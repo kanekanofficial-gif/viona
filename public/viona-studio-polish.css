@@ -1,0 +1,64 @@
+/* VIONA Studio polish: consistent palettes, vector icons and support surfaces. */
+.vst-svg,.vb-svg,.vs-svg{width:17px;height:17px;display:inline-block;vertical-align:-.22em;flex:none;stroke:currentColor;fill:none}
+.vst-tabs button,.vst-icon-button,.vb-nav button{display:inline-flex;align-items:center;justify-content:center;gap:8px}
+.vst-icon-button{min-height:40px}.vst-svg.small,.vb-svg.small{width:15px;height:15px}
+.vst-lang-badge{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--vst-border);background:var(--vst-card);color:var(--vst-ink);border-radius:12px;padding:8px 10px;font-weight:800;font-size:11px;min-height:40px}
+.vst-lang-badge img,.lang-list img,.lang-trigger img{width:20px;height:14px;border-radius:2px;object-fit:cover;vertical-align:middle}
+.lang-list [data-lang="ru"]{display:flex;gap:8px;align-items:center}
+.lang-trigger .lang-flag{display:inline-flex;align-items:center;justify-content:center}
+.vst-support-contact{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.vst-support-address{font:800 clamp(13px,2vw,18px)/1.6 "Manrope",sans-serif;overflow-wrap:anywhere;color:var(--vst-ink)}
+.vst-support-actions{display:flex;gap:9px;flex-wrap:wrap}
+.vst-faq{border:1px solid var(--vst-border);border-radius:13px;background:var(--vst-soft);margin-top:10px}
+.vst-faq summary{padding:13px 15px;font-weight:800;cursor:pointer;list-style-position:inside;color:var(--vst-ink)}
+.vst-faq p{padding:0 15px 14px;line-height:1.65;color:var(--vst-muted)}
+.vst-route-notice{margin:10px 0;padding:11px 14px;border:1px solid var(--vst-border);background:var(--vst-soft);border-radius:12px;color:var(--vst-muted)}
+.vst-code,.vst-preview-web,.vst-preview-web *{color:var(--vst-ink)}
+.vst-preview-web{background:linear-gradient(155deg,var(--vst-soft),var(--vst-card));border-color:var(--vst-border)}
+.vst-preview-web>header{border-color:var(--vst-border)}
+.vst-preview-web h3{color:var(--vst-ink)}
+.vst-preview-web p{color:var(--vst-muted)}
+/* Explicit effective palettes: editor, previews, cards and chat follow the whole site. */
+html[data-theme="light"]{color-scheme:light}
+html[data-theme="dark"]{color-scheme:dark}
+html[data-theme="dark"] body.vs-studio-page{
+ --vst-bg:#090b0e;--vst-ink:#f5f6f7;--vst-muted:#bbc4cc;--vst-card:#191d22f0;--vst-soft:#222830;--vst-border:#39424d;--vst-accent:#d5e4ed;--vst-action:#e4edf3;--vst-action-ink:#12171c;
+ --vg27-glass:#181d23ed;--vg27-highlight:#ffffff20;--vg27-border:#52606b8a;--vg27-shadow:#000a;
+ background:#090b0e!important;color:#f5f6f7;
+}
+html[data-theme="light"] body.vs-studio-page{
+ --vst-bg:#f6fbfd;--vst-ink:#132c39;--vst-muted:#496574;--vst-card:#ffffffed;--vst-soft:#e9f3f8;--vst-border:#b9d5e0;--vst-accent:#096d88;--vst-action:#096e8b;--vst-action-ink:#ffffff;
+ --vg27-glass:#ffffffed;--vg27-highlight:#ffffffde;--vg27-border:#ffffffd8;
+ background:#f6fbfd!important;color:#132c39;
+}
+html[data-theme="light"] body.vs-studio-page .vst-hero,
+html[data-theme="dark"] body.vs-studio-page .vst-hero{background:linear-gradient(130deg,var(--vst-card),var(--vst-soft))}
+html[data-theme="dark"] body.vs-studio-page :is(.vst-head,.vst-card,.vst-hero-meta,.vb-top,.vb-card,.vb-phone,.vb-chat-extras){
+ background:var(--vst-card)!important;color:var(--vst-ink)!important;border-color:var(--vst-border)!important;
+}
+html[data-theme="light"] body.vs-studio-page :is(.vst-head,.vst-card,.vst-hero-meta,.vb-top,.vb-card,.vb-phone,.vb-chat-extras){
+ background:var(--vst-card)!important;color:var(--vst-ink)!important;border-color:var(--vst-border)!important;
+}
+body.vs-studio-page :is(.vb-app,.vb-phone,.vb-chat-extras,.vb-chat-msgs,.vb-chat-compose,.vb-phone-top,.vb-brief,.vb-attachment,.vb-chat-system){
+ --vb-ink:var(--vst-ink);--vb-muted:var(--vst-muted);--vb-soft:var(--vst-soft);--vb-card:var(--vst-card);
+ --vb-border:var(--vst-border);--vb-accent:var(--vst-accent);--vb-action:var(--vst-action);--vb-action-text:var(--vst-action-ink);
+}
+body.vs-studio-page :is(input,select,textarea,.vst-input,.vst-code,.vst-line-nums,.vb-field input,.vb-field select,.vb-field textarea,.vb-chat-compose input){
+ background:var(--vst-soft);color:var(--vst-ink);border-color:var(--vst-border)
+}
+body.vs-studio-page :is(input,textarea)::placeholder{color:var(--vst-muted)}
+html[data-theme="dark"] body.vs-studio-page .vb-chat-msgs,
+html[data-theme="light"] body.vs-studio-page .vb-chat-msgs{background:var(--vst-soft)}
+html[data-theme="dark"] body.vs-studio-page .vst-editor-light,
+html[data-theme="dark"] body.vs-studio-page .vst-editor-dark{background:#10161d!important;color:#f3f6f9!important;border-color:var(--vst-border)!important}
+html[data-theme="light"] body.vs-studio-page .vst-editor-dark,
+html[data-theme="light"] body.vs-studio-page .vst-editor-light{background:#fff!important;color:#152d3a!important;border-color:var(--vst-border)!important}
+html[data-theme="dark"] body.vs-studio-page :is(.vs-dialog,.vs-group,.vs-select-wrap,.vs-segment,.vgc-dialog){color:var(--vst-ink)}
+html[data-theme="light"] body.vs-studio-page :is(.vs-dialog,.vs-group,.vs-select-wrap,.vs-segment,.vgc-dialog){color:var(--vst-ink)}
+body.vs-studio-page :is(.vs-dialog,.vgc-dialog){background:var(--vst-card);border-color:var(--vst-border)}
+body.vs-studio-page .vb-phone-icon{background:var(--vst-action);color:var(--vst-action-ink)}
+body.vs-studio-page .vb-nav button[aria-selected="true"],body.vs-studio-page .vst-tabs button[aria-pressed="true"]{color:var(--vst-action-ink)}
+.vst-mail-link{font-weight:850;text-decoration:underline;text-underline-offset:3px}
+.vst-foot-contacts{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;align-items:center;padding:14px}
+.vst-foot-contacts a{color:var(--vst-accent);font-weight:800}
+@media(max-width:650px){.vst-support-actions{width:100%}.vst-support-actions .vst-btn{flex:1;text-align:center}.vst-lang-badge{padding:8px}.vst-head-tools{flex-wrap:wrap}}
