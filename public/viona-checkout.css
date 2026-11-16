@@ -127,7 +127,7 @@
 .vx-project-brief{margin:0 0 21px;padding:18px;border:1px solid var(--vx-line);border-radius:18px;background:linear-gradient(145deg,#e3faff0c,#ffffff05)}
 .vx-project-brief .vx-section-title{margin-bottom:9px}.vx-brief-description{margin:0 0 13px;color:var(--vx-muted);font-size:12px;line-height:1.7}
 .vx-brief-field{display:flex;flex-direction:column;gap:7px;margin:13px 0;color:var(--vt-text,#e9f4fa);font-size:12px;font-weight:750}
-.vx-brief-field input,.vx-brief-field textarea{display:block;width:100%;min-width:0;padding:12px 13px;background:#14212bdd;color:#f5fbff;border:1px solid #7f9eb888;border-radius:12px;font:500 12px/1.6 inherit;resize:vertical;outline-offset:3px}
+.vx-brief-field input,.vx-brief-field textarea{display:block;width:100%;min-width:0;padding:12px 13px;background:#14212bdd;color:#f5fbff;border:1px solid #7f9eb888;border-radius:12px;font:500 12px/1.6 system-ui,sans-serif;resize:vertical;outline-offset:3px}
 .vx-brief-field :is(input,textarea)::placeholder{color:#a5bac9}
 .vx-brief-warning{display:block;margin-top:9px;font-size:10px;line-height:1.6;color:var(--vx-muted)}
 html[data-theme="light"] .vx-project-brief{background:#eaf6fa;border-color:#bed9e6}
