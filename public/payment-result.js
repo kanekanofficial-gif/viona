@@ -70,7 +70,7 @@
 
  function render(payload){
   const order=payload.order,confirmed=order.verifiedPaid,failed=order.failed;
-  const state=confirmed?"success":failed?"failure":"waiting";
+  const state=order.rejected?"rejected":confirmed?"success":failed?"failure":"waiting";
   const stageTitle={queued:"Заявка принята",in_progress:"В разработке",ready:"Подготовка к отправке",completed:"Готово",rejected:"Отклонён"};
   const headline=confirmed?(stageTitle[order.stage]||"Заказ оформлен"):failed?"Оплата не прошла":"Ожидаем подтверждения";
   const description=confirmed?(order.rejected?"Администратор отклонил выполнение заказа. Это не возврат платежа. Причину можно посмотреть ниже, по вопросам обращайся в поддержку.":"Тестовая оплата подтверждена Т-Банком. Статусы меняет только команда VIONA; готовый файл появится в этом заказе после завершения."):
