@@ -16,11 +16,11 @@ femboy:{account:"VIONA ID 2.0 ♡",orders:"Мои заказы ♡",notify:"Ув
 };
 const lang=(document.documentElement.dataset.world||document.documentElement.lang||"ru").toLowerCase();const t=tr[lang]||tr.ru;
 const stageLabels={
- ru:{queued:"Заявка принята",in_progress:"В разработке",ready:"Подготовка к отправке",completed:"Готово"},
- femboy:{queued:"Заявка принята",in_progress:"В разработке",ready:"Подготовка к отправке",completed:"Готово"},
- en:{queued:"Request accepted",in_progress:"In development",ready:"Preparing delivery",completed:"Ready"},
- de:{queued:"Auftrag angenommen",in_progress:"In Bearbeitung",ready:"Versand wird vorbereitet",completed:"Fertig"},
- ja:{queued:"依頼受付済み",in_progress:"制作中",ready:"納品準備中",completed:"完了"}
+ ru:{queued:"Заявка принята",in_progress:"В разработке",ready:"Подготовка к отправке",completed:"Готово",rejected:"Отклонён"},
+ femboy:{queued:"Заявка принята",in_progress:"В разработке",ready:"Подготовка к отправке",completed:"Готово",rejected:"Отклонён"},
+ en:{queued:"Request accepted",in_progress:"In development",ready:"Preparing delivery",completed:"Ready",rejected:"Rejected"},
+ de:{queued:"Auftrag angenommen",in_progress:"In Bearbeitung",ready:"Versand wird vorbereitet",completed:"Fertig",rejected:"Abgelehnt"},
+ ja:{queued:"依頼受付済み",in_progress:"制作中",ready:"納品準備中",completed:"完了",rejected:"却下"}
 };
 const stageLabel=id=>(stageLabels[lang]||stageLabels.ru)[id]||id;
 
@@ -32,7 +32,7 @@ async function load(){const [profile,orders,notifications,purchases]=await Promi
 function accountHtml(){const p=state16.profile;return '<div class="v16-eyebrow">VIONA / PERSONAL SPACE</div><h2>'+escape(t.account)+'</h2><div class="v16-account"><div class="v16-avatar">'+(p.photo_url&&/^https:\/\//.test(p.photo_url)?'<img src="'+escape(p.photo_url)+'" alt="" referrerpolicy="no-referrer">':escape((p.display_name||"V")[0]))+'</div><div><strong>'+escape(p.display_name)+'</strong><span>'+escape(p.username?"@"+p.username:t.telegramId+": "+p.telegram_id)+'</span><small>'+escape(t.since)+': '+fmt(p.created_at)+'</small></div></div><form id="v16NickForm" class="v16-nick"><label>'+escape(t.nickname)+'<input name="nickname" maxlength="32" value="'+escape(p.nickname||p.username||"")+'"></label><button type="submit">'+escape(t.save)+'</button></form><div class="v16-actions"><button type="button" id="v16OrdersButton">'+escape(t.myPurchases)+' · '+(state16.purchases.length+state16.orders.length)+'</button><button type="button" id="v16NotificationsButton">'+escape(t.notify)+' · '+state16.notifications.filter(n=>!n.read_at).length+'</button></div><section class="vx-account-wallet"><div class="vx-account-wallet-head"><strong>'+escape(t.savedCards)+'</strong><span>'+escape(t.bankDemo)+'</span></div><div id="v16SavedCards" class="vx-card-list" role="status" aria-live="polite"><p class="vx-card-state">'+escape(t.loadingCards)+'</p></div></section><p id="v16Message" role="status"></p>'}function orderHtml(){
  const bought='<section class="v17-purchase-list"><h3>'+escape(t.paymentsAndGoods)+'</h3>'+
  (state16.purchases.length?state16.purchases.map(o=>
- '<a class="v17-purchase-row" href="/payment/order/'+encodeURIComponent(o.orderId)+'"><div><strong>#'+escape(o.orderId.slice(0,8).toUpperCase())+'</strong><small>'+fmt(o.createdAt)+'</small></div><div class="v17-purchase-meta"><span>'+escape(o.verifiedPaid?t.paid:o.failed?t.notPaid:t.awaitingPayment)+(o.verifiedPaid?" · "+escape(stageLabel(o.stage)):"")+'</span><b>'+Number(o.amount).toLocaleString(locale)+' ₽</b><small>'+escape(t.detailsLink)+' ↗'+(o.fileAvailable?' · ↓ '+escape(({
+ '<a class="v17-purchase-row" href="/payment/order/'+encodeURIComponent(o.orderId)+'"><div><strong>#'+escape(o.orderId.slice(0,8).toUpperCase())+'</strong><small>'+fmt(o.createdAt)+'</small></div><div class="v17-purchase-meta"><span>'+escape(o.verifiedPaid?t.paid:o.failed?t.notPaid:t.awaitingPayment)+(o.verifiedPaid?" · "+escape(stageLabel(o.stage)):"")+'</span><b>'+Number(o.amount).toLocaleString(locale)+' ₽</b><small>'+(o.customerBrief?'Заявка: '+escape(o.customerBrief.slice(0,80))+(o.customerBrief.length>80?'…':'')+' · ':'')+escape(t.detailsLink)+' ↗'+(o.fileAvailable?' · ↓ '+escape(({
   ru:"Скачать результат",femboy:"Скачать результат",en:"Download result",de:"Ergebnis herunterladen",ja:"成果物をダウンロード"
  })[lang]||"Скачать результат"):'')+'</small></div></a>'
  ).join(""):'<p class="v16-empty">'+escape(t.noPurchases)+'</p>')+'</section>';
