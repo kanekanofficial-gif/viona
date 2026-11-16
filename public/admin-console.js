@@ -146,17 +146,40 @@
    }
   }catch(e){say(e.message||"Не удалось открыть панель.",true)}
  }
- $("#adminReload").addEventListener("click",async()=>{try{await loadOrders();if(state.id)await selectOrder(state.id);say("Список заказов обновлён.")}catch(e){say(e.message,true)}});
+ $("#adminReload").addEventListener("click",async()=>{try{if(state.mode==="inquiries"){await loadInquiries();say("Заявки обновлены.")}else{await loadOrders();if(state.id)await selectOrder(state.id);say("Список заказов обновлён.")}}catch(e){say(e.message,true)}});
+ $("#adminModes").addEventListener("click",async e=>{
+  const b=e.target.closest("[data-admin-mode]");if(!b)return;
+  showMode(b.dataset.adminMode);if(state.mode==="inquiries")try{await loadInquiries();say("Заявки с сайта загружены.")}catch(err){say(err.message,true)}
+ });
+ $("#adminArchiveToggle").addEventListener("click",async()=>{
+  state.archived=!state.archived;state.id=null;state.detail=null;
+  $("#adminArchiveToggle").textContent=state.archived?"Рабочий список":"Архив";
+  try{await loadOrders();say(state.archived?"Открыт архив заказов.":"Открыт рабочий список.")}catch(err){say(err.message,true)}
+ });
+ $("#adminClearOrders").addEventListener("click",async()=>{
+  if(state.archived){say("Сначала вернись в рабочий список.",true);return}
+  if(!window.confirm("Очистить рабочий список? Все заказы переместятся в архив. Платежи, файлы и доступ клиентов сохранятся."))return;
+  try{const r=await api("/orders/archive",json("POST",{confirm:"АРХИВИРОВАТЬ"}));state.id=null;state.detail=null;await loadOrders();say("Перемещено заказов в архив: "+r.archived+". Их можно восстановить.")}catch(err){say(err.message,true)}
+ });
+ $("#adminDetail").addEventListener("click",async e=>{
+  if(!e.target.closest("#adminRestoreOrder")||!state.id)return;
+  try{await api("/orders/"+encodeURIComponent(state.id)+"/restore",{method:"POST"});state.id=null;state.detail=null;await loadOrders();say("Заказ восстановлен в рабочем списке.")}catch(err){say(err.message,true)}
+ });
+
  $("#adminLogout").addEventListener("click",async()=>{try{await api("/logout",{method:"POST"});state.id=null;state.orders=[];state.detail=null;showDashboard(false);say("Ты вышел из панели. Обнови страницу для повторного входа.")}catch(e){say(e.message,true)}});
  $("#adminOrders").addEventListener("click",e=>{const item=e.target.closest("[data-order]");if(item)selectOrder(item.dataset.order)});
  $("#adminFilters").addEventListener("click",e=>{const btn=e.target.closest("[data-filter]");if(!btn)return;state.filter=btn.dataset.filter;document.querySelectorAll("#adminFilters [data-filter]").forEach(el=>el.setAttribute("aria-pressed",String(el===btn)));renderList()});
  $("#adminDetail").addEventListener("submit",async e=>{
-  if(!["adminStageForm","adminUploadForm","adminMessageForm"].includes(e.target.id))return;
+  if(!["adminStageForm","adminUploadForm","adminMessageForm","adminRejectForm"].includes(e.target.id))return;
   e.preventDefault();if(state.busy||!state.id)return;
   state.busy=true;const btn=e.submitter||e.target.querySelector('button[type="submit"]');if(btn)btn.disabled=true;
   try{
    const id=encodeURIComponent(state.id),form=e.target;
-   if(form.id==="adminStageForm"){
+   if(form.id==="adminRejectForm"){
+    if(!window.confirm("Отклонить заказ? Клиент увидит причину отказа. Тестовая оплата не отменится."))return;
+    await api("/orders/"+id+"/reject",json("PATCH",{reason:form.elements.reason.value}));
+    await afterChange("Заказ отклонён. Причина показана клиенту. Статус банка не изменён.");
+   }else if(form.id==="adminStageForm"){
     await api("/orders/"+id+"/stage",json("PATCH",{stage:btn.dataset.next,note:form.elements.note.value}));
     await afterChange("Этап обновлён. Клиент увидит новый статус в своём заказе.");
    }else if(form.id==="adminMessageForm"){
