@@ -94,6 +94,22 @@
   try{state.detail=await api("/orders/"+encodeURIComponent(id));renderDetail()}
   catch(e){say(e.message,true)}
  }
+ function renderInquiries(){
+  const list=$("#adminInquiryList");
+  list.innerHTML=state.inquiries.length?state.inquiries.map(q=>
+   '<article class="ad-inquiry"><span class="ad-label">'+esc(q.kind)+'</span><div class="ad-split"><strong>'+esc(q.title||"Заявка")+'</strong><small>'+esc(stamp(q.createdAt))+'</small></div>'+
+   '<p><b>Контакт:</b> '+esc(q.contact||"Не указан")+'</p>'+(q.technology?'<p><b>Технология:</b> '+esc(q.technology)+'</p>':"")+
+   '<div class="ad-brief-content">'+esc(q.details||"Описание не указано.")+'</div></article>'
+  ).join(""):'<p class="ad-empty">Заявок с сайта пока нет.</p>';
+ }
+ async function loadInquiries(){const response=await api("/inquiries");state.inquiries=Array.isArray(response.inquiries)?response.inquiries:[];renderInquiries()}
+ function showMode(mode){
+  state.mode=mode;
+  $("#adminOrdersWorkspace").hidden=mode!=="orders";$("#adminInquiries").hidden=mode!=="inquiries";
+  $("#adminClearOrders").hidden=mode!=="orders";$("#adminArchiveToggle").hidden=mode!=="orders";
+  document.querySelectorAll("#adminModes [data-admin-mode]").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.adminMode===mode)));
+ }
+
  async function afterChange(message){await loadOrders();if(state.id)await selectOrder(state.id);say(message)}
  async function googleLogin(token){
   try{
