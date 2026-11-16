@@ -5,8 +5,8 @@
  theme();window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change",theme);window.addEventListener("storage",e=>{if(e.key==="viona-theme")theme()});
  const $=q=>document.querySelector(q);
  const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
- const state={orders:[],detail:null,id:null,filter:"all",busy:false};
- const stages={awaiting_payment:"Ожидает оплату",queued:"Заявка принята",in_progress:"В разработке",ready:"Подготовка к отправке",completed:"Готово"};
+ const state={orders:[],detail:null,id:null,filter:"all",busy:false,archived:false,mode:"orders",inquiries:[]};
+ const stages={awaiting_payment:"Ожидает оплату",queued:"Заявка принята",in_progress:"В разработке",ready:"Подготовка к отправке",completed:"Готово",rejected:"Отклонён"};
  const next={queued:"in_progress",in_progress:"ready",ready:"completed"};
  const money=n=>new Intl.NumberFormat("ru-RU",{style:"currency",currency:"RUB",maximumFractionDigits:0}).format(Number(n)||0);
  const stamp=s=>{const d=new Date(s);return Number.isNaN(d.getTime())?"—":d.toLocaleString("ru-RU",{day:"2-digit",month:"short",year:"numeric",hour:"2-digit",minute:"2-digit"})};
@@ -25,6 +25,7 @@
  }
  const label=o=>{
   if(o.failed)return "Оплата отклонена";
+  if(o.rejected)return "Отклонён администратором";
   if(!o.verifiedPaid)return stages.awaiting_payment;
   return stages[o.stage]||stages.queued;
  };
@@ -36,7 +37,7 @@
  }
  function renderList(){
   const f=state.filter;
-  const rows=state.orders.filter(o=>f==="all"||f==="paid"&&o.verifiedPaid||f==="pending"&&!o.verifiedPaid||f==="completed"&&o.stage==="completed"&&o.verifiedPaid);
+  const rows=state.orders.filter(o=>f==="all"||f==="paid"&&o.verifiedPaid||f==="pending"&&!o.verifiedPaid||f==="completed"&&o.stage==="completed"&&o.verifiedPaid||f==="rejected"&&o.rejected);
   $("#adminOrders").innerHTML=rows.length?rows.map(o=>
    '<button type="button" class="ad-order" data-order="'+esc(o.orderId)+'" aria-pressed="'+(state.id===o.orderId)+'">'+
    '<span class="ad-order-top"><strong>#'+esc(o.orderId.slice(0,8).toUpperCase())+'</strong>'+badge(o)+'</span>'+
@@ -52,15 +53,15 @@
   if(!payload){root.innerHTML='<div class="ad-empty">Выбери заказ для просмотра.</div>';return}
   const o=payload.order;if(!o)return;
   const items=Array.isArray(o.items)?o.items:[];
-  const locked=!o.verifiedPaid||o.failed;
+  const locked=!o.verifiedPaid||o.failed||o.rejected;
   const upcoming=next[o.stage];
   const timeline=(payload.events||[]).map(e=>
    '<article class="ad-event"><strong>'+esc(e.stage==="message"?"Сообщение клиенту":e.stage==="file"?"Файл":"Смена этапа: "+(stages[e.stage]||e.stage))+'</strong>'+
    (e.message?'<p>'+esc(e.message)+'</p>':"")+'<small>'+esc(stamp(e.created_at))+'</small></article>').join("")||'<p>Обновлений пока нет.</p>';
-  const stageControl=locked?'<p>Сначала требуется подтверждённый тестовый платёж Т-Банка.</p>':
+  const stageControl=locked?'<p>'+(o.rejected?'Заказ отклонён. Причина видна клиенту.':'Сначала требуется подтверждённый тестовый платёж Т-Банка.')+'</p>':
    upcoming?'<form id="adminStageForm" class="ad-form"><label class="ad-field">Следующий этап<input readonly value="'+esc(stages[upcoming])+'"></label>'+
    '<label class="ad-field">Комментарий клиенту<textarea name="note" maxlength="500" placeholder="Например: начали писать код и проверять функциональность"></textarea></label>'+
-   '<div class="ad-actions"><button type="submit" data-next="'+upcoming+'">Изменить этап</button></div>'+
+   '<div class="ad-actions"><button type="submit" data-next="'+upcoming+'">'+(upcoming==="completed"?"Готово — выдать файл":upcoming==="ready"?"Подготовка к отправке":"В разработке")+'</button></div>'+
    (upcoming==="completed"&&!o.fileName?'<p>Перед статусом «Готово» нужно загрузить файл с результатом.</p>':"")+'</form>':
    '<p>Заказ завершён. Готовый файл доступен владельцу через его Telegram-аккаунт.</p>';
   root.innerHTML='<div class="ad-detail-top"><span class="ad-label">VIONA / ORDER DETAIL</span><div class="ad-split"><h2 class="ad-detail-title">#'+esc(o.orderId.slice(0,8).toUpperCase())+'</h2>'+badge(o)+'</div>'+
@@ -75,10 +76,11 @@
    '<h3>История заказа</h3><div>'+timeline+'</div>';
  }
  async function loadOrders(){
-  const result=await api("/orders");
+  const result=await api("/orders"+(state.archived?"?archived=1":""));
   state.orders=Array.isArray(result.orders)?result.orders:[];
   stats();renderList();
   if(state.id&&state.orders.some(x=>x.orderId===state.id)){return}
+  state.id=null;state.detail=null;
   if(state.orders.length)await selectOrder(state.orders[0].orderId);
   else{state.id=null;state.detail=null;renderDetail()}
  }
