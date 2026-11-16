@@ -64,13 +64,17 @@
    '<div class="ad-actions"><button type="submit" data-next="'+upcoming+'">'+(upcoming==="completed"?"Готово — выдать файл":upcoming==="ready"?"Подготовка к отправке":"В разработке")+'</button></div>'+
    (upcoming==="completed"&&!o.fileName?'<p>Перед статусом «Готово» нужно загрузить файл с результатом.</p>':"")+'</form>':
    '<p>Заказ завершён. Готовый файл доступен владельцу через его Telegram-аккаунт.</p>';
+  const rejectControl=!locked&&o.stage!=="completed"?
+   '<form id="adminRejectForm" class="ad-form"><label class="ad-field">Причина отклонения для клиента<textarea name="reason" minlength="10" maxlength="500" required placeholder="Почему заказ нельзя выполнить?"></textarea></label><div class="ad-actions"><button type="submit" class="ad-danger">Отклонить заказ</button></div></form>':"";
+  const restoreControl=o.archivedAt?'<div class="ad-actions"><button type="button" class="secondary" id="adminRestoreOrder">Вернуть из архива</button></div>':"";
+  const briefHtml='<section class="ad-customer-brief"><h3>Что хочет клиент?</h3><div class="ad-detail-fields">'+field("Контакт",o.customerContact||"Не указан")+'</div><div class="ad-brief-content">'+(o.customerBrief?esc(o.customerBrief):"Техническое задание не указано: заказ оформлен до обновления формы оплаты.")+'</div></section>';
   root.innerHTML='<div class="ad-detail-top"><span class="ad-label">VIONA / ORDER DETAIL</span><div class="ad-split"><h2 class="ad-detail-title">#'+esc(o.orderId.slice(0,8).toUpperCase())+'</h2>'+badge(o)+'</div>'+
    '<p>Полный ID: <code>'+esc(o.orderId)+'</code></p></div>'+
    '<div class="ad-detail-fields">'+field("Клиент Telegram ID",o.telegramId)+field("Тестовая сумма",money(o.amount))+field("Метод",o.method)+field("Создан",stamp(o.createdAt))+'</div>'+
    '<h3>Товары заказа</h3><div class="ad-products">'+(items.length?items.map(item=>'<div class="ad-product"><div><strong>'+esc(item.title)+'</strong><br><small>'+esc(item.category||"Цифровой товар")+'</small></div><strong>'+money(item.price)+'</strong></div>').join(""):'<p>Снимок товаров недоступен для этого старого заказа.</p>')+'</div>'+
-   '<h3>Изменение этапа</h3>'+stageControl+
+   briefHtml+'<h3>Изменение этапа</h3>'+stageControl+rejectControl+restoreControl+
    '<h3>Готовый код / файл</h3><p>Разрешены файлы исходного кода и ZIP до 1 МиБ. Хранятся приватно в PostgreSQL.</p>'+
-   (o.fileName?'<div class="ad-actions"><a class="ad-file-link" href="/api/admin/orders/'+encodeURIComponent(o.orderId)+'/file">Скачать: '+esc(o.fileName)+'</a></div>':'<p>Файл ещё не загружен.</p>')+
+   (o.fileName?'<div class="ad-upload-indicator"><strong>Файл загружен: '+esc(o.fileName)+'</strong><small>'+(o.stage==="completed"?"Доступен клиенту для скачивания.":"Ожидает нажатия «Готово» для выдачи клиенту.")+'</small></div>':'<p>Файл ещё не загружен.</p>')+
    (!locked?'<form class="ad-form" id="adminUploadForm"><label class="ad-field">Прикрепить или заменить результат<input type="file" name="file" accept=".zip,.txt,.md,.js,.jsx,.ts,.tsx,.py,.html,.css,.json,.xml,.sql,.java,.cs,.c,.h,.cpp,.go,.rs,.lua,.rb,.php,.yaml,.yml" required></label><div class="ad-actions"><button type="submit">Загрузить файл</button></div></form>':'')+
    (!locked?'<h3>Сообщение покупателю</h3><form class="ad-form" id="adminMessageForm"><label class="ad-field">Что сообщить<textarea name="message" maxlength="500" required placeholder="Например: проверка готова, остался последний этап"></textarea></label><div class="ad-actions"><button type="submit">Добавить сообщение</button></div></form>':'')+
    '<h3>История заказа</h3><div>'+timeline+'</div>';
