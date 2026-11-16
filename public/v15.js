@@ -120,6 +120,13 @@ function openCheckout(){
   '<div class="vx-flow"><span class="vx-flow-active"><b>01</b> Способ оплаты</span><i></i><span><b>02</b> Банк</span><i></i><span><b>03</b> Результат</span></div>',
   '<div class="vx-layout">',
     '<main class="vx-payment-column">',
+     '<section class="vx-project-brief" id="vionaCheckoutBriefPanel">',
+      '<div class="vx-section-title"><span class="vx-section-number">01</span><h3>Что нужно сделать?</h3></div>',
+      '<p class="vx-brief-description">Расскажи, что именно должен получить твой проект. Эти данные попадут в заказ и будут видны администратору.</p>',
+      '<label class="vx-brief-field">Твой Telegram или email для связи<input id="vionaBriefContact" name="clientContact" maxlength="200" minlength="3" autocomplete="email" placeholder="@username или email" required></label>',
+      '<label class="vx-brief-field">Техническое задание / пожелания<textarea id="vionaBriefText" name="clientBrief" rows="5" minlength="10" maxlength="4000" required placeholder="Какие команды, дизайн, функции, сценарии или изменения тебе нужны?"></textarea></label>',
+      '<small class="vx-brief-warning">Не отправляй пароли, токены ботов и данные банковских карт. Это тестовая оплата; реальные деньги не списываются.</small>',
+     '</section>',
      '<section class="vx-methods" id="vionaPaymentOptions" hidden>',
       '<div class="vx-section-title"><span class="vx-section-number">01</span><h3>Способ оплаты</h3><span class="vx-section-caption vx-bank-brand"><span class="viona-brand viona-brand-tbank" aria-hidden="true"></span> Т-Банк · DEMO</span></div>',
       '<div class="vx-payment-method-list">',
@@ -188,6 +195,18 @@ function rememberPendingPayment(result,items){
  if(!result?.orderId)return;
  try{sessionStorage.setItem("viona-checkout-pending",JSON.stringify({orderId:result.orderId,items:[...items]}))}catch{}
 }
+function checkoutBrief(){
+ const contact=content.querySelector("#vionaBriefContact");
+ const brief=content.querySelector("#vionaBriefText");
+ if(!contact||!brief)throw Error("Открой оформление заказа и опиши задачу.");
+ if(!contact.reportValidity()||!brief.reportValidity()){
+  (contact.validity.valid?brief:contact).focus();
+  throw Error("Перед тестовой оплатой укажи контакт и описание задачи (не менее 10 символов).");
+ }
+ const data={contact:contact.value.trim(),brief:brief.value.trim()};
+ if(data.contact.length<3||data.brief.length<10)throw Error("Укажи контакт и описание задачи минимум в 10 символов.");
+ return data;
+}
 let vionaCardsRequest=0;
 async function loadSavedCards(){
  const target=content.querySelector("#vionaCardsList");if(!target)return;
@@ -220,7 +239,7 @@ content.addEventListener("click",async e=>{
  const status=content.querySelector("#checkoutStatus");
  const ids=state.cart.map(Number);
  button.disabled=true;status.textContent="Создаём тестовый платёж…";
- try{const r=await fetch("/api/payments/test/init",{method:"POST",headers:{"Content-Type":"application/json"},credentials:"same-origin",body:JSON.stringify({items:ids,saveCard:content.querySelector("#vionaSaveCard")?.checked===true})});const data=await r.json();if(!r.ok)throw Error(data.error||"Ошибка оплаты");rememberPendingPayment(data,ids);window.location.assign(data.paymentUrl)}
+ try{const r=await fetch("/api/payments/test/init",{method:"POST",headers:{"Content-Type":"application/json"},credentials:"same-origin",body:JSON.stringify({items:ids,saveCard:content.querySelector("#vionaSaveCard")?.checked===true,...checkoutBrief()})});const data=await r.json();if(!r.ok)throw Error(data.error||"Ошибка оплаты");rememberPendingPayment(data,ids);window.location.assign(data.paymentUrl)}
  catch(err){status.textContent=err.message;button.disabled=false}
 });
 
@@ -234,7 +253,7 @@ content.addEventListener("click",async e=>{
  stopQrPolling();button.disabled=true;status.textContent="Создаём тестовый QR СБП…";
  const panel=content.querySelector("#vionaQrPanel");if(panel)panel.hidden=true;
  try{
-  const r=await fetch("/api/payments/test/qr",{method:"POST",headers:{"Content-Type":"application/json"},credentials:"same-origin",body:JSON.stringify({items:ids})});
+  const r=await fetch("/api/payments/test/qr",{method:"POST",headers:{"Content-Type":"application/json"},credentials:"same-origin",body:JSON.stringify({items:ids,...checkoutBrief()})});
   const data=await r.json();if(!r.ok)throw Error(data.error||"Ошибка СБП");
   if(!data.qrImage||!data.qrLink||!data.orderId)throw Error("Банк не вернул QR");
   rememberPendingPayment(data,ids);
@@ -317,7 +336,7 @@ content.addEventListener("click",async e=>{
  stopSberPolling();
  status.textContent="Создаём тестовый платёж SberPay…";
  try{
-  const res=await fetch("/api/payments/test/sberpay",{method:"POST",headers:{"Content-Type":"application/json"},credentials:"same-origin",body:JSON.stringify({items:state.cart.map(Number),device:mobile?"mobile":"desktop",phone})});
+  const res=await fetch("/api/payments/test/sberpay",{method:"POST",headers:{"Content-Type":"application/json"},credentials:"same-origin",body:JSON.stringify({items:state.cart.map(Number),device:mobile?"mobile":"desktop",phone,...checkoutBrief()})});
   const result=await res.json().catch(()=>({}));
   if(!res.ok)throw Error(result.error||"Не удалось запустить SberPay.");
   rememberPendingPayment(result,state.cart);
