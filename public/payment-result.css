@@ -117,3 +117,7 @@ html[data-theme="light"] #vionaResultRoot.vr-root .vr-rejected-stage{background:
 html[data-theme="light"] #vionaResultRoot.vr-root .vr-rejected-stage p{color:#864f51}
 html[data-theme="light"] #vionaResultRoot.vr-root .vr-rejected-result{background:#fff5f2!important;border-color:#dbb4ac!important}
 html[data-theme="light"] #vionaResultRoot.vr-root .vr-rejected-result .vr-box-title>span{color:#7d3336!important}
+
+.vr-page.rejected .vr-hero-icon{background:linear-gradient(145deg,#84534f,#38262d);border-color:#e9ada05c;color:#ffe3d8}
+.vr-page.rejected .vr-eyebrow{color:#ffcac2}
+html[data-theme="light"] #vionaResultRoot.vr-root .vr-page.rejected .vr-hero-icon{background:linear-gradient(140deg,#ffe8db,#ebb1a8);border-color:#d6a099;color:#853c3e}
