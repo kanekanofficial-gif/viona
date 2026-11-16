@@ -197,9 +197,10 @@ function registerAdminConsole(app,pool,{bank,configured}={}){
   if(!Buffer.isBuffer(req.body)||!req.body.length||req.body.length>1048576)
    return res.status(400).json({error:"Нужен файл кода не более 1 МиБ."});
   try{
-   const row=await pool.query("SELECT status FROM viona_demo_payments WHERE order_id=$1",[req.params.id]);
+   const row=await pool.query("SELECT status,fulfillment_status FROM viona_demo_payments WHERE order_id=$1",[req.params.id]);
    if(!row.rowCount)return res.sendStatus(404);
    if(row.rows[0].status!=="CONFIRMED")return res.status(409).json({error:"Выдача возможна только после подтверждения тестовой оплаты."});
+   if(row.rows[0].fulfillment_status==="rejected")return res.status(409).json({error:"Нельзя загружать файл для отклонённого заказа."});
    await pool.query(`INSERT INTO viona_demo_order_files(order_id,filename,media_type,contents,file_size)
     VALUES($1,$2,'application/octet-stream',$3,$4)
     ON CONFLICT(order_id) DO UPDATE SET filename=EXCLUDED.filename,media_type=EXCLUDED.media_type,
