@@ -270,7 +270,7 @@ html[data-world] .contact form{display:flex;flex-direction:column;gap:14px;paddi
 .v16-actions button{color:#176f84!important}
 .vx-account-wallet{border-color:#c9e3e9!important;background:#f0f8f9!important}
 .vr-root .vr-logo-mark img,.vr-root .vr-hero-icon img{filter:none!important}
-.vr-root .vr-box,.vr-root .vr-hero{background:#f6fbfc!important;color:#294b5a!important;border-color:#d0e6ea!important}
+/* Payment-result cards use their own theme-aware palette; never hard-code a light surface here. */
 .nx-reveal{opacity:1;transform:none}
 .nx-motion-ready .nx-reveal:not(.nx-visible){opacity:1;transform:none}
 .nx-motion-ready .nx-reveal{transition:opacity .55s cubic-bezier(.2,.8,.2,1),transform .55s cubic-bezier(.2,.8,.2,1)}

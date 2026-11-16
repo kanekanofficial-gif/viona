@@ -299,6 +299,32 @@ const {chromium}=require("playwright");
    assert.ok(!await page.locator("#adminDashboard").isVisible(),"admin orders must be private");
    assert.match(await page.locator("h1").first().innerText(),/Управление заказами/);
    if(width===1440)await page.screenshot({path:"screenshots/admin-login.png"});
+
+   /* Regression: a dark order page must not render unreadable white cards. */
+   if(width===1440){
+    await page.goto("http://127.0.0.1:4173/payment/order/11111111-1111-4111-8111-111111111111",{waitUntil:"domcontentloaded"});
+    await page.waitForSelector("#vionaResultRoot .vr-message",{timeout:8000});
+    await page.evaluate(()=>{
+     window.VionaTheme.choose("dark");
+     document.querySelector("#vionaResultRoot").innerHTML=
+      '<div class="vr-page"><section class="vr-hero">Заголовок</section><section class="vr-box">Заказ</section></div>';
+    });
+    const darkColors=await page.evaluate(()=>{
+     const a=getComputedStyle(document.querySelector(".vr-box"));
+     const b=getComputedStyle(document.querySelector(".vr-hero"));
+     return {box:a.backgroundImage,hero:b.backgroundImage,text:a.color};
+    });
+    assert.match(darkColors.box,/rgb\(22, 37, 59\)/,"dark order box did not use its dark palette");
+    assert.match(darkColors.hero,/rgb\(25, 42, 66\)/,"dark order hero did not use its dark palette");
+    assert.equal(darkColors.text,"rgb(237, 246, 252)");
+    await page.evaluate(()=>window.VionaTheme.choose("light"));
+    const lightColors=await page.evaluate(()=>{
+     const a=getComputedStyle(document.querySelector(".vr-box"));
+     return {box:a.backgroundImage,text:a.color};
+    });
+    assert.match(lightColors.box,/rgb\(255, 255, 255\)/,"light order box did not use its light palette");
+    assert.equal(lightColors.text,"rgb(28, 64, 84)");
+   }
    assert.deepEqual(pageErrors,[],"uncaught page errors: "+pageErrors.join(" | "));
    await page.close();
   }

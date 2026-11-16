@@ -50,7 +50,7 @@ function registerAdminConsole(app,pool,{bank,configured}={}){
  const noStore=(req,res,next)=>{res.set({"Cache-Control":"private, no-store","X-Content-Type-Options":"nosniff"});next()};
  app.use(base,noStore);
  app.get("/admin-console",(req,res)=>{res.set({"Cache-Control":"no-store","X-Robots-Tag":"noindex, nofollow, noarchive","Referrer-Policy":"no-referrer"});res.sendFile(path.join(__dirname,"private","admin-console.html"))});
- app.get(base+"/config",(req,res)=>res.json({enabled:enabled(pool),clientId:enabled(pool)?process.env.GOOGLE_CLIENT_ID:null,login:"google"}));
+ app.get(base+"/config",(req,res)=>res.json({enabled:enabled(pool),databaseReady:Boolean(pool),googleClientReady:Boolean(process.env.GOOGLE_CLIENT_ID),clientId:enabled(pool)?process.env.GOOGLE_CLIENT_ID:null,login:"google"}));
  const readToken=req=>{
   const match=String(req.headers.cookie||"").split(";").map(x=>x.trim()).find(x=>x.startsWith(SESSION_COOKIE+"="));
   const value=match?.slice(SESSION_COOKIE.length+1)||"";
