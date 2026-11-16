@@ -121,3 +121,15 @@
 .vx-sber-fallback:hover{background:#ffffff1b}
 .vx-sber-fallback:focus-visible,.vx-sber-start:focus-visible{outline:2px solid #8adeb1;outline-offset:3px}
 @media(max-width:590px){.vx-sber-panel{padding:15px}.vx-sber-method .vx-sber-symbol{font-size:22px}}
+
+
+/* Project brief is mandatory for paid demo orders and always visible before choosing a payment method. */
+.vx-project-brief{margin:0 0 21px;padding:18px;border:1px solid var(--vx-line);border-radius:18px;background:linear-gradient(145deg,#e3faff0c,#ffffff05)}
+.vx-project-brief .vx-section-title{margin-bottom:9px}.vx-brief-description{margin:0 0 13px;color:var(--vx-muted);font-size:12px;line-height:1.7}
+.vx-brief-field{display:flex;flex-direction:column;gap:7px;margin:13px 0;color:var(--vt-text,#e9f4fa);font-size:12px;font-weight:750}
+.vx-brief-field input,.vx-brief-field textarea{display:block;width:100%;min-width:0;padding:12px 13px;background:#14212bdd;color:#f5fbff;border:1px solid #7f9eb888;border-radius:12px;font:500 12px/1.6 inherit;resize:vertical;outline-offset:3px}
+.vx-brief-field :is(input,textarea)::placeholder{color:#a5bac9}
+.vx-brief-warning{display:block;margin-top:9px;font-size:10px;line-height:1.6;color:var(--vx-muted)}
+html[data-theme="light"] .vx-project-brief{background:#eaf6fa;border-color:#bed9e6}
+html[data-theme="light"] .vx-brief-field input,html[data-theme="light"] .vx-brief-field textarea{color:#14394b;background:#fff;border-color:#91bdce}
+html[data-theme="light"] .vx-brief-field :is(input,textarea)::placeholder{color:#648898}
