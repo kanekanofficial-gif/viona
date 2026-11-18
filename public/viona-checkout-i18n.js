@@ -3,6 +3,14 @@
 (()=>{
  const base={
   "VIONA / NIGHT CHECKOUT":"brand","Оформи":"titleA","по-своему.":"titleB",
+  "Что нужно сделать?":"briefTitle",
+  "Расскажи, что именно должен получить твой проект. Эти данные попадут в заказ и будут видны администратору.":"briefLead",
+  "Твой Telegram или email для связи":"briefContact",
+  "Техническое задание / пожелания":"briefText",
+  "Не отправляй пароли, токены ботов и данные банковских карт. Это тестовая оплата; реальные деньги не списываются.":"briefWarning",
+  "@username или email":"briefContactPlaceholder",
+  "Какие команды, дизайн, функции, сценарии или изменения тебе нужны?":"briefTextPlaceholder",
+
   "Выбери способ оплаты, а потом наблюдай за своим заказом в VIONA ID.":"lead",
   "Способ оплаты":"paymentMethod","Банк":"bank","Результат":"result",
   "Т-Банк · DEMO":"bankDemo","Банковская карта":"bankCard",
@@ -64,6 +72,31 @@
  de:{brand:"VIONA / KASSE",titleA:"Bezahlen",titleB:"auf deine Art.",lead:"Wähle eine Zahlungsart und verfolge deine Bestellung in VIONA ID.",paymentMethod:"Zahlungsart",bank:"Bank",result:"Ergebnis",bankDemo:"T-Bank · DEMO",bankCard:"Bankkarte",cardDesc:"Visa, Mastercard, Mir · sichere Bankseite",sbp:"SBP per QR-Code",sbpDesc:"Mit einer unterstützten Banking-App bezahlen",sberDesc:"Bezahlung über SberBank Online ohne Kartendaten",savedCards:"Gespeicherte Karten",cardsAccount:"Mit VIONA ID verknüpft",refresh:"Aktualisieren",loadingCards:"Karten werden geladen…",walletFoot:"Gespeicherte Karten zur Übersicht. Ein-Klick-Zahlung folgt nach den Tests.",saveCard:"Neue Karte speichern",saveCardDesc:"Optional. Die Bank speichert die Daten für spätere Zahlungen.",security:"Kartendaten und CVV nur auf der T-Bank-Seite eingeben, niemals bei VIONA.",sberTitle:"SberPay-Zahlung",sberGuide:"Am PC kann SberBank eine Bestätigung an die verknüpfte App senden. Mobil öffnet sich gegebenenfalls die Banking-App.",sberPhone:"Mit SberBank Online verknüpfte Telefonnummer",sberPhoneAria:"Telefonnummer für SberPay",sberStart:"Mit SberPay fortfahren ↗",sberFallbackLink:"T-Bank-Zahlungsseite öffnen ↗",sbpTitle:"Mit SBP bezahlen",qrAlt:"QR-Code für SBP-Testzahlung",qrLink:"Banking-App öffnen ↗",qrWaiting:"Warte auf Zahlungsbestätigung…",talk:"Fragen zur Bestellung?",leaveRequest:"Anfrage senden ↗",yourOrder:"DEINE BESTELLUNG",toPay:"Zu zahlen",demoPayment:"Testzahlung",noCharge:"Es wird kein echtes Geld abgebucht",creatingPayment:"Testzahlung wird erstellt…",creatingQr:"SBP-Test-QR wird erstellt…",paymentError:"Zahlungsfehler",sbpError:"SBP-Fehler",qrMissing:"Die Bank hat keinen QR-Code geliefert",qrHow:"Öffne den Link oder scanne den QR-Code mit deiner Banking-App.",confirmed:"Testzahlung bestätigt ✓",authorized:"Bankautorisierung erfolgt. Warte auf Bestätigung…",failed:"Zahlung fehlgeschlagen",declined:"Die Bank hat die Zahlung abgelehnt. Versuche eine andere Methode.",phonePrompt:"Gib die bei SberBank Online hinterlegte Nummer ein. VIONA speichert sie nicht.",phoneInvalid:"Gib eine Nummer im internationalen Format ein, z. B. +79990000000.",creatingSber:"SberPay-Testzahlung wird erstellt…",startFailed:"SberPay konnte nicht gestartet werden.",untrustedSber:"Die Bank hat eine unbekannte SberPay-Adresse zurückgegeben.",redirectSber:"SberBank Online wird geöffnet…",sberPush:"Bestätigung an SberBank Online gesendet. Öffne die App und bestätige die Testzahlung.",sberUnavailable:"Direktes SberPay wird von diesem Testterminal nicht unterstützt. Öffne T-Bank; SberPay ist nur verfügbar, wenn die Bank es anbietet.",unsafeLink:"Kein vertrauenswürdiger SberPay-Link erhalten.",needLogin:"Melde dich bei Telegram an, um gespeicherte Karten zu sehen.",cardsError:"Karten konnten nicht geladen werden",cardsNotFound:"Keine Karten gefunden. Nach dem Speichern bitte aktualisieren.",cardsEmpty:"Noch keine gespeicherten Karten. Beim Bezahlen kannst du eine Karte speichern.",savedTbank:"Über T-Bank gespeichert",saved:"Gespeichert",cardNumber:"Karte ····",cardsLoadError:"Karten konnten nicht geladen werden. Bitte aktualisieren.",requestDemo:"Demo-Modus: Anfrage nicht gespeichert. Datenbank erforderlich.",notConfigured:"Test-Acquiring ist nicht eingerichtet.",authRequired:"Für Testzahlungen bei Telegram anmelden.",paymentUnreachable:"Testzahlung konnte nicht erstellt werden.",bankInitFailed:"Die Bank konnte die Testzahlung nicht starten.",requestSaveError:"Anfrage konnte nicht gespeichert werden.",pieces:"Stk."},
  femboy:{brand:"VIONA / МОЯ КОРЗИНКА ♡",titleA:"Оформи",titleB:"как тебе нравится ♡",lead:"Выбирай способ оплаты и следи за заказом в VIONA ID ♡",paymentMethod:"Способ оплаты ♡",bank:"Банк",result:"Результат",bankCard:"Банковская карта ♡",savedCards:"Мои карты ♡",refresh:"Обновить ♡",talk:"Обсудить заказ? ♡",leaveRequest:"Написать нам ↗",yourOrder:"МОЯ КОРЗИНКА ♡",toPay:"Итого ♡",demoPayment:"Тестовая оплата ♡",noCharge:"Настоящие деньги не списываются ♡",sberFallbackLink:"Открыть страницу Т-Банка ↗",sberUnavailable:"В тестовом режиме прямой SberPay недоступен. На форме Т-Банка он появится, только если банк его предложит ♡",pieces:"шт."}
  };
+
+ Object.assign(locales.en,{
+  briefTitle:"What should we build?",briefLead:"Describe exactly what you need. We will attach these requirements to your order for the project team.",
+  briefContact:"Your Telegram or email",briefText:"Project brief / requirements",
+  briefWarning:"Do not share passwords, bot tokens or banking details. This is a demo payment with no real charge.",
+  briefContactPlaceholder:"@username or email",briefTextPlaceholder:"Which commands, design, features or changes would you like?"
+ });
+ if(locales.de)Object.assign(locales.de,{
+  briefTitle:"Was soll erstellt werden?",briefLead:"Beschreibe deinen Auftrag. Wir speichern deine Wünsche bei der Bestellung für das Team.",
+  briefContact:"Dein Telegram oder E-Mail",briefText:"Projektbeschreibung / Wünsche",
+  briefWarning:"Keine Passwörter, Bot-Tokens oder Bankdaten eingeben. Dies ist eine Testzahlung.",
+  briefContactPlaceholder:"@username oder E-Mail",briefTextPlaceholder:"Welche Funktionen, Befehle oder Änderungen brauchst du?"
+ });
+ if(locales.ja)Object.assign(locales.ja,{
+  briefTitle:"何を作りますか？",briefLead:"制作したい内容を詳しく記入してください。注文に保存され、担当者が確認できます。",
+  briefContact:"Telegram またはメール",briefText:"依頼内容・ご要望",
+  briefWarning:"パスワードやトークン、カード情報は送信しないでください。テスト決済です。",
+  briefContactPlaceholder:"@username またはメール",briefTextPlaceholder:"必要な機能、デザイン、コマンド、変更内容など"
+ });
+ Object.assign(locales.femboy,{
+  briefTitle:"Что будем делать? ♡",briefLead:"Расскажи, что ты хочешь получить — все пожелания увидит команда VIONA ♡",
+  briefContact:"Твой Telegram или почта ♡",briefText:"Пожелания к проекту ♡",
+  briefWarning:"Без паролей, токенов и данных карт. Это только тестовая оплата ♡",
+  briefContactPlaceholder:"@username или email",briefTextPlaceholder:"Опиши свою идею и нужные функции ♡"
+ });
  const locale=()=>{const l=document.documentElement.dataset.world||"ru";return locales[l]?l:"ru"};
  const words=()=>locales[locale()];
  const translation=txt=>{

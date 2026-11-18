@@ -5,8 +5,8 @@
  theme();window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change",theme);window.addEventListener("storage",e=>{if(e.key==="viona-theme")theme()});
  const $=q=>document.querySelector(q);
  const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
- const state={orders:[],detail:null,id:null,filter:"all",busy:false};
- const stages={awaiting_payment:"Ожидает оплату",queued:"Заявка принята",in_progress:"В разработке",ready:"Подготовка к отправке",completed:"Готово"};
+ const state={orders:[],detail:null,id:null,filter:"all",busy:false,archived:false,mode:"orders",inquiries:[]};
+ const stages={awaiting_payment:"Ожидает оплату",queued:"Заявка принята",in_progress:"В разработке",ready:"Подготовка к отправке",completed:"Готово",rejected:"Отклонён"};
  const next={queued:"in_progress",in_progress:"ready",ready:"completed"};
  const money=n=>new Intl.NumberFormat("ru-RU",{style:"currency",currency:"RUB",maximumFractionDigits:0}).format(Number(n)||0);
  const stamp=s=>{const d=new Date(s);return Number.isNaN(d.getTime())?"—":d.toLocaleString("ru-RU",{day:"2-digit",month:"short",year:"numeric",hour:"2-digit",minute:"2-digit"})};
@@ -25,6 +25,7 @@
  }
  const label=o=>{
   if(o.failed)return "Оплата отклонена";
+  if(o.rejected)return "Отклонён администратором";
   if(!o.verifiedPaid)return stages.awaiting_payment;
   return stages[o.stage]||stages.queued;
  };
@@ -36,7 +37,7 @@
  }
  function renderList(){
   const f=state.filter;
-  const rows=state.orders.filter(o=>f==="all"||f==="paid"&&o.verifiedPaid||f==="pending"&&!o.verifiedPaid||f==="completed"&&o.stage==="completed"&&o.verifiedPaid);
+  const rows=state.orders.filter(o=>f==="all"||f==="paid"&&o.verifiedPaid||f==="pending"&&!o.verifiedPaid||f==="completed"&&o.stage==="completed"&&o.verifiedPaid||f==="rejected"&&o.rejected);
   $("#adminOrders").innerHTML=rows.length?rows.map(o=>
    '<button type="button" class="ad-order" data-order="'+esc(o.orderId)+'" aria-pressed="'+(state.id===o.orderId)+'">'+
    '<span class="ad-order-top"><strong>#'+esc(o.orderId.slice(0,8).toUpperCase())+'</strong>'+badge(o)+'</span>'+
@@ -52,33 +53,38 @@
   if(!payload){root.innerHTML='<div class="ad-empty">Выбери заказ для просмотра.</div>';return}
   const o=payload.order;if(!o)return;
   const items=Array.isArray(o.items)?o.items:[];
-  const locked=!o.verifiedPaid||o.failed;
+  const locked=!o.verifiedPaid||o.failed||o.rejected;
   const upcoming=next[o.stage];
   const timeline=(payload.events||[]).map(e=>
    '<article class="ad-event"><strong>'+esc(e.stage==="message"?"Сообщение клиенту":e.stage==="file"?"Файл":"Смена этапа: "+(stages[e.stage]||e.stage))+'</strong>'+
    (e.message?'<p>'+esc(e.message)+'</p>':"")+'<small>'+esc(stamp(e.created_at))+'</small></article>').join("")||'<p>Обновлений пока нет.</p>';
-  const stageControl=locked?'<p>Сначала требуется подтверждённый тестовый платёж Т-Банка.</p>':
+  const stageControl=locked?'<p>'+(o.rejected?'Заказ отклонён. Причина видна клиенту.':'Сначала требуется подтверждённый тестовый платёж Т-Банка.')+'</p>':
    upcoming?'<form id="adminStageForm" class="ad-form"><label class="ad-field">Следующий этап<input readonly value="'+esc(stages[upcoming])+'"></label>'+
    '<label class="ad-field">Комментарий клиенту<textarea name="note" maxlength="500" placeholder="Например: начали писать код и проверять функциональность"></textarea></label>'+
-   '<div class="ad-actions"><button type="submit" data-next="'+upcoming+'">Изменить этап</button></div>'+
+   '<div class="ad-actions"><button type="submit" data-next="'+upcoming+'">'+(upcoming==="completed"?"Готово — выдать файл":upcoming==="ready"?"Подготовка к отправке":"В разработке")+'</button></div>'+
    (upcoming==="completed"&&!o.fileName?'<p>Перед статусом «Готово» нужно загрузить файл с результатом.</p>':"")+'</form>':
    '<p>Заказ завершён. Готовый файл доступен владельцу через его Telegram-аккаунт.</p>';
+  const rejectControl=!locked&&o.stage!=="completed"?
+   '<form id="adminRejectForm" class="ad-form"><label class="ad-field">Причина отклонения для клиента<textarea name="reason" minlength="10" maxlength="500" required placeholder="Почему заказ нельзя выполнить?"></textarea></label><div class="ad-actions"><button type="submit" class="ad-danger">Отклонить заказ</button></div></form>':"";
+  const restoreControl=o.archivedAt?'<div class="ad-actions"><button type="button" class="secondary" id="adminRestoreOrder">Вернуть из архива</button></div>':"";
+  const briefHtml='<section class="ad-customer-brief"><h3>Что хочет клиент?</h3><div class="ad-detail-fields">'+field("Контакт",o.customerContact||"Не указан")+'</div><div class="ad-brief-content">'+(o.customerBrief?esc(o.customerBrief):"Техническое задание не указано: заказ оформлен до обновления формы оплаты.")+'</div></section>';
   root.innerHTML='<div class="ad-detail-top"><span class="ad-label">VIONA / ORDER DETAIL</span><div class="ad-split"><h2 class="ad-detail-title">#'+esc(o.orderId.slice(0,8).toUpperCase())+'</h2>'+badge(o)+'</div>'+
    '<p>Полный ID: <code>'+esc(o.orderId)+'</code></p></div>'+
    '<div class="ad-detail-fields">'+field("Клиент Telegram ID",o.telegramId)+field("Тестовая сумма",money(o.amount))+field("Метод",o.method)+field("Создан",stamp(o.createdAt))+'</div>'+
    '<h3>Товары заказа</h3><div class="ad-products">'+(items.length?items.map(item=>'<div class="ad-product"><div><strong>'+esc(item.title)+'</strong><br><small>'+esc(item.category||"Цифровой товар")+'</small></div><strong>'+money(item.price)+'</strong></div>').join(""):'<p>Снимок товаров недоступен для этого старого заказа.</p>')+'</div>'+
-   '<h3>Изменение этапа</h3>'+stageControl+
+   briefHtml+'<h3>Изменение этапа</h3>'+stageControl+rejectControl+restoreControl+
    '<h3>Готовый код / файл</h3><p>Разрешены файлы исходного кода и ZIP до 1 МиБ. Хранятся приватно в PostgreSQL.</p>'+
-   (o.fileName?'<div class="ad-actions"><a class="ad-file-link" href="/api/admin/orders/'+encodeURIComponent(o.orderId)+'/file">Скачать: '+esc(o.fileName)+'</a></div>':'<p>Файл ещё не загружен.</p>')+
+   (o.fileName?'<div class="ad-upload-indicator"><strong>Файл загружен: '+esc(o.fileName)+'</strong><small>'+(o.stage==="completed"?"Доступен клиенту для скачивания.":"Ожидает нажатия «Готово» для выдачи клиенту.")+'</small></div>':'<p>Файл ещё не загружен.</p>')+
    (!locked?'<form class="ad-form" id="adminUploadForm"><label class="ad-field">Прикрепить или заменить результат<input type="file" name="file" accept=".zip,.txt,.md,.js,.jsx,.ts,.tsx,.py,.html,.css,.json,.xml,.sql,.java,.cs,.c,.h,.cpp,.go,.rs,.lua,.rb,.php,.yaml,.yml" required></label><div class="ad-actions"><button type="submit">Загрузить файл</button></div></form>':'')+
    (!locked?'<h3>Сообщение покупателю</h3><form class="ad-form" id="adminMessageForm"><label class="ad-field">Что сообщить<textarea name="message" maxlength="500" required placeholder="Например: проверка готова, остался последний этап"></textarea></label><div class="ad-actions"><button type="submit">Добавить сообщение</button></div></form>':'')+
    '<h3>История заказа</h3><div>'+timeline+'</div>';
  }
  async function loadOrders(){
-  const result=await api("/orders");
+  const result=await api("/orders"+(state.archived?"?archived=1":""));
   state.orders=Array.isArray(result.orders)?result.orders:[];
   stats();renderList();
   if(state.id&&state.orders.some(x=>x.orderId===state.id)){return}
+  state.id=null;state.detail=null;
   if(state.orders.length)await selectOrder(state.orders[0].orderId);
   else{state.id=null;state.detail=null;renderDetail()}
  }
@@ -88,6 +94,22 @@
   try{state.detail=await api("/orders/"+encodeURIComponent(id));renderDetail()}
   catch(e){say(e.message,true)}
  }
+ function renderInquiries(){
+  const list=$("#adminInquiryList");
+  list.innerHTML=state.inquiries.length?state.inquiries.map(q=>
+   '<article class="ad-inquiry"><span class="ad-label">'+esc(q.kind)+'</span><div class="ad-split"><strong>'+esc(q.title||"Заявка")+'</strong><small>'+esc(stamp(q.createdAt))+'</small></div>'+
+   '<p><b>Контакт:</b> '+esc(q.contact||"Не указан")+'</p>'+(q.technology?'<p><b>Технология:</b> '+esc(q.technology)+'</p>':"")+
+   '<div class="ad-brief-content">'+esc(q.details||"Описание не указано.")+'</div></article>'
+  ).join(""):'<p class="ad-empty">Заявок с сайта пока нет.</p>';
+ }
+ async function loadInquiries(){const response=await api("/inquiries");state.inquiries=Array.isArray(response.inquiries)?response.inquiries:[];renderInquiries()}
+ function showMode(mode){
+  state.mode=mode;
+  $("#adminOrdersWorkspace").hidden=mode!=="orders";$("#adminInquiries").hidden=mode!=="inquiries";
+  $("#adminClearOrders").hidden=mode!=="orders";$("#adminArchiveToggle").hidden=mode!=="orders";
+  document.querySelectorAll("#adminModes [data-admin-mode]").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.adminMode===mode)));
+ }
+
  async function afterChange(message){await loadOrders();if(state.id)await selectOrder(state.id);say(message)}
  async function googleLogin(token){
   try{
@@ -124,17 +146,40 @@
    }
   }catch(e){say(e.message||"Не удалось открыть панель.",true)}
  }
- $("#adminReload").addEventListener("click",async()=>{try{await loadOrders();if(state.id)await selectOrder(state.id);say("Список заказов обновлён.")}catch(e){say(e.message,true)}});
+ $("#adminReload").addEventListener("click",async()=>{try{if(state.mode==="inquiries"){await loadInquiries();say("Заявки обновлены.")}else{await loadOrders();if(state.id)await selectOrder(state.id);say("Список заказов обновлён.")}}catch(e){say(e.message,true)}});
+ $("#adminModes").addEventListener("click",async e=>{
+  const b=e.target.closest("[data-admin-mode]");if(!b)return;
+  showMode(b.dataset.adminMode);if(state.mode==="inquiries")try{await loadInquiries();say("Заявки с сайта загружены.")}catch(err){say(err.message,true)}
+ });
+ $("#adminArchiveToggle").addEventListener("click",async()=>{
+  state.archived=!state.archived;state.id=null;state.detail=null;
+  $("#adminArchiveToggle").textContent=state.archived?"Рабочий список":"Архив";
+  try{await loadOrders();say(state.archived?"Открыт архив заказов.":"Открыт рабочий список.")}catch(err){say(err.message,true)}
+ });
+ $("#adminClearOrders").addEventListener("click",async()=>{
+  if(state.archived){say("Сначала вернись в рабочий список.",true);return}
+  if(!window.confirm("Очистить рабочий список? Все заказы переместятся в архив. Платежи, файлы и доступ клиентов сохранятся."))return;
+  try{const r=await api("/orders/archive",json("POST",{confirm:"АРХИВИРОВАТЬ"}));state.id=null;state.detail=null;await loadOrders();say("Перемещено заказов в архив: "+r.archived+". Их можно восстановить.")}catch(err){say(err.message,true)}
+ });
+ $("#adminDetail").addEventListener("click",async e=>{
+  if(!e.target.closest("#adminRestoreOrder")||!state.id)return;
+  try{await api("/orders/"+encodeURIComponent(state.id)+"/restore",{method:"POST"});state.id=null;state.detail=null;await loadOrders();say("Заказ восстановлен в рабочем списке.")}catch(err){say(err.message,true)}
+ });
+
  $("#adminLogout").addEventListener("click",async()=>{try{await api("/logout",{method:"POST"});state.id=null;state.orders=[];state.detail=null;showDashboard(false);say("Ты вышел из панели. Обнови страницу для повторного входа.")}catch(e){say(e.message,true)}});
  $("#adminOrders").addEventListener("click",e=>{const item=e.target.closest("[data-order]");if(item)selectOrder(item.dataset.order)});
  $("#adminFilters").addEventListener("click",e=>{const btn=e.target.closest("[data-filter]");if(!btn)return;state.filter=btn.dataset.filter;document.querySelectorAll("#adminFilters [data-filter]").forEach(el=>el.setAttribute("aria-pressed",String(el===btn)));renderList()});
  $("#adminDetail").addEventListener("submit",async e=>{
-  if(!["adminStageForm","adminUploadForm","adminMessageForm"].includes(e.target.id))return;
+  if(!["adminStageForm","adminUploadForm","adminMessageForm","adminRejectForm"].includes(e.target.id))return;
   e.preventDefault();if(state.busy||!state.id)return;
   state.busy=true;const btn=e.submitter||e.target.querySelector('button[type="submit"]');if(btn)btn.disabled=true;
   try{
    const id=encodeURIComponent(state.id),form=e.target;
-   if(form.id==="adminStageForm"){
+   if(form.id==="adminRejectForm"){
+    if(!window.confirm("Отклонить заказ? Клиент увидит причину отказа. Тестовая оплата не отменится."))return;
+    await api("/orders/"+id+"/reject",json("PATCH",{reason:form.elements.reason.value}));
+    await afterChange("Заказ отклонён. Причина показана клиенту. Статус банка не изменён.");
+   }else if(form.id==="adminStageForm"){
     await api("/orders/"+id+"/stage",json("PATCH",{stage:btn.dataset.next,note:form.elements.note.value}));
     await afterChange("Этап обновлён. Клиент увидит новый статус в своём заказе.");
    }else if(form.id==="adminMessageForm"){

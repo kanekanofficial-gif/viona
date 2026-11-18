@@ -63,6 +63,6 @@ test("settings assets loaded on storefront and code-edit page",()=>{
   assert.match(s,/viona-settings\.css\?v=1/);
   assert.match(s,/viona-settings\.js\?v=1/);
  }
- assert.match(sw,/viona-reboot-v37/);
+ assert.match(sw,/viona-reboot-v38/);
  for(const p of ['"/viona-settings.css?v=1"','"/viona-settings.js?v=1"'])assert.ok(sw.includes(p));
 });

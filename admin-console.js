@@ -30,7 +30,7 @@ function filenameFromHeader(raw){
 function asPublic(row){
  const o=publicOrder(row,false);
  return {...o,telegramId:String(row.telegram_id),fileName:row.filename||null,
-  fileSize:row.file_size||null,fileUploadedAt:row.uploaded_at||null};
+  fileSize:row.file_size||null,fileUploadedAt:row.uploaded_at||null,archivedAt:row.archived_at||null};
 }
 function download(res,row){
  const name=row.filename;
@@ -100,15 +100,17 @@ function registerAdminConsole(app,pool,{bank,configured}={}){
   res.json({ok:true});
  });
  app.get(base+"/orders",session,async(req,res)=>{
+  const showArchived=req.query.archived==="1";
+  const archiveFilter=showArchived?"p.archived_at IS NOT NULL":"p.archived_at IS NULL";
   try{
    let q=await pool.query(`SELECT p.*,f.filename,f.file_size,f.uploaded_at FROM viona_demo_payments p
     LEFT JOIN viona_demo_order_files f ON f.order_id=p.order_id
-    ORDER BY p.created_at DESC LIMIT 100`);
+    WHERE ${archiveFilter} ORDER BY p.created_at DESC LIMIT 100`);
    if(configured?.()&&typeof bank==="function"){
     const pending=q.rows.filter(x=>x.payment_id&&!["CONFIRMED","REFUNDED","REVERSED","REJECTED","CANCELED"].includes(x.status)).slice(0,6);
     await Promise.allSettled(pending.map(async row=>{await reconcile(row,pool,bank)}));
     if(pending.length)q=await pool.query(`SELECT p.*,f.filename,f.file_size,f.uploaded_at FROM viona_demo_payments p
-      LEFT JOIN viona_demo_order_files f ON f.order_id=p.order_id ORDER BY p.created_at DESC LIMIT 100`);
+      LEFT JOIN viona_demo_order_files f ON f.order_id=p.order_id WHERE ${archiveFilter} ORDER BY p.created_at DESC LIMIT 100`);
    }
    res.json({orders:q.rows.map(asPublic)});
   }catch(e){console.error("VIONA admin orders:",e.message);res.status(503).json({error:"Не удалось загрузить заказы."})}
@@ -138,6 +140,46 @@ function registerAdminConsole(app,pool,{bank,configured}={}){
    res.json({order:publicOrder(updated.rows[0],false)});
   }catch(e){console.error("VIONA admin stage update:",e.message);res.status(503).json({error:"Не удалось изменить этап."})}
  });
+ // Declining delivery is an admin decision, not a bank refund or a failed payment.
+ app.patch(base+"/orders/:id/reject",session,requireMutation,async(req,res)=>{
+  if(!UUID.test(req.params.id)||!isJSON(req))return res.sendStatus(400);
+  const reason=typeof req.body?.reason==="string"?req.body.reason.trim().slice(0,500):"";
+  if(reason.length<10)return res.status(400).json({error:"Укажи причину отклонения минимум в 10 символов."});
+  try{
+   const result=await pool.query(`UPDATE viona_demo_payments
+    SET fulfillment_status='rejected',fulfillment_note=$2,stage_updated_at=NOW(),updated_at=NOW()
+    WHERE order_id=$1 AND status='CONFIRMED' AND fulfillment_status IN ('queued','in_progress','ready')
+    RETURNING *`,[req.params.id,reason]);
+   if(!result.rowCount)return res.status(409).json({error:"Можно отклонить только оплаченный заказ, который ещё не завершён."});
+   return res.json({order:publicOrder(result.rows[0],false)});
+  }catch(e){console.error("VIONA order rejection:",e.message);return res.status(503).json({error:"Не удалось отклонить заказ."})}
+ });
+ // Soft archive; never delete payment records, uploaded files or customer history.
+ app.post(base+"/orders/archive",session,requireMutation,async(req,res)=>{
+  if(!isJSON(req)||req.body?.confirm!=="АРХИВИРОВАТЬ")return res.status(400).json({error:"Требуется подтверждение архивирования."});
+  try{
+   const q=await pool.query("UPDATE viona_demo_payments SET archived_at=NOW() WHERE archived_at IS NULL RETURNING order_id");
+   return res.json({ok:true,archived:q.rowCount});
+  }catch(e){console.error("VIONA admin archive:",e.message);return res.status(503).json({error:"Не удалось очистить список заказов."})}
+ });
+ app.post(base+"/orders/:id/restore",session,requireMutation,async(req,res)=>{
+  if(!UUID.test(req.params.id))return res.sendStatus(400);
+  try{
+   const q=await pool.query("UPDATE viona_demo_payments SET archived_at=NULL WHERE order_id=$1 AND archived_at IS NOT NULL RETURNING order_id",[req.params.id]);
+   return res.status(q.rowCount?200:404).json({ok:Boolean(q.rowCount)});
+  }catch(e){console.error("VIONA order restore:",e.message);return res.status(503).json({error:"Не удалось восстановить заказ."})}
+ });
+ app.get(base+"/inquiries",session,async(req,res)=>{
+  try{
+   const ordinary=await pool.query("SELECT id,name,contact,details,created_at FROM requests ORDER BY created_at DESC LIMIT 100");
+   const code=await pool.query("SELECT id,project_name,contact,requested_changes,technology,created_at FROM code_edit_requests ORDER BY created_at DESC LIMIT 50");
+   const inquiries=[
+    ...ordinary.rows.map(x=>({id:String(x.id),kind:"Обращение с сайта",title:x.name||"Новая заявка",contact:x.contact,details:x.details,createdAt:x.created_at})),
+    ...code.rows.map(x=>({id:String(x.id),kind:"Доработка кода",title:x.project_name,contact:x.contact,details:x.requested_changes,technology:x.technology,createdAt:x.created_at}))
+   ].sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt)).slice(0,120);
+   return res.json({inquiries});
+  }catch(e){console.error("VIONA inquiries:",e.message);return res.status(503).json({error:"Не удалось загрузить заявки."})}
+ });
  app.post(base+"/orders/:id/message",session,requireMutation,async(req,res)=>{
   if(!UUID.test(req.params.id)||!isJSON(req))return res.sendStatus(400);
   const message=typeof req.body?.message==="string"?req.body.message.trim().slice(0,500):"";
@@ -155,9 +197,10 @@ function registerAdminConsole(app,pool,{bank,configured}={}){
   if(!Buffer.isBuffer(req.body)||!req.body.length||req.body.length>1048576)
    return res.status(400).json({error:"Нужен файл кода не более 1 МиБ."});
   try{
-   const row=await pool.query("SELECT status FROM viona_demo_payments WHERE order_id=$1",[req.params.id]);
+   const row=await pool.query("SELECT status,fulfillment_status FROM viona_demo_payments WHERE order_id=$1",[req.params.id]);
    if(!row.rowCount)return res.sendStatus(404);
    if(row.rows[0].status!=="CONFIRMED")return res.status(409).json({error:"Выдача возможна только после подтверждения тестовой оплаты."});
+   if(row.rows[0].fulfillment_status==="rejected")return res.status(409).json({error:"Нельзя загружать файл для отклонённого заказа."});
    await pool.query(`INSERT INTO viona_demo_order_files(order_id,filename,media_type,contents,file_size)
     VALUES($1,$2,'application/octet-stream',$3,$4)
     ON CONFLICT(order_id) DO UPDATE SET filename=EXCLUDED.filename,media_type=EXCLUDED.media_type,

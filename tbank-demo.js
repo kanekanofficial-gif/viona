@@ -67,6 +67,9 @@ function registerTestPayments(app,pool,getCatalog){
   if(!user)return res.status(401).json({error:"Войдите через Telegram для тестовой оплаты."});
   const ids=req.body?.items;
   if(!Array.isArray(ids)||ids.length<1||ids.length>20||!ids.every(id=>Number.isSafeInteger(id)&&id>0)||new Set(ids).size!==ids.length)return res.status(400).json({error:"Некорректная корзина."});
+  const customerContact=typeof req.body?.contact==="string"?req.body.contact.trim().slice(0,200):"";
+  const customerBrief=typeof req.body?.brief==="string"?req.body.brief.trim().slice(0,4000):"";
+  if(customerContact.length<3||customerBrief.length<10)return res.status(400).json({error:"Перед оплатой укажи контакт и описание задачи (от 10 символов)."});
   const saveCard=method==="card"&&req.body?.saveCard===true;
   const sberDesktop=method==="sberpay"&&req.body?.device==="desktop";
   const sberMobile=method==="sberpay"&&req.body?.device==="mobile";
@@ -82,7 +85,7 @@ function registerTestPayments(app,pool,getCatalog){
    if(!Number.isSafeInteger(amount)||amount<minimum||amount>1000000000)return res.status(400).json({error:method==="sbp"?"Для СБП минимальная сумма 10 ₽.":"Некорректная сумма."});
    const orderId=crypto.randomUUID();
    const snapshot=selected.map(p=>({id:Number(p.id),title:String(p.title||"").slice(0,160),description:String(p.description||"").slice(0,1000),category:String(p.category||"").slice(0,70),tag:String(p.tag||"").slice(0,70),price:Number(p.price)}));
-   await pool.query("INSERT INTO viona_demo_payments(order_id,telegram_id,amount_kopecks,status,method,save_card_requested,items) VALUES($1,$2,$3,'NEW',$4,$5,$6::jsonb)",[orderId,user.id,amount,method,saveCard,JSON.stringify(snapshot)]);
+   await pool.query("INSERT INTO viona_demo_payments(order_id,telegram_id,amount_kopecks,status,method,save_card_requested,items,customer_contact,customer_brief) VALUES($1,$2,$3,'NEW',$4,$5,$6::jsonb,$7,$8)",[orderId,user.id,amount,method,saveCard,JSON.stringify(snapshot),customerContact,customerBrief]);
    const base=(process.env.PUBLIC_BASE_URL||"https://viona.space").replace(new RegExp("/$"),"");
    // Browser redirects are UX only; an authenticated GetState verification decides payment success.
    const initFields={

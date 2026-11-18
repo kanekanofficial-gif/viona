@@ -52,3 +52,26 @@ html[data-theme="light"] .ad-pill{background:#e4f6ed;border-color:#99c7b1}
 html[data-theme="light"] .ad-pill.pending{background:#fff5df;border-color:#d6bb77}
 html[data-theme="light"] .ad-pill.failed{background:#fff1f0;border-color:#d8a7ac}
 html[data-theme="light"] .ad-tools button:not(.secondary),html[data-theme="light"] .ad-actions button:not(.secondary){color:#fff}
+
+
+/* Admin workbench: project briefs, review actions and reversible archive. */
+.ad-mode-switch{display:flex;gap:9px;flex-wrap:wrap;margin:16px 0 20px}
+.ad-mode-switch button{min-height:42px;padding:10px 15px;border-radius:11px;border:1px solid var(--line);background:var(--panel2);color:var(--text);font-weight:800;font-size:12px}
+.ad-mode-switch button[aria-pressed="true"]{border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent)}
+.ad-customer-brief{margin:22px 0;padding:17px;border-radius:15px;border:1px solid var(--line);background:var(--panel2)}
+.ad-customer-brief h3{margin:0 0 12px}
+.ad-customer-brief .ad-detail-fields{margin:0 0 13px;grid-template-columns:1fr}
+.ad-brief-content{white-space:pre-wrap;overflow-wrap:anywhere;border:1px solid var(--line);border-radius:11px;background:var(--panel);padding:13px;color:var(--text);font-size:12px;line-height:1.75;max-height:380px;overflow:auto}
+.ad-upload-indicator{display:flex;flex-direction:column;gap:7px;padding:12px 15px;border:1px solid #91dbc466;border-radius:11px;background:#61c59b14;margin:12px 0;overflow-wrap:anywhere}
+.ad-upload-indicator strong{color:var(--teal);font-size:12px}.ad-upload-indicator small{color:var(--muted)}
+.ad-actions button.ad-danger{background:#663032;border-color:#9e5358;color:#fff}
+.ad-reject-form{margin-top:13px;padding-top:15px;border-top:1px solid var(--line)}
+.ad-inquiries{padding:25px;min-height:240px}
+.ad-inquiry{margin:13px 0;padding:18px;border:1px solid var(--line);background:var(--panel2);border-radius:15px}
+.ad-inquiry .ad-label{margin-bottom:10px;display:block}
+.ad-inquiry .ad-brief-content{max-height:280px}
+.ad-inquiry p{color:var(--muted);margin:10px 0}
+.ad-inquiry .ad-split strong{overflow-wrap:anywhere}
+.ad-order:has(.ad-pill.rejected) .ad-pill{color:#ffc1b7}
+html[data-theme="light"] .ad-actions button.ad-danger{background:#ba353d;border-color:#ab2632;color:#fff}
+@media(max-width:600px){.ad-mode-switch button{flex:1}.ad-inquiries{padding:16px}.ad-customer-brief{padding:14px}}

@@ -15,7 +15,7 @@
   {id:"queued",label:"Заявка принята",desc:"Подтверждённый заказ ожидает начала работы"},
   {id:"in_progress",label:"В разработке",desc:"Команда работает над проектом"},
   {id:"ready",label:"Подготовка к отправке",desc:"Проводим финальную проверку результата"},
-  {id:"completed",label:"Готово",desc:"Результат загружен и доступен для скачивания"}
+  {id:"completed",label:"Готово",desc:"Результат загружен и доступен для скачивания"},{id:"rejected",label:"Отклонён",desc:"Администратор сообщил причину отказа"}
  ];
  const stageIndex={queued:1,in_progress:2,ready:3,completed:4};
  document.body.classList.add("vr-result-active");
@@ -36,6 +36,7 @@
  root.innerHTML=loading();
  const pathToOrder="/payment/order/"+encodeURIComponent(id);
  function steps(order){
+  if(order.stage==="rejected")return '<div class="vr-rejected-stage"><strong>Заказ отклонён администратором</strong><p>'+escaped(order.stageNote||"Причина пока не указана.")+'</p></div>';
   const current=stageIndex[order.stage]??1;
   return '<ol class="vr-steps">'+stages.map((step,i)=>{
    const done=i<current,active=i===current;
@@ -57,6 +58,7 @@
  }
  function deliveryHtml(order){
   if(!order.verifiedPaid)return "";
+  if(order.stage==="rejected")return '<section class="vr-box vr-rejected-result"><div class="vr-box-title"><span>Результат заказа</span><small>Отклонён</small></div><p>Администратор отклонил выполнение. Файл недоступен. Если есть вопросы, напиши в поддержку с номером заказа.</p></section>';
   if(order.stage==="completed"&&order.fileAvailable)
    return '<section class="vr-box vr-delivery"><div class="vr-box-title"><span>Твой готовый проект</span><small>Доступ по VIONA ID</small></div>'+
     '<p>Файл загружен командой VIONA и доступен только в аккаунте, который оформил заказ.</p>'+
@@ -68,16 +70,17 @@
 
  function render(payload){
   const order=payload.order,confirmed=order.verifiedPaid,failed=order.failed;
-  const state=confirmed?"success":failed?"failure":"waiting";
-  const stageTitle={queued:"Заявка принята",in_progress:"В разработке",ready:"Подготовка к отправке",completed:"Готово"};
+  const state=order.rejected?"rejected":confirmed?"success":failed?"failure":"waiting";
+  const stageTitle={queued:"Заявка принята",in_progress:"В разработке",ready:"Подготовка к отправке",completed:"Готово",rejected:"Отклонён"};
   const headline=confirmed?(stageTitle[order.stage]||"Заказ оформлен"):failed?"Оплата не прошла":"Ожидаем подтверждения";
-  const description=confirmed?"Тестовая оплата подтверждена Т-Банком. Статусы меняет только команда VIONA; готовый файл появится в этом заказе после завершения.":
+  const description=confirmed?(order.rejected?"Администратор отклонил выполнение заказа. Это не возврат платежа. Причину можно посмотреть ниже, по вопросам обращайся в поддержку.":"Тестовая оплата подтверждена Т-Банком. Статусы меняет только команда VIONA; готовый файл появится в этом заказе после завершения."):
    failed?"Банк не подтвердил оплату. Деньги по этому тестовому заказу не считаются полученными. Можно попробовать снова.":
    "Оплата ещё не подтверждена банком. Мы продолжаем проверку — не нужно платить повторно, пока статус не прояснится.";
-  const logo=confirmed?"✓":failed?"!":"⋯";
+  const logo=order.rejected?"!":confirmed?"✓":failed?"!":"⋯";
   const receipt='<div class="vr-receipt"><div class="vr-receipt-row"><span>Номер заказа</span><strong>#'+escaped(order.orderId.slice(0,8).toUpperCase())+'</strong></div><div class="vr-receipt-row"><span>Дата оформления</span><strong>'+escaped(date(order.createdAt))+'</strong></div><div class="vr-receipt-row"><span>Способ оплаты</span><strong class="v18-method-receipt"><span class="viona-brand viona-brand-'+(order.method==="sbp"?"sbp":order.method==="sberpay"?"sber":"card")+'" role="img" aria-label="Способ оплаты"></span>'+escaped(methodLabel[order.method]||"Т-Банк")+'</strong></div><div class="vr-receipt-row"><span>Статус банка</span><strong>'+escaped(order.status)+'</strong></div><div class="vr-receipt-total"><span>Сумма заказа</span><strong>'+money(order.amount)+'</strong></div></div>';
   root.innerHTML=shell('<div class="vr-page '+state+'"><div class="vr-hero"><div class="vr-hero-icon" aria-hidden="true">'+logo+'</div><div class="vr-hero-text"><span class="vr-eyebrow">VIONA / '+(confirmed?"PAYMENT COMPLETE":failed?"PAYMENT FAILED":"PAYMENT CHECK")+'</span><h1>'+headline+'<span class="vr-dot">.</span></h1><p>'+description+'</p><div class="vr-hero-actions"><a class="vr-primary-link" href="/#catalog">В каталог ↗</a><a class="vr-secondary-link" href="'+pathToOrder+'">Ссылка на заказ</a><button type="button" class="vr-text-link" id="vrRetry">Обновить статус ↻</button></div></div></div>'+
    '<div class="vr-grid"><div class="vr-main-column"><section class="vr-box"><div class="vr-box-title"><span>Твой заказ</span><small>'+(order.items.length?order.items.length+" поз.":"Товары")+'</small></div>'+itemsHtml(order.items)+'</section>'+
+   '<section class="vr-box vr-customer-brief"><div class="vr-box-title"><span>Моя заявка</span><small>Техническое задание</small></div>'+   (order.customerContact?'<p><b>Контакт:</b> '+escaped(order.customerContact)+'</p>':'')+   '<p class="vr-client-brief">'+escaped(order.customerBrief||"Описание задачи не указано: заказ оформлен до обновления.")+'</p></section>'+
    (confirmed?'<section class="vr-box"><div class="vr-box-title"><span>Этапы выполнения</span><small>По факту выполнения</small></div>'+steps(order)+(order.stageNote?'<div class="vr-current-note">'+escaped(order.stageNote)+'</div>':'')+'</section>':'<section class="vr-box vr-follow"><strong>Что дальше?</strong><p>'+(failed?'Вернись в каталог и открой оформление заказа снова. Не отправляй платежи повторно по старой ссылке.':'Дождись подтверждения банка или обнови статус через несколько секунд. Эта страница ничего не списывает.')+'</p></section>')+
    (confirmed?'<section class="vr-box"><div class="vr-box-title"><span>Обновления команды</span><small>Только настоящие сообщения</small></div>'+eventsHtml(payload.events||[])+'</section>':'')+
    deliveryHtml(order)+'</div><aside class="vr-aside"><section class="vr-box vr-summary"><div class="vr-box-title"><span>Информация</span><small>VIONA / '+(order.demo?"DEMO":"PAYMENT")+'</small></div>'+receipt+'<div class="vr-verified"><span>◇</span>'+(confirmed?'Подтверждено запросом к серверу и данным банка':'Статус заказа проверяется сервером, а не адресом страницы')+'</div></section><div class="vr-help"><span>Нужна помощь?</span><p>Для уточнения сроков и комплектации свяжись с командой VIONA, указав номер заказа.</p><a href="/studio/support">Открыть поддержку ↗</a></div></aside></div></div>');

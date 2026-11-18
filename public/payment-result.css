@@ -102,3 +102,22 @@ body.vr-result-active>.overlay,body.vr-result-active>.panel,body.vr-result-activ
 .vr-delivery p{color:#b8d3d4;font-size:12px;line-height:1.7}
 .vr-delivery .vr-file-name{margin-top:14px;overflow-wrap:anywhere;color:#add6e6}
 .vr-delivery .vr-primary-link{background:linear-gradient(110deg,#b7efd5,#8be5d3);color:#15312f!important}
+
+
+/* Customer request details, archived-order independent view and rejected fulfillment. */
+.vr-customer-brief p{color:#c5d5e4;font-size:12px;line-height:1.75;overflow-wrap:anywhere}
+.vr-customer-brief .vr-client-brief{padding:15px;border:1px solid #86c1d73d;border-radius:12px;background:#93cbdc0e;color:#ecf6fa;white-space:pre-wrap;overflow-wrap:anywhere}
+.vr-rejected-stage{padding:16px 18px;border-radius:12px;border:1px solid #e2a29266;background:#a7444b15;color:#ffd2c8}
+.vr-rejected-stage strong{font-size:13px}.vr-rejected-stage p{white-space:pre-wrap;overflow-wrap:anywhere;color:#e7c2bd;font-size:12px;margin:7px 0 0}
+.vr-rejected-result{border-color:#e2a29266!important;background:linear-gradient(145deg,#302024,#191c27)!important}
+.vr-rejected-result .vr-box-title>span{color:#ffe0d6}
+html[data-theme="light"] #vionaResultRoot.vr-root .vr-customer-brief p{color:#406477!important}
+html[data-theme="light"] #vionaResultRoot.vr-root .vr-client-brief{background:#edf6fb!important;border-color:#b6d3de!important;color:#1c4558!important}
+html[data-theme="light"] #vionaResultRoot.vr-root .vr-rejected-stage{background:#fff1ef;color:#8d3135;border-color:#e8b5ad}
+html[data-theme="light"] #vionaResultRoot.vr-root .vr-rejected-stage p{color:#864f51}
+html[data-theme="light"] #vionaResultRoot.vr-root .vr-rejected-result{background:#fff5f2!important;border-color:#dbb4ac!important}
+html[data-theme="light"] #vionaResultRoot.vr-root .vr-rejected-result .vr-box-title>span{color:#7d3336!important}
+
+.vr-page.rejected .vr-hero-icon{background:linear-gradient(145deg,#84534f,#38262d);border-color:#e9ada05c;color:#ffe3d8}
+.vr-page.rejected .vr-eyebrow{color:#ffcac2}
+html[data-theme="light"] #vionaResultRoot.vr-root .vr-page.rejected .vr-hero-icon{background:linear-gradient(140deg,#ffe8db,#ebb1a8);border-color:#d6a099;color:#853c3e}

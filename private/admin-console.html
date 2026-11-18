@@ -8,9 +8,9 @@
  <meta name="theme-color" content="#0b1119">
  <title>VIONA — защищённое управление заказами</title>
  <link rel="icon" href="/favicon.svg?v=30" type="image/svg+xml">
- <link rel="stylesheet" href="/admin-console.css?v=1">
+ <link rel="stylesheet" href="/admin-console.css?v=2">
  <script src="https://accounts.google.com/gsi/client" async defer></script>
- <script src="/admin-console.js?v=1" defer></script>
+ <script src="/admin-console.js?v=2" defer></script>
 </head>
 <body>
 <header class="ad-top"><a href="/" class="ad-brand"><span class="ad-mark">V</span><span><strong>VIONA</strong><small>ORDER CONTROL</small></span></a><span class="ad-top-label">T-BANK · DEMO ONLY</span></header>
@@ -24,14 +24,18 @@
   <small>Если вход недоступен, проверь настройку Google Client ID и PostgreSQL на сервере.</small>
  </section>
  <section id="adminDashboard" hidden>
-  <div class="ad-toolbar"><div><span class="ad-label">DASHBOARD / LIVE ORDERS</span><p id="adminEmail"></p></div><div class="ad-tools"><button type="button" id="adminReload">Обновить</button><button type="button" id="adminLogout" class="secondary">Выйти</button></div></div>
+  <div class="ad-toolbar"><div><span class="ad-label">DASHBOARD / LIVE ORDERS</span><p id="adminEmail"></p></div><div class="ad-tools"><button type="button" id="adminReload">Обновить</button><button type="button" id="adminClearOrders" class="secondary" title="Скрыть заказы из рабочего списка, сохранив историю и файлы">Очистить список</button><button type="button" id="adminArchiveToggle" class="secondary">Архив</button><button type="button" id="adminLogout" class="secondary">Выйти</button></div></div>
+  <div class="ad-mode-switch" id="adminModes"><button type="button" data-admin-mode="orders" aria-pressed="true">Заказы после оплаты</button><button type="button" data-admin-mode="inquiries" aria-pressed="false">Заявки с сайта</button></div>
+  <div id="adminInquiries" class="ad-card ad-inquiries" hidden><div class="ad-panel-head"><h2>Что хотят клиенты?</h2><small>Запросы, предложения и доработка кода без оплаты</small></div><div id="adminInquiryList"></div></div>
+  <div id="adminOrdersWorkspace">
   <div class="ad-stats" id="adminStats" aria-label="Сводка заказов"></div>
   <div class="ad-layout">
    <section class="ad-card ad-list-panel"><div class="ad-panel-head"><h2>Все заказы</h2><small>Последние 100 тестовых оформлений</small></div>
-    <div class="ad-filters" id="adminFilters"><button type="button" data-filter="all" aria-pressed="true">Все</button><button type="button" data-filter="paid">Оплачены</button><button type="button" data-filter="pending">Ожидают</button><button type="button" data-filter="completed">Готовые</button></div>
+    <div class="ad-filters" id="adminFilters"><button type="button" data-filter="all" aria-pressed="true">Все</button><button type="button" data-filter="paid">Оплачены</button><button type="button" data-filter="pending">Ожидают</button><button type="button" data-filter="completed">Готовые</button><button type="button" data-filter="rejected">Отклонены</button></div>
     <div id="adminOrders" class="ad-order-list" aria-live="polite"></div>
    </section>
    <section class="ad-card ad-detail-panel" id="adminDetail"><div class="ad-empty">Выбери заказ слева, чтобы посмотреть товары, обновить этап и прикрепить файл.</div></section>
+  </div>
   </div>
  </section>
  <p class="ad-foot">Защита доступа проверяется сервером. URL страницы не является авторизацией. Реальные платежи здесь не проводятся.</p>
