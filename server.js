@@ -30,7 +30,8 @@ const demo = [
 {id:4,title:"Game Mod Toolkit",category:"Игры",description:"Инструменты для разрешённых модификаций одиночных игр.",price:390,icon:"⬡",tag:"Инструменты"},
 {id:5,title:"Landing Page Pack",category:"Шаблоны",description:"Набор адаптивных страниц для небольших проектов.",price:350,icon:"▧",tag:"HTML/CSS"},
 {id:6,title:"Custom Development",category:"Услуги",description:"Опиши задачу и найди разработчика для своего проекта.",price:0,icon:"↗",tag:"Заказ"},
-{id:7,title:"MAX Bot Starter",category:"Боты",description:"Стартовый шаблон чат-бота для мессенджера MAX: обработка сообщений, команды и структура проекта. Концепт товара, не готовый подключённый бот.",price:0,icon:"✦",tag:"MAX / Шаблон"}
+{id:7,title:"MAX Bot Starter",category:"Боты",description:"Стартовый шаблон чат-бота для мессенджера MAX: обработка сообщений, команды и структура проекта. Концепт товара, не готовый подключённый бот.",price:0,icon:"✦",tag:"MAX / Шаблон"},
+{id:8,title:"KANEKAN KAN — создание музыки",category:"Музыка",description:"Оригинальный трек под твои идеи: жанр, вокал и техническое задание. Отдельная студия SoundLab.",price:0,icon:"♫",tag:"SoundLab / Заявка"}
 ];
 const start=async()=>{
 const ready=await initializeDatabase(pool);
