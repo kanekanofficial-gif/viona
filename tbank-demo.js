@@ -57,7 +57,7 @@ async function bank(method,fields){
  try{const r=await fetch(BASE+"/"+method,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body),signal:controller.signal});if(!r.ok)throw Error("Bank HTTP "+r.status);return await r.json()}finally{clearTimeout(timeout)}
 }
 function registerTestPayments(app,pool,getCatalog){
- app.get("/api/payments/test/config",(_req,res)=>res.json({enabled:configured()&&Boolean(pool),mode:"demo"}));
+ app.get("/api/payments/test/config",(_req,res)=>res.set("Cache-Control","no-store").json({enabled:configured()&&Boolean(pool),mode:"demo",bankReady:configured(),databaseReady:Boolean(pool)}));
 
  async function createCheckout(req,res,method){
   res.set("Cache-Control","no-store");
@@ -101,9 +101,21 @@ function registerTestPayments(app,pool,getCatalog){
    }
    if(method==="sberpay")initFields.DATA={SberPayWeb:"true",Device:sberDesktop?"Desktop":"Mobile"};
    const result=await bank("Init",initFields);
-   if(result.Success!==true||!result.PaymentId||((method==="card"||method==="sberpay")&&!trustedPaymentUrl(result.PaymentURL))){
-    console.warn("Demo payment Init bank response:",safeBankFailure(result));
-    return res.status(502).json({error:"Банк не создал тестовый платёж."});
+   if(result.Success!==true){
+    const failed=safeBankFailure(result),code=String(result?.ErrorCode??"unknown").slice(0,24);
+    console.warn("Demo payment Init rejected:",{...failed,method});
+    return res.status(502).json({
+     error:"Т-Банк отклонил создание тестового платежа. Проверь настройки DEMO-терминала или передай код ошибки поддержке.",
+     bankErrorCode:/^[a-zA-Z0-9_-]{1,24}$/.test(code)?code:"unknown",reason:"bank_rejected"
+    });
+   }
+   if(!result.PaymentId){
+    console.warn("Demo payment Init missing PaymentId:",safeBankFailure(result));
+    return res.status(502).json({error:"Банк не вернул номер тестового платежа.",reason:"missing_payment_id"});
+   }
+   if((method==="card"||method==="sberpay")&&!trustedPaymentUrl(result.PaymentURL)){
+    console.warn("Demo payment Init untrusted checkout host:",safeBankFailure(result));
+    return res.status(502).json({error:"Банк вернул неподдерживаемую ссылку оплаты. Платёж не был открыт — обратись в поддержку.",reason:"invalid_payment_url"});
    }
    const paymentId=String(result.PaymentId);
    await pool.query("UPDATE viona_demo_payments SET payment_id=$2,status='INITIATED' WHERE order_id=$1",[orderId,paymentId]);
