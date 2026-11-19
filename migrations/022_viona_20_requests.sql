@@ -1,6 +1,7 @@
 -- VIONA 2.0: request queues. Never mark requests as paid without a bank-confirmed payment.
 CREATE TABLE IF NOT EXISTS viona_music_requests (
  id UUID PRIMARY KEY,
+ access_hash CHAR(64) NOT NULL,
  client_name VARCHAR(100) NOT NULL,
  contact VARCHAR(200) NOT NULL,
  track_title VARCHAR(120) NOT NULL,
@@ -31,3 +32,11 @@ CREATE TABLE IF NOT EXISTS viona_staff_applications (
  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 CREATE INDEX IF NOT EXISTS viona_staff_applications_latest ON viona_staff_applications(created_at DESC);
+
+CREATE TABLE IF NOT EXISTS viona_music_deliveries (
+ request_id UUID PRIMARY KEY REFERENCES viona_music_requests(id) ON DELETE CASCADE,
+ filename VARCHAR(180) NOT NULL,
+ contents BYTEA NOT NULL,
+ file_size INTEGER NOT NULL CHECK(file_size > 0 AND file_size <= 20971520),
+ uploaded_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
