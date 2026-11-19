@@ -8,8 +8,17 @@ const {initializeDatabase}=require("./db-init");
 const {registerTestPayments}=require("./tbank-demo");
 const {registerCodeEdit}=require("./code-edit-api");
 const {registerAdminConsole}=require("./admin-console");
+const {registerV20}=require("./v20-api");
 const PORT = process.env.PORT || 3000;
 app.use(express.json({limit:"1mb"}));
+// Optional standalone hostnames, served by one Render instance after DNS/alias configuration.
+const v20Hosts={"soundlab.viona.space":"soundlab.html","bots.viona.space":"service-hub.html","web.viona.space":"service-hub.html","code.viona.space":"service-hub.html"};
+app.use((req,res,next)=>{
+ if(req.method!=="GET"||req.path!=="/")return next();
+ const doc=v20Hosts[String(req.hostname||"").toLowerCase()];
+ if(!doc)return next();
+ return res.sendFile(path.join(__dirname,"public",doc));
+});
 app.use(express.static(path.join(__dirname,"public")));
 registerTelegramAuth(app);
 let pool = null;
@@ -29,6 +38,7 @@ if(pool&&!ready){console.error("VIONA: database schema unavailable; persistent A
 const getCatalog=async()=>{if(pool){try{const r=await pool.query("SELECT id,title,category,description,price,icon,tag FROM products ORDER BY id");return r.rows.some(p=>String(p.title).toLowerCase().includes("max bot"))?r.rows:[...r.rows,demo[6]]}catch(e){console.error("Catalog fallback:",e.message)}}return demo};
 registerV16(app,pool,getCatalog);
 registerTestPayments(app,pool,getCatalog);
+registerV20(app,pool);
 registerAdminConsole(app,pool,{bank:require("./tbank-demo").bank,configured:require("./tbank-demo").configured});
 registerCodeEdit(app,pool);
 app.get("/api/health",(_req,res)=>res.json({ok:true,app:"VIONA"}));
@@ -42,6 +52,12 @@ app.post("/api/request",async(req,res)=>{
  if(pool){try{await pool.query("INSERT INTO requests(name,contact,details) VALUES($1,$2,$3)",[String(name).slice(0,100),String(contact).slice(0,200),String(details).slice(0,5000)]);return res.status(201).json({message:"Заявка сохранена."});}catch(e){console.error(e.message);return res.status(500).json({error:"Не удалось сохранить заявку."});}}
  res.status(202).json({message:"Демо-режим: заявка не сохранена. Подключи PostgreSQL."});
 });
+app.get("/soundlab",(_req,res)=>res.sendFile(path.join(__dirname,"public","soundlab.html")));
+app.get("/KANEKANKANARTIST",(_req,res)=>res.sendFile(path.join(__dirname,"public","artist.html")));
+app.get("/careers",(_req,res)=>res.sendFile(path.join(__dirname,"public","careers.html")));
+app.get("/support",(_req,res)=>res.sendFile(path.join(__dirname,"public","support.html")));
+app.get(["/bots","/web","/code"],(_req,res)=>res.sendFile(path.join(__dirname,"public","service-hub.html")));
+app.get(["/terms","/privacy","/services","/refunds"],(_req,res)=>res.sendFile(path.join(__dirname,"public","legal.html")));
 app.get("/code-edit",(_req,res)=>res.sendFile(path.join(__dirname,"public","code-edit.html")));
 app.get("/studio",(_req,res)=>res.sendFile(path.join(__dirname,"public","studio.html")));
 app.get("/studio/:view", (req,res,next)=>{
