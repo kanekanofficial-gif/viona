@@ -127,21 +127,22 @@ function openCheckout(){
       '<label class="vx-brief-field">Техническое задание / пожелания<textarea id="vionaBriefText" name="clientBrief" rows="5" minlength="10" maxlength="4000" required placeholder="Какие команды, дизайн, функции, сценарии или изменения тебе нужны?"></textarea></label>',
       '<small class="vx-brief-warning">Не отправляй пароли, токены ботов и данные банковских карт. Это тестовая оплата; реальные деньги не списываются.</small>',
      '</section>',
-     '<section class="vx-methods" id="vionaPaymentOptions" hidden>',
+     '<div class="v20-checkout-legal"><strong>Перед оплатой</strong><label><input type="checkbox" id="v20AcceptTerms" required><span>Я ознакомился(-ась) с <a href="/terms" target="_blank" rel="noopener noreferrer">соглашением</a>, <a href="/privacy" target="_blank" rel="noopener noreferrer">политикой данных</a>, <a href="/services" target="_blank" rel="noopener noreferrer">условиями цифровых услуг</a> и <a href="/refunds" target="_blank" rel="noopener noreferrer">правилами оплаты</a>. Это тестовый платёж.</span></label></div>',
+      '<section class="vx-methods" id="vionaPaymentOptions" hidden>',
       '<div class="vx-section-title"><span class="vx-section-number">01</span><h3>Способ оплаты</h3><span class="vx-section-caption vx-bank-brand"><span class="viona-brand viona-brand-tbank" aria-hidden="true"></span> Т-Банк · DEMO</span></div>',
       '<div class="vx-payment-method-list">',
         '<button type="button" id="vionaDemoPay" class="vx-method vx-card-method">',
-         '<span class="vx-method-icon" aria-hidden="true"><span class="viona-brand viona-brand-card"></span></span>',
+         '<span class="vx-method-icon" aria-hidden="true"><img src="/assets/payment-bank-card.svg" width="96" height="64" alt=""></span>',
          '<span class="vx-method-copy"><strong>Банковская карта</strong><small>Visa, Mastercard, Мир · защищённая страница банка</small></span>',
          '<span class="vx-method-arrow" aria-hidden="true">↗</span>',
         '</button>',
         '<button type="button" id="vionaSbpPay" class="vx-method vx-sbp-method">',
-         '<span class="vx-method-icon" aria-hidden="true"><span class="viona-brand viona-brand-sbp"></span></span>',
+         '<span class="vx-method-icon" aria-hidden="true"><img src="/assets/payment-sbp.svg" width="96" height="64" alt=""></span>',
          '<span class="vx-method-copy"><strong>СБП по QR-коду</strong><small>Оплата через приложение любого поддерживаемого банка</small></span>',
          '<span class="vx-method-arrow" aria-hidden="true">↗</span>',
         '</button>',
         '<button type="button" id="vionaSberPay" class="vx-method vx-sber-method">',
-         '<span class="vx-method-icon vx-sber-symbol" aria-hidden="true"><span class="viona-brand viona-brand-sber"></span></span>',
+         '<span class="vx-method-icon vx-sber-symbol" aria-hidden="true"><img src="/assets/brand-sberpay.svg" width="96" height="64" alt=""></span>',
          '<span class="vx-method-copy"><strong>SberPay</strong><small>Оплата через СберБанк Онлайн · без реквизитов карты</small></span>',
          '<span class="vx-method-arrow" aria-hidden="true">↗</span>',
         '</button>',
@@ -205,6 +206,8 @@ function checkoutBrief(){
  }
  const data={contact:contact.value.trim(),brief:brief.value.trim()};
  if(data.contact.length<3||data.brief.length<10)throw Error("Укажи контакт и описание задачи минимум в 10 символов.");
+ const terms=content.querySelector("#v20AcceptTerms");
+ if(!terms?.checked){terms?.focus();terms?.reportValidity();throw Error("Перед оплатой ознакомься с условиями и подтверди согласие.");}
  return data;
 }
 let vionaCardsRequest=0;
@@ -239,7 +242,7 @@ content.addEventListener("click",async e=>{
  const status=content.querySelector("#checkoutStatus");
  const ids=state.cart.map(Number);
  button.disabled=true;status.textContent="Создаём тестовый платёж…";
- try{const r=await fetch("/api/payments/test/init",{method:"POST",headers:{"Content-Type":"application/json"},credentials:"same-origin",body:JSON.stringify({items:ids,saveCard:content.querySelector("#vionaSaveCard")?.checked===true,...checkoutBrief()})});const data=await r.json();if(!r.ok)throw Error(data.error||"Ошибка оплаты");rememberPendingPayment(data,ids);window.location.assign(data.paymentUrl)}
+ try{const r=await fetch("/api/payments/test/init",{method:"POST",headers:{"Content-Type":"application/json"},credentials:"same-origin",body:JSON.stringify({items:ids,saveCard:content.querySelector("#vionaSaveCard")?.checked===true,...checkoutBrief()})});const data=await r.json();if(!r.ok)throw Error((data.error||"Ошибка оплаты")+(data.bankErrorCode?" (код Т-Банка: "+data.bankErrorCode+")":""));rememberPendingPayment(data,ids);window.location.assign(data.paymentUrl)}
  catch(err){status.textContent=err.message;button.disabled=false}
 });
 
