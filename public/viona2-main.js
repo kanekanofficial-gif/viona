@@ -44,6 +44,10 @@
   if(summary){
    const terms=document.createElement("div");terms.className="v2-payment-terms";
    terms.innerHTML='<strong>Тестовая оплата VIONA</strong><p>Перед запуском банковской формы ознакомься с документами:</p><a href="/legal/terms" target="_blank" rel="noopener">Пользовательское соглашение</a> · <a href="/legal/privacy" target="_blank" rel="noopener">Политика конфиденциальности</a> · <a href="/legal/delivery" target="_blank" rel="noopener">Условия услуг и оплаты</a><p>Финальные юридические условия будут утверждены до реального приёма денег.</p>';
+   const consent=document.createElement("label");
+   consent.style.cssText="display:flex;gap:9px;align-items:flex-start;margin-top:12px;font-size:11px;line-height:1.5;font-weight:700";
+   consent.innerHTML='<input id="v2CheckoutTerms" type="checkbox" required style="width:auto;margin-top:2px" aria-label="Я ознакомился с условиями заказа"><span>Я ознакомился с условиями оформления заказа и обработкой данных.</span>';
+   terms.append(consent);
    summary.append(terms);
    const row=document.createElement("div");row.className="v2-payment-icons";
    row.innerHTML='<img src="/assets/bank-card-v2.svg" alt="Банковская карта"><img src="/assets/brand-sbp.svg" alt="СБП"><img src="/assets/brand-sberpay.svg?v=23" alt="SberPay">';
