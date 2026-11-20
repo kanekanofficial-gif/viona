@@ -74,3 +74,11 @@ test("private admin, careers and special host routes remain unchanged",()=>{
  assert.match(server,/app\.get\("\/payment\/order\/:id"/);
  assert.match(read("tbank-demo.js"),/INIT_FAILED/);
 });
+
+test("entire public artist story has complete EN/JA/DE paragraphs without losing Russian original",()=>{
+ const t=read("public/atelier/artist-translations.js");
+ for(const locale of ["en","ja","de"])assert.ok(t.includes(locale),locale);
+ assert.match(t,/window\.addEventListener\("viona:locale",apply\)/);
+ assert.match(read("public/v2/artist.html"),/artist-translations\.js/);
+ for(const fact of ["FL Studio","KANEKAN KAN","Witch House"])assert.ok(t.includes(fact),fact);
+});
