@@ -13,9 +13,15 @@ const PORT = process.env.PORT || 3000;
 app.use(express.json({limit:"1mb"}));
 /* Standalone branded SoundLab hostname. Requires DNS CNAME and Render custom-domain setup. */
 app.use((req,res,next)=>{
- if(req.hostname==="soundlab.viona.space"&&(req.path==="/"||req.path==="/index.html")){
+ const landing={
+  "soundlab.viona.space":"music.html",
+  "bots.viona.space":"catalog.html",
+  "web.viona.space":"catalog.html",
+  "code.viona.space":"catalog.html"
+ };
+ if(landing[req.hostname]&&(req.path==="/"||req.path==="/index.html")){
   res.set({"Vary":"Host","Cache-Control":"public, max-age=300"});
-  return res.sendFile(path.join(__dirname,"public","v2","music.html"));
+  return res.sendFile(path.join(__dirname,"public","v2",landing[req.hostname]));
  }
  next();
 });
