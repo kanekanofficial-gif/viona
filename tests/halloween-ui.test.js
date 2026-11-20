@@ -5,7 +5,7 @@ const fs=require("node:fs");
 const path=require("node:path");
 const base=path.resolve(__dirname,"..");
 const read=file=>fs.readFileSync(path.join(base,file),"utf8");
-const html=read("public/index.html");
+const html=read("public/classic.html");
 const css=read("public/viona-reset.css");
 const js=read("public/v15.js");
 const motion=read("public/viona-reset-motion.js");
@@ -92,7 +92,7 @@ test("original image upgrade detects real PNGs and preserves existing fallbacks"
 test("favicon/manifest/cache use the v30 shell and all static assets exist",()=>{
  assert.match(html,/href="\/favicon\.svg\?v=30"/);
  assert.equal(manifest.theme_color,"#eef7f8");
- assert.match(sw,/viona-reboot-v39/);
+ assert.match(sw,/viona-reboot-v40/);
  for(const name of ["/viona-reset.css?v=1","/viona-reset-motion.js?v=1","/v15.js?v=33","/assets/viona-mark.webp?v=1"])
   assert.ok(sw.includes(name),name);
  const links=[
