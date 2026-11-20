@@ -88,3 +88,24 @@ html body #v2HiringDialog a{display:inline-flex;padding:13px 18px;margin-top:14p
 @media(max-width:900px){html body .site-header.nx-sidebar{min-height:62px!important;padding:12px 18px!important}html body .nx-sidebar .nx-sidebar-nav{display:none!important}html body .nx-topbar{padding:12px 16px!important}html body .nx-breadcrumb{display:none!important}html body .nx-topbar-actions{width:100%;justify-content:space-between!important}html body .nx-hero{display:flex!important;flex-direction:column!important}html body .nx-hero .nx-hero-screen{width:100%!important;min-height:360px!important}html body .v2-home-grid{grid-template-columns:1fr 1fr}}
 @media(max-width:620px){html body .nx-hero h1{font-size:clamp(30px,8vw,45px)!important}html body .nx-hero .nx-hero-screen{min-height:290px!important}html body .nx-metrics{grid-template-columns:1fr!important;margin-bottom:15px!important}html body .nx-topbar-actions{gap:4px!important}html body .nx-topbar .nx-theme-picker{max-width:135px!important}html body .v2-home-grid{grid-template-columns:1fr}html body .v2-home-links{padding:18px}html body .v2-home-music h3{font-size:22px}html body .vg-feature-hub,html body .nx-code-promo{padding:22px!important}}
 @media(prefers-reduced-motion:reduce){html body *{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+
+/* Legacy reset targets html[data-world] + class with stronger specificity.
+   Override it explicitly: VIONA 2.0 uses a real horizontal header in the flow. */
+html[data-world] body .site-header.nx-sidebar{
+ position:sticky!important;inset:0 0 auto 0!important;
+ width:100%!important;height:auto!important;min-height:76px!important;
+ display:flex!important;flex-direction:row!important;align-items:center!important;
+ justify-content:space-between!important;gap:16px!important;
+ margin:0!important;padding:12px clamp(16px,3.5vw,56px)!important;
+ background:var(--v2-bg)!important;color:var(--v2-ink)!important;
+ border:0!important;border-bottom:1px solid var(--v2-border)!important;
+ box-shadow:none!important;transform:none!important;
+}
+html[data-world] body .site-header.nx-sidebar .nx-sidebar-nav{
+ display:flex!important;flex-direction:row!important;align-items:center!important;
+ justify-content:flex-end!important;flex-wrap:wrap!important;
+}
+@media(max-width:900px){
+ html[data-world] body .site-header.nx-sidebar{min-height:62px!important;padding:12px 18px!important}
+ html[data-world] body .site-header.nx-sidebar .nx-sidebar-nav{display:none!important}
+}
