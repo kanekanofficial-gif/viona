@@ -214,7 +214,7 @@ if(header){
  menu.innerHTML=Object.entries(tr).map(([key,v])=>'<button type="button" role="menuitemradio" data-lang-value="'+key+'" aria-checked="false"><span>'+v.locale+'</span><strong>'+v.name+'</strong><span class="locale-check">✓</span></button>').join("");
  const tools=header.querySelector(".nav-tools");
  if(tools)tools.insertBefore(wrap,tools.firstChild);
- else header.insertBefore(wrap,header.querySelector(".back-store,.artist-button")||null);
+ else {const back=header.querySelector(".back-store");if(back&&back.parentElement===header)header.insertBefore(wrap,back);else header.append(wrap)}
  const btn=wrap.querySelector("#vionaLanguageButton");
  btn.addEventListener("click",()=>{const open=menu.hidden;menu.hidden=!open;btn.setAttribute("aria-expanded",String(open))});
  menu.addEventListener("click",e=>{const option=e.target.closest("[data-lang-value]");if(option)change(option.dataset.langValue)});
