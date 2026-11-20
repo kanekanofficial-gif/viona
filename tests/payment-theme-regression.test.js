@@ -4,7 +4,7 @@ const assert=require("node:assert/strict");
 const fs=require("node:fs");
 const path=require("node:path");
 const src=p=>fs.readFileSync(path.join(__dirname,"..",p),"utf8");
-const home=src("public/index.html");
+const home=src("public/classic.html");
 const reset=src("public/viona-reset.css");
 const theme=src("public/payment-result-theme.css");
 const sw=src("public/sw.js");
