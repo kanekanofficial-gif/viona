@@ -5,7 +5,7 @@ const fs=require("node:fs");
 const path=require("node:path");
 const base=path.resolve(__dirname,"..");
 const read=file=>fs.readFileSync(path.join(base,file),"utf8");
-const homepage=read("public/index.html"),service=read("public/code-edit.html");
+const homepage=read("public/classic.html"),service=read("public/code-edit.html");
 const logic=read("public/viona-settings.js"),css=read("public/viona-settings.css");
 const oldProfile=read("public/v15.js"),fullProfile=read("public/v16.js");
 const theme=read("public/viona-theme.js"),sw=read("public/sw.js");
@@ -63,6 +63,6 @@ test("settings assets loaded on storefront and code-edit page",()=>{
   assert.match(s,/viona-settings\.css\?v=1/);
   assert.match(s,/viona-settings\.js\?v=1/);
  }
- assert.match(sw,/viona-reboot-v39/);
+ assert.match(sw,/viona-reboot-v40/);
  for(const p of ['"/viona-settings.css?v=1"','"/viona-settings.js?v=1"'])assert.ok(sw.includes(p));
 });
