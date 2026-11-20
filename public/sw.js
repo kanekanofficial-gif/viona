@@ -1,5 +1,5 @@
 /* VIONA v30: network-first CSS/JS, no stale seasonal skin or checkout cache. */
-const CACHE="viona-reboot-v38";
+const CACHE="viona-reboot-v39";
 const SHELL=[
  "/","/manifest.webmanifest?v=30","/favicon.svg?v=30",
  "/rich-details.css?v=1","/v14.css?v=1","/v15.css?v=1",
@@ -11,7 +11,8 @@ const SHELL=[
  "/assets/viona-mark.webp?v=1","/assets/viona-user-logos.webp?v=23",
  "/assets/brand-mir.svg?v=23","/assets/brand-sberpay.svg?v=23",
  "/assets/brand-max.svg?v=23","/assets/brand-gamepad.svg?v=23","/assets/flag-ru.svg","/assets/studio-icons.svg",
- "/viona-theme.js?v=1","/viona-icons.js?v=18","/v15.js?v=32","/rich-details.js?v=4",
+ "/viona2-home.css?v=1","/viona2-main.js?v=1","/v2/base.css?v=1","/v2/app.js?v=1",
+ "/viona-theme.js?v=1","/viona-icons.js?v=18","/v15.js?v=33","/rich-details.js?v=4",
  "/viona-checkout-i18n.js?v=1","/viona-requirements.js?v=1","/viona-settings.js?v=1","/code-edit.js?v=1",
  "/viona-telegram-builder.js?v=1","/viona-studio.js?v=2","/viona-command.js?v=1","/viona-glass27.js?v=1","/viona-editor-prefs.js?v=1",
  "/telegram-login.js?v=4","/v16.js?v=22","/payment-result.js?v=20",

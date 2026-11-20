@@ -180,6 +180,31 @@ function registerAdminConsole(app,pool,{bank,configured}={}){
    return res.json({inquiries});
   }catch(e){console.error("VIONA inquiries:",e.message);return res.status(503).json({error:"Не удалось загрузить заявки."})}
  });
+ // SoundLab and recruiting applications are private and never visible to unauthenticated visitors.
+ app.get(base+"/v2/music",session,async(_req,res)=>{
+  try{const q=await pool.query("SELECT id,title,genre,voice,lyrics_mode,lyrics_or_brief,mood,instrumentation,reference_note,contact,status,created_at FROM viona_music_requests ORDER BY created_at DESC LIMIT 100");res.json({items:q.rows})}
+  catch(e){console.error("V2 music administration:",e.message);res.status(503).json({error:"Не удалось открыть музыкальные заявки."})}
+ });
+ app.get(base+"/v2/careers",session,async(_req,res)=>{
+  try{const q=await pool.query("SELECT id,name,contact,specialty,skills,portfolio,availability,status,created_at FROM viona_career_applications ORDER BY created_at DESC LIMIT 100");res.json({items:q.rows})}
+  catch(e){console.error("V2 career administration:",e.message);res.status(503).json({error:"Не удалось открыть отклики."})}
+ });
+ app.patch(base+"/v2/music/:id/status",session,requireMutation,async(req,res)=>{
+  if(!UUID.test(req.params.id)||!isJSON(req))return res.sendStatus(400);
+  if(!["new","reviewing","accepted","declined","completed"].includes(req.body?.status))return res.status(400).json({error:"Неподдерживаемый этап."});
+  try{
+   const q=await pool.query("UPDATE viona_music_requests SET status=$2 WHERE id=$1 RETURNING id,status",[req.params.id,req.body.status]);
+   res.status(q.rowCount?200:404).json({item:q.rows[0]||null});
+  }catch(e){console.error("V2 music status:",e.message);res.status(503).json({error:"Не удалось обновить этап."})}
+ });
+ app.patch(base+"/v2/careers/:id/status",session,requireMutation,async(req,res)=>{
+  if(!UUID.test(req.params.id)||!isJSON(req))return res.sendStatus(400);
+  if(!["new","reviewing","invited","declined"].includes(req.body?.status))return res.status(400).json({error:"Неподдерживаемый этап."});
+  try{
+   const q=await pool.query("UPDATE viona_career_applications SET status=$2 WHERE id=$1 RETURNING id,status",[req.params.id,req.body.status]);
+   res.status(q.rowCount?200:404).json({item:q.rows[0]||null});
+  }catch(e){console.error("V2 applicant status:",e.message);res.status(503).json({error:"Не удалось обновить статус отклика."})}
+ });
  app.post(base+"/orders/:id/message",session,requireMutation,async(req,res)=>{
   if(!UUID.test(req.params.id)||!isJSON(req))return res.sendStatus(400);
   const message=typeof req.body?.message==="string"?req.body.message.trim().slice(0,500):"";

@@ -196,6 +196,8 @@ function rememberPendingPayment(result,items){
  try{sessionStorage.setItem("viona-checkout-pending",JSON.stringify({orderId:result.orderId,items:[...items]}))}catch{}
 }
 function checkoutBrief(){
+ const agree=content.querySelector("#v2CheckoutTerms");
+ if(agree&&!agree.checked){agree.focus();throw Error("Перед тестовой оплатой ознакомься с условиями заказа и подтверди согласие.")}
  const contact=content.querySelector("#vionaBriefContact");
  const brief=content.querySelector("#vionaBriefText");
  if(!contact||!brief)throw Error("Открой оформление заказа и опиши задачу.");

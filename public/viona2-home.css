@@ -1,0 +1,111 @@
+/* VIONA 2.0 — radical editorial redesign. Overrides v14/v15/viona legacy styles at the end. */
+html:not([data-theme="dark"]):not([data-world="femboy"]){--v2-bg:#f2f0e7;--v2-panel:#fffcf4;--v2-ink:#16292b;--v2-muted:#536b69;--v2-border:#b6c8bc;--v2-lime:#c0f19d;--v2-orange:#e95f49;--v2-shadow:#24413e20}
+html[data-theme="dark"],html[data-world="femboy"]{--v2-bg:#0c1718;--v2-panel:#182728;--v2-ink:#eff7eb;--v2-muted:#a2bab6;--v2-border:#42615c;--v2-lime:#d2fa85;--v2-orange:#ee775e;--v2-shadow:#0008}
+html body:not(.vr-result-active):not(.vs-studio-page){background:var(--v2-bg)!important;color:var(--v2-ink)!important;font-family:'Manrope',system-ui,sans-serif}
+html body .site-header.nx-sidebar{position:sticky!important;top:0!important;left:0!important;right:0!important;width:100%!important;height:auto!important;min-height:76px!important;max-width:none!important;z-index:200!important;display:flex!important;align-items:center!important;justify-content:space-between!important;gap:20px!important;padding:12px clamp(16px,3.5vw,56px)!important;background:var(--v2-bg)!important;color:var(--v2-ink)!important;border:0!important;border-bottom:1px solid var(--v2-border)!important;box-shadow:none!important;backdrop-filter:blur(18px)}
+html body .nx-sidebar .nx-sidebar-line,html body .nx-sidebar .nx-nav-caption,html body .nx-sidebar .nx-sidebar-bottom{display:none!important}
+html body .nx-sidebar .nx-brand{display:flex!important;align-items:center!important;gap:9px!important;width:auto!important;max-width:230px!important;margin:0!important}
+html body .nx-sidebar .nx-brand-logo{width:35px!important;height:35px!important;object-fit:contain!important}
+html body .nx-sidebar .nx-brand-type strong{font-family:'Unbounded',sans-serif!important;font-weight:750!important;font-size:21px!important;letter-spacing:-.07em!important;color:var(--v2-ink)!important}
+html body .nx-sidebar .nx-brand-type small{color:var(--v2-muted)!important;font-size:10px!important;letter-spacing:.16em}
+html body .nx-sidebar .nx-sidebar-nav{display:flex!important;gap:4px!important;align-items:center!important;flex-wrap:wrap!important;justify-content:flex-end!important;width:auto!important;flex:1!important;margin:0!important;padding:0!important}
+html body .nx-sidebar .nx-sidebar-nav>a{display:inline-flex!important;width:auto!important;align-items:center!important;gap:5px!important;min-height:37px!important;white-space:nowrap!important;padding:8px 11px!important;border:0!important;border-radius:9px!important;background:transparent!important;color:var(--v2-ink)!important;font:800 11px 'Manrope',sans-serif!important;box-shadow:none!important}
+html body .nx-sidebar .nx-sidebar-nav>a:hover,html body .nx-sidebar .nx-sidebar-nav>a.nx-nav-active{background:var(--v2-lime)!important;color:#1b2b23!important}
+html body .nx-sidebar .nx-rail-glyph,html body .nx-sidebar .nx-nav-arrow{display:none!important}
+html body .nx-workspace{margin:0!important;padding:0!important;width:100%!important;max-width:none!important;overflow:visible!important}
+html body .nx-topbar{display:flex!important;align-items:center!important;justify-content:space-between!important;gap:12px!important;max-width:1550px!important;margin:0 auto!important;padding:15px clamp(18px,4vw,65px)!important;height:auto!important;min-height:76px!important;background:transparent!important;border:0!important;border-bottom:1px solid var(--v2-border)!important;box-shadow:none!important}
+html body .nx-topbar .nx-breadcrumb{color:var(--v2-muted)!important;font-weight:800!important;font-size:11px!important;letter-spacing:.08em!important}
+html body .nx-topbar .nx-topbar-actions{display:flex!important;align-items:center!important;justify-content:flex-end!important;flex-wrap:wrap!important;gap:8px!important;min-width:0!important}
+html body .nx-topbar .tool-button,html body .nx-topbar .nx-profile-button,html body .nx-topbar .lang-trigger,html body .nx-topbar .nx-theme-picker{border:1px solid var(--v2-border)!important;background:var(--v2-panel)!important;color:var(--v2-ink)!important;box-shadow:none!important;border-radius:10px!important}
+html body .nx-topbar .nx-profile-button{border-color:var(--v2-ink)!important;background:var(--v2-ink)!important;color:var(--v2-bg)!important}
+html body .nx-topbar .nx-profile-button span{color:inherit!important}
+html body .nx-topbar .nx-theme-picker select{color:var(--v2-ink)!important}
+html body main#home{max-width:1550px!important;margin:auto!important;padding:0 clamp(18px,4vw,65px)!important}
+html body .nx-hero{margin:0!important;padding:clamp(40px,6vw,95px) 0!important;gap:22px!important;grid-template-columns:minmax(0,1.03fr) minmax(0,.97fr)!important;background:transparent!important;border:0!important;box-shadow:none!important}
+html body .nx-hero .nx-hero-copy{background:var(--v2-panel)!important;color:var(--v2-ink)!important;border:1px solid var(--v2-border)!important;border-radius:13px!important;box-shadow:none!important;padding:clamp(26px,4vw,65px)!important;position:relative!important;overflow:hidden!important}
+html body .nx-hero .nx-hero-copy:before{content:"VIONA / 02.0";display:block;color:var(--v2-orange);font:800 12px 'IBM Plex Mono',monospace;letter-spacing:.15em;margin-bottom:24px}
+html body .nx-hero h1{font-family:'Unbounded',sans-serif!important;font-size:clamp(32px,3.9vw,65px)!important;font-weight:750!important;letter-spacing:-.085em!important;line-height:1.12!important;color:var(--v2-ink)!important}
+html body .nx-hero h1 :is(em,strong){color:var(--v2-orange)!important}
+html body .nx-hero .nx-hero-copy p{color:var(--v2-muted)!important;font-size:14px!important;line-height:1.85!important}
+html body .nx-hero .nx-hero-screen{background:#122629!important;color:#f0f4ec!important;border:1px solid #233e3b!important;border-radius:13px!important;box-shadow:none!important;overflow:hidden!important;min-height:450px!important}
+html body .nx-hero .nx-hero-screen:after{content:"V / NEW DIGITAL ERA";position:absolute;inset:auto 20px 20px auto;font:800 11px 'IBM Plex Mono',monospace;color:#d4f6ba;letter-spacing:.1em}
+html body .nx-metrics{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:12px!important;margin-bottom:65px!important}
+html body .nx-metrics>div{border:1px solid var(--v2-border)!important;background:var(--v2-panel)!important;color:var(--v2-ink)!important;border-radius:10px!important;box-shadow:none!important;padding:24px!important}
+html body .nx-metrics small,html body .nx-metrics span{color:var(--v2-muted)!important}
+html body .nx-metrics .nx-metric-number{color:var(--v2-orange)!important;font-size:12px!important}
+html body .section,html body .catalog,html body .studio{padding-top:72px!important;padding-bottom:80px!important}
+html body .nx-section-label{color:var(--v2-orange)!important;letter-spacing:.16em!important;font-family:'IBM Plex Mono',monospace!important}
+html body .section-top h2,html body .vg-hub-title h2,html body .contact h2{font:750 clamp(30px,3.65vw,58px)/1.15 'Unbounded',sans-serif!important;letter-spacing:-.075em!important;color:var(--v2-ink)!important}
+html body .section-top h2 em,html body .contact h2 em{color:var(--v2-orange)!important}
+html body .section-top p,html body .vg-hub-title p,html body .contact p{color:var(--v2-muted)!important}
+html body .product,html body .vg-hub-card,html body .studio-grid article{background:var(--v2-panel)!important;color:var(--v2-ink)!important;border:1px solid var(--v2-border)!important;border-radius:12px!important;box-shadow:none!important;backdrop-filter:none!important;transform:none;transition:transform .28s ease,box-shadow .28s ease!important}
+html body .product:hover,html body .vg-hub-card:hover,html body .studio-grid article:hover{transform:translateY(-5px)!important;box-shadow:0 24px 40px var(--v2-shadow)!important}
+html body .product :is(h3,strong),html body .vg-hub-card strong,html body .studio-grid article h3{color:var(--v2-ink)!important}
+html body .product :is(p,small),html body .vg-hub-card p,html body .studio-grid article p{color:var(--v2-muted)!important}
+html body .product-icon{width:100%!important;max-width:none!important;min-height:145px!important;display:grid!important;place-items:center!important;border-radius:9px!important;background:#d4e8da!important;margin-bottom:12px!important;overflow:hidden!important}
+html body .product-icon .viona-catalog-svg{width:100px!important;height:100px!important;max-width:100%!important;filter:none!important}
+html body .v2-catalog-art{display:block;width:100%;aspect-ratio:16/8;object-fit:cover;border-radius:8px;margin-bottom:16px}
+html body .product:nth-child(3n+2) .product-icon{background:#f3d5c8!important}
+html body .product:nth-child(3n) .product-icon{background:#d4e3ea!important}
+html body .category-bar [data-category],html body .sort-trigger,html body .search-field{border:1px solid var(--v2-border)!important;border-radius:10px!important;background:var(--v2-panel)!important;color:var(--v2-ink)!important;box-shadow:none!important}
+html body .category-bar .active{background:var(--v2-ink)!important;color:var(--v2-bg)!important;border-color:var(--v2-ink)!important}
+html body .nx-code-promo,html body .vg-feature-hub{padding:45px!important;background:#1c3334!important;color:#edf8ea!important;border:0!important;border-radius:16px!important;box-shadow:none!important}
+html body .nx-code-promo *,html body .vg-feature-hub h2{color:#f0f9f2!important}
+html body .nx-code-promo p,html body .vg-feature-hub p{color:#bbd0c8!important}
+html body .vg-hub-grid a{background:#243e3f!important;border-color:#54726c!important;color:white!important}
+html body .vg-hub-card strong{color:#fff!important}
+html body .contact{background:transparent!important;gap:24px!important}
+html body .contact-copy,html body .contact form{border:1px solid var(--v2-border)!important;border-radius:14px!important;background:var(--v2-panel)!important;color:var(--v2-ink)!important;box-shadow:none!important}
+html body .contact input,html body .contact textarea{border:1px solid var(--v2-border)!important;background:var(--v2-bg)!important;color:var(--v2-ink)!important}
+html body .action-primary,html body .product-view,html body .vst-btn{border-radius:8px!important;background:var(--v2-ink)!important;color:var(--v2-bg)!important;border:1px solid var(--v2-ink)!important;box-shadow:none!important}
+html body .vg-footer{padding:45px clamp(18px,4vw,65px)!important;background:#172d2d!important;color:#fff!important;border:0!important;max-width:none!important}
+html body .vg-footer :is(a,span){color:#eff3e9!important}
+html body .v2-home-links{margin:35px 0 75px;padding:35px;border-radius:16px;background:var(--v2-panel);border:1px solid var(--v2-border)}
+html body .v2-home-links h2{font:750 clamp(27px,3.4vw,45px)/1.14 'Unbounded',sans-serif;color:var(--v2-ink);letter-spacing:-.08em;margin:0 0 22px}
+html body .v2-home-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+html body .v2-home-grid a{display:flex;flex-direction:column;min-height:190px;padding:23px;border-radius:12px;background:#d5e5d8;color:#193230;position:relative;transition:transform .2s ease}
+html body .v2-home-grid a:nth-child(2){background:#f4cfc1}html body .v2-home-grid a:nth-child(3){background:#d6deef}
+html body .v2-home-grid a:hover{transform:translateY(-5px)}html body .v2-home-grid strong{font:750 24px 'Unbounded',sans-serif;letter-spacing:-.07em}html body .v2-home-grid small{font-weight:750;margin-top:8px;color:#3c5956}
+html body .v2-home-grid a:after{content:"↗";position:absolute;bottom:15px;right:22px;font-size:25px}
+html body .v2-home-music{display:flex;align-items:center;justify-content:space-between;gap:15px;flex-wrap:wrap;margin-bottom:26px;padding:25px 28px;border-radius:13px;background:#142c2d;color:#f5f8e6}
+html body .v2-home-music h3{font:800 29px 'Unbounded',sans-serif;letter-spacing:-.07em;margin:4px 0 7px}html body .v2-home-music p{color:#c7d5cf;margin:0;font-size:12px}html body .v2-home-music a{display:inline-flex;padding:14px 18px;background:#d1f699;color:#173021;border-radius:8px;font-weight:800;font-size:12px}
+html body .v2-payment-terms{padding:15px!important;margin:12px 0!important;border:1px solid var(--v2-border)!important;background:var(--v2-panel)!important;border-radius:10px!important;color:var(--v2-ink)!important;font-size:11px!important}
+html body .v2-payment-terms a{text-decoration:underline!important;text-underline-offset:2px!important;color:var(--v2-ink)!important}
+html body .v2-payment-icons{display:flex;gap:10px;flex-wrap:wrap;margin:12px 0}.v2-payment-icons img{width:80px;height:36px;object-fit:contain;border-radius:8px;padding:4px;background:#fff}
+html body .v15-dialog .vx-checkout .vx-method{border-radius:12px!important;transition:transform .2s ease!important}
+html body .v2-recruit-banner{border:1px solid var(--v2-border);background:var(--v2-panel);border-radius:13px;padding:25px;display:flex;gap:20px;justify-content:space-between;flex-wrap:wrap;align-items:center}
+html body .v2-recruit-banner strong{font:750 25px 'Unbounded',sans-serif;color:var(--v2-ink);letter-spacing:-.07em}
+html body .v2-recruit-banner p{color:var(--v2-muted);margin:4px 0}
+html body .v2-recruit-banner a{padding:13px 18px;background:var(--v2-ink);color:var(--v2-bg);border-radius:8px;font-weight:800}
+html body #v2HiringDialog{position:fixed;z-index:8000;inset:0;background:#071415bb;display:grid;place-items:center;padding:18px}
+html body #v2HiringDialog[hidden]{display:none}
+html body #v2HiringDialog .v2-hiring-inner{position:relative;width:min(560px,100%);background:var(--v2-panel);border:1px solid var(--v2-border);border-radius:15px;padding:38px;color:var(--v2-ink)}
+html body #v2HiringDialog h2{font:750 clamp(25px,3.8vw,39px)/1.14 'Unbounded',sans-serif;letter-spacing:-.06em;color:var(--v2-ink)}
+html body #v2HiringDialog p{color:var(--v2-muted)}
+html body #v2HiringDialog button.close{position:absolute;top:16px;right:16px;border:1px solid var(--v2-border);border-radius:50%;width:34px;height:34px;background:transparent;color:var(--v2-ink)}
+html body #v2HiringDialog a{display:inline-flex;padding:13px 18px;margin-top:14px;background:var(--v2-ink);border-radius:7px;color:var(--v2-bg);font-size:13px;font-weight:800}
+@media(max-width:1180px){html body .nx-sidebar .nx-sidebar-nav>a{padding:7px!important;font-size:10px!important}html body .nx-sidebar .nx-brand-type small{display:none!important}}
+@media(max-width:900px){html body .site-header.nx-sidebar{min-height:62px!important;padding:12px 18px!important}html body .nx-sidebar .nx-sidebar-nav{display:none!important}html body .nx-topbar{padding:12px 16px!important}html body .nx-breadcrumb{display:none!important}html body .nx-topbar-actions{width:100%;justify-content:space-between!important}html body .nx-hero{display:flex!important;flex-direction:column!important}html body .nx-hero .nx-hero-screen{width:100%!important;min-height:360px!important}html body .v2-home-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:620px){html body .nx-hero h1{font-size:clamp(30px,8vw,45px)!important}html body .nx-hero .nx-hero-screen{min-height:290px!important}html body .nx-metrics{grid-template-columns:1fr!important;margin-bottom:15px!important}html body .nx-topbar-actions{gap:4px!important}html body .nx-topbar .nx-theme-picker{max-width:135px!important}html body .v2-home-grid{grid-template-columns:1fr}html body .v2-home-links{padding:18px}html body .v2-home-music h3{font-size:22px}html body .vg-feature-hub,html body .nx-code-promo{padding:22px!important}}
+@media(prefers-reduced-motion:reduce){html body *{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+
+/* Legacy reset targets html[data-world] + class with stronger specificity.
+   Override it explicitly: VIONA 2.0 uses a real horizontal header in the flow. */
+html[data-world] body .site-header.nx-sidebar{
+ position:sticky!important;inset:0 0 auto 0!important;
+ width:100%!important;height:auto!important;min-height:76px!important;
+ display:flex!important;flex-direction:row!important;align-items:center!important;
+ justify-content:space-between!important;gap:16px!important;
+ margin:0!important;padding:12px clamp(16px,3.5vw,56px)!important;
+ background:var(--v2-bg)!important;color:var(--v2-ink)!important;
+ border:0!important;border-bottom:1px solid var(--v2-border)!important;
+ box-shadow:none!important;transform:none!important;
+}
+html[data-world] body .site-header.nx-sidebar .nx-sidebar-nav{
+ display:flex!important;flex-direction:row!important;align-items:center!important;
+ justify-content:flex-end!important;flex-wrap:wrap!important;
+}
+@media(max-width:900px){
+ html[data-world] body .site-header.nx-sidebar{min-height:62px!important;padding:12px 18px!important}
+ html[data-world] body .site-header.nx-sidebar .nx-sidebar-nav{display:none!important}
+}
