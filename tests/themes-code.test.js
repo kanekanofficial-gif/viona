@@ -53,7 +53,7 @@ test("code edit has a real page, protected backend and no automatic payment",()=
  assert.match(server,/registerCodeEdit\(app,pool\)/);
  assert.match(db,/CREATE TABLE IF NOT EXISTS code_edit_requests/);
  assert.doesNotMatch(codeEdit,/paymentUrl|checkoutOpen/);
- assert.match(sw,/viona-reboot-v41/);
+ assert.match(sw,/viona-reboot-v42/);
 });
 test("code request validation and database storage are safe and explicit",async()=>{
  const {registerCodeEdit}=require("../code-edit-api");
