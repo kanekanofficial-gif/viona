@@ -1,7 +1,7 @@
 /* VIONA v30: network-first CSS/JS, no stale seasonal skin or checkout cache. */
-const CACHE="viona-reboot-v41";
+const CACHE="viona-reboot-v42";
 const SHELL=[
- "/atelier/main.css?v=2","/atelier/polish.css?v=1","/atelier/language.css?v=1","/atelier/language.js?v=1","/atelier/product-details.js?v=1","/atelier/app.js?v=2","/atelier/artist.css?v=1",
+ "/atelier/main.css?v=2","/atelier/polish.css?v=1","/atelier/language.css?v=1","/atelier/language.js?v=1","/atelier/artist-translations.js?v=1","/atelier/product-details.js?v=1","/atelier/app.js?v=2","/atelier/artist.css?v=1",
  "/atelier/music.css?v=1","/atelier/catalog.css?v=1","/atelier/catalog.js?v=1",
  "/atelier/secondary.css?v=1","/atelier/forms.js?v=2",
  "/classic.html","/v2/music.html","/v2/artist.html","/v2/catalog.html",
