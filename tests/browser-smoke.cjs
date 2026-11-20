@@ -12,7 +12,10 @@ const {chromium}=require("playwright");
    const pageErrors=[];
    page.on("pageerror",error=>pageErrors.push(error.message));
    await page.goto("http://127.0.0.1:4173/",{waitUntil:"domcontentloaded",timeout:25000});
-   await page.waitForTimeout(900);
+   await page.waitForLoadState("load");
+   if(await page.locator("#v2HiringDialog .close").isVisible().catch(()=>false))
+    await page.locator("#v2HiringDialog .close").click();
+   await page.waitForTimeout(350);
    const layout=await page.evaluate(()=>{
     const box=selector=>{const r=document.querySelector(selector)?.getBoundingClientRect();return r?{x:r.x,y:r.y,right:r.right,bottom:r.bottom,width:r.width,height:r.height}:null};
     const img=document.querySelector(".nx-mark-original img");
@@ -32,7 +35,7 @@ const {chromium}=require("playwright");
    assert.ok(layout.scrollWidth<=width+1,label+" has horizontal scroll");
    assert.ok(layout.copy&&layout.screen,"hero regions missing");
    assert.ok(await page.locator(".v2-home-links").isVisible(),"VIONA 2.0 service area missing");
-   assert.ok(await page.locator('.v2-home-links a[href="/music"]').count()>0,"SoundLab homepage link missing");
+   assert.ok(await page.locator('.v2-home-links a[href="https://soundlab.viona.space"]').count()>0,"SoundLab homepage link missing");
    assert.ok(layout.productCount>=5,label+" catalog did not load demo products");
    assert.ok(layout.logo.natural>=layout.logo.width,"logo is being enlarged beyond source resolution");
    if(width>=1000){
@@ -326,6 +329,14 @@ const {chromium}=require("playwright");
     });
     assert.match(lightColors.box,/rgb\(255, 255, 255\)/,"light order box did not use its light palette");
     assert.equal(lightColors.text,"rgb(28, 64, 84)");
+   }
+   /* Every new VIONA 2.0 area renders as a page, not a modal placeholder. */
+   for(const [route,heading] of [["/music","Не просто трек"],["/KANEKANKANARTIST","KANEKAN"],["/careers","Сильные идеи"],["/bots","Боты"]]){
+    await page.goto("http://127.0.0.1:4173"+route,{waitUntil:"domcontentloaded"});
+    await page.waitForSelector("h1",{timeout:8000});
+    assert.match(await page.locator("h1").first().innerText(),new RegExp(heading,"i"),route+" heading");
+    const docWidth=await page.evaluate(()=>document.documentElement.scrollWidth);
+    assert.ok(docWidth<=width+2,route+" has horizontal overflow: "+docWidth+" vs "+width);
    }
    assert.deepEqual(pageErrors,[],"uncaught page errors: "+pageErrors.join(" | "));
    await page.close();
