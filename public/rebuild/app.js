@@ -6,7 +6,7 @@
  const txt=(s,max=4000)=>typeof s==="string"?s.trim().slice(0,max):"";
  const format=n=>new Intl.NumberFormat("ru-RU").format(Number(n)||0)+" ₽";
  const read=(key,backup)=>{try{const x=JSON.parse(localStorage.getItem(key));return x??backup}catch{return backup}};
- const state={catalog:[],cart:read("viona3-cart",[]).filter(Number.isSafeInteger),user:null,auth:null,active:"all",query:"",busy:false,modal:null};
+ const state={catalog:[],cart:read("viona3-cart",[]).filter(Number.isSafeInteger),user:null,auth:null,active:"Все",query:"",busy:false,modal:null};
  const art={
  1:{kind:"telegram",images:["telegram.svg"]},
  2:{kind:"web"},
