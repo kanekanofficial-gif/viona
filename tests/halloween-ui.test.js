@@ -5,7 +5,7 @@ const fs=require("node:fs");
 const path=require("node:path");
 const base=path.resolve(__dirname,"..");
 const read=file=>fs.readFileSync(path.join(base,file),"utf8");
-const html=read("public/index.html");
+const html=read("public/classic.html");
 const css=read("public/viona-reset.css");
 const js=read("public/v15.js");
 const motion=read("public/viona-reset-motion.js");
