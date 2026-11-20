@@ -50,11 +50,11 @@ test("music brief is real, and biography includes the full non-graphic artist st
  assert.match(music,/name="voice" value="female"/);
  assert.match(music,/name="voice" value="male"/);
  assert.match(music,/name="lyricsMode" value="commission"/);
- assert.match(music,/согласуем до оплаты/);
+ assert.match(music,/цены и сроки согласовываются до оплаты|цену и сроки согласуем до начала работы/);
  for(const v of ["KANEKAN","FL Studio","С семи лет","три операции","автомобильный эдитинг","ИИ-вокала","Witch House"]){
   assert.match(artist,new RegExp(v,"i"),v);
  }
- assert.doesNotMatch(artist,/история компании VIONA, а история самого артиста/);
+ assert.match(artist,/музыка — центральная тема этого сайта/);
  assert.match(read("public/v2/artist-v3.css"),/recordSpin/);
  assert.match(routes,/INSERT INTO viona_music_requests/);
 });
