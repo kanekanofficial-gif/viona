@@ -109,6 +109,13 @@ const fs=require("node:fs");const {chromium}=require("playwright");
    assert.equal(await page.locator(".bio-chapter").count(),6,"Full biography missing");
    assert.equal(await page.locator(".platform-link").count(),6,"Official artist channels missing");
    assert.ok(await page.locator("#vionaLanguageButton").isVisible());
+   if(label==="desktop"){
+    await page.locator("#vionaLanguageButton").click();await page.locator('[data-lang-value="en"]').click();
+    assert.match(await page.locator(".bio-chapter").first().locator("h3").innerText(),/The urge to create/);
+    await page.locator("#vionaLanguageButton").click();await page.locator('[data-lang-value="ja"]').click();
+    assert.match(await page.locator(".bio-chapter").first().locator("h3").innerText(),/最初の曲/);
+    await page.locator("#vionaLanguageButton").click();await page.locator('[data-lang-value="ru"]').click();
+   }
    await noOverflow("/KANEKANKANARTIST");
    await page.screenshot({path:"screenshots/artist-"+label+".png",fullPage:true});
    for(const route of ["/bots","/web","/code"]){
