@@ -220,5 +220,6 @@
  }
  if(location.search.includes("auth=success"))toast("Telegram подключён");
  if(location.search.includes("auth=failed"))toast("Не удалось войти. Проверь настройки Telegram.");
+ if("serviceWorker"in navigator)window.addEventListener("load",()=>{navigator.serviceWorker.register("/sw.js").catch(()=>{})},{once:true});
  loadCatalog();loadUser();
 })();
