@@ -58,6 +58,7 @@ const fs=require("node:fs");const {chromium}=require("playwright");
     await page.locator("#closeDialog").click();await page.locator("#overlay").waitFor({state:"hidden"});
     await page.locator("#openCart").click();
     await page.locator("#goCheckout").click();
+    await page.locator("#payForm").waitFor({state:"attached",timeout:5000});
     assert.ok(await page.locator('#payForm input[name="method"][value="card"]').count()===1,"Card payment missing");
     assert.ok(await page.locator('img[src$="visa.svg"]').count()>=1);
     assert.ok(await page.locator('img[src$="Mir.svg"]').count()>=1,"Mir missing next to Visa");
