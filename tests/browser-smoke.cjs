@@ -35,6 +35,7 @@ const fs=require("node:fs");const {chromium}=require("playwright");
    await page.locator("#searchProducts").fill("");
    if(label==="desktop"){
     await page.locator('[data-product="1"]').first().click();
+    await page.locator("#overlay").waitFor({state:"visible",timeout:4000});
     assert.ok(await page.locator("#overlay").isVisible(),"Product detail dialog missing");
     assert.ok(await page.locator("#overlay").evaluate(el=>el.classList.contains("is-open")),"Product dialog animation not active");
     assert.equal(await page.locator(".detail-block").count(),5,"Expected comprehensive product description");
