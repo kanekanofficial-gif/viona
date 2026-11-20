@@ -13,6 +13,13 @@ const {chromium}=require("playwright");
    async function open(path){await page.goto(base+path,{waitUntil:"domcontentloaded",timeout:25000});await page.waitForLoadState("load");await page.waitForTimeout(120)}
    async function noOverflow(path){
     const result=await page.evaluate(()=>({scroll:document.documentElement.scrollWidth,window:innerWidth}));
+    if(result.scroll>result.window+2){
+     const issues=await page.evaluate(()=>[...document.querySelectorAll("body *")].map(el=>{
+      const box=el.getBoundingClientRect();
+      return {tag:el.tagName,id:el.id,cls:typeof el.className==="string"?el.className.slice(0,65):"",left:box.left,right:box.right,width:box.width}
+     }).filter(x=>x.left<-10||x.right>innerWidth+10).slice(0,20));
+     console.error(path+" overflow offenders:",JSON.stringify(issues));
+    }
     assert.ok(result.scroll<=result.window+2,path+" overflow "+result.scroll+" / "+result.window+" on "+name);
    }
    await open("/");
