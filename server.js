@@ -11,6 +11,14 @@ const {registerAdminConsole}=require("./admin-console");
 const {registerViona2}=require("./viona2-routes");
 const PORT = process.env.PORT || 3000;
 app.use(express.json({limit:"1mb"}));
+/* Standalone branded SoundLab hostname. Requires DNS CNAME and Render custom-domain setup. */
+app.use((req,res,next)=>{
+ if(req.hostname==="soundlab.viona.space"&&(req.path==="/"||req.path==="/index.html")){
+  res.set({"Vary":"Host","Cache-Control":"public, max-age=300"});
+  return res.sendFile(path.join(__dirname,"public","v2","music.html"));
+ }
+ next();
+});
 app.use(express.static(path.join(__dirname,"public")));
 registerTelegramAuth(app);
 let pool = null;
