@@ -31,10 +31,12 @@ const {chromium}=require("playwright");
    }
    assert.ok(layout.scrollWidth<=width+1,label+" has horizontal scroll");
    assert.ok(layout.copy&&layout.screen,"hero regions missing");
+   assert.ok(await page.locator(".v2-home-links").isVisible(),"VIONA 2.0 service area missing");
+   assert.ok(await page.locator('.v2-home-links a[href="/music"]').count()>0,"SoundLab homepage link missing");
    assert.ok(layout.productCount>=5,label+" catalog did not load demo products");
    assert.ok(layout.logo.natural>=layout.logo.width,"logo is being enlarged beyond source resolution");
    if(width>=1000){
-    assert.ok(layout.main.x>=layout.sidebar.right-3,"sidebar overlaps main");
+    assert.ok(layout.main.y>=layout.sidebar.bottom-3,"VIONA 2.0 header overlaps main content");
     assert.ok(layout.screen.x>=layout.copy.right+5,"hero panels overlap");
    }else{
     assert.ok(layout.screen.y>=layout.copy.bottom+5,"stacked hero panels overlap");
