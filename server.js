@@ -8,6 +8,7 @@ const {initializeDatabase}=require("./db-init");
 const {registerTestPayments}=require("./tbank-demo");
 const {registerCodeEdit}=require("./code-edit-api");
 const {registerAdminConsole}=require("./admin-console");
+const {registerViona2}=require("./viona2-routes");
 const PORT = process.env.PORT || 3000;
 app.use(express.json({limit:"1mb"}));
 app.use(express.static(path.join(__dirname,"public")));
@@ -31,6 +32,7 @@ registerV16(app,pool,getCatalog);
 registerTestPayments(app,pool,getCatalog);
 registerAdminConsole(app,pool,{bank:require("./tbank-demo").bank,configured:require("./tbank-demo").configured});
 registerCodeEdit(app,pool);
+registerViona2(app,pool);
 app.get("/api/health",(_req,res)=>res.json({ok:true,app:"VIONA"}));
 app.get("/api/products",async(_req,res)=>{
  if(pool){try{const r=await pool.query("SELECT id,title,category,description,price,icon,tag FROM products ORDER BY id");return res.json({products:r.rows.some(p=>String(p.title).toLowerCase().includes("max bot"))?r.rows:[...r.rows,demo[6]],source:"database"});}catch(e){console.error(e.message);}}
