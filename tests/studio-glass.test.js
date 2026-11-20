@@ -91,7 +91,7 @@ test("command center works on all pages and is keyboard accessible",()=>{
  for(const page of [home,studio,codeEdit])assert.match(page,/viona-command\.js\?v=1/);
 });
 test("offline cache references Studio and all visual assets",()=>{
- assert.match(sw,/viona-reboot-v38/);
+ assert.match(sw,/viona-reboot-v39/);
  for(const path of ["/studio.html","/viona-glass27.css?v=1","/viona-studio.js?v=2","/viona-command.js?v=1","/viona-editor-prefs.js?v=1"])assert.ok(sw.includes('"'+path+'"'));
  assert.match(home,/viona-glass27\.css\?v=1/);
 });
