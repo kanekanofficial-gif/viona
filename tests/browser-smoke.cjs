@@ -18,7 +18,14 @@ const {chromium}=require("playwright");
    await open("/");
    const hire=page.locator("#hireOverlay");
    if(await hire.isVisible())await page.locator("#hireClose").click();
-   await page.waitForFunction(()=>document.querySelectorAll(".product-item").length>=5,{timeout:9000});
+   await page.waitForFunction(()=>document.querySelectorAll(".product-item").length>=5,null,{timeout:9000}).catch(async err=>{
+    console.error("Catalog load failed: ",JSON.stringify({
+     jsErrors:errors,
+     text:await page.locator("#productGrid").innerText().catch(()=>"<missing>"),
+     apiStatus:await page.evaluate(async()=>fetch("/api/products").then(r=>r.status).catch(e=>e.message)),
+     appScript:await page.evaluate(async()=>fetch("/rebuild/app.js?v=1").then(r=>r.status).catch(e=>e.message))
+    }));throw err;
+   });
    assert.ok(await page.locator("header.top-dock").isVisible(),"new root uses independent floating dock");
    assert.equal(await page.locator(".nx-sidebar").count(),0,"legacy sidebar leaked into rebuilt frontend");
    assert.ok(await page.locator(".glass-surface").count()>=6,"layered glass surfaces missing");
