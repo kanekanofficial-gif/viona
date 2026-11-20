@@ -4,7 +4,7 @@ const assert=require("node:assert/strict");
 const fs=require("node:fs");
 const path=require("node:path");
 const at=file=>fs.readFileSync(path.resolve(__dirname,"..",file),"utf8");
-const home=at("public/index.html"),studio=at("public/studio.html"),site=at("public/viona-studio.js");
+const home=at("public/classic.html"),studio=at("public/studio.html"),site=at("public/viona-studio.js");
 const glass=at("public/viona-glass27.css"),enhance=at("public/viona-glass27.js"),settings=at("public/viona-settings.js"),cmd=at("public/viona-command.js");
 const sw=at("public/sw.js"),server=at("server.js"),codeEdit=at("public/code-edit.html");
 test("all agreed Studio tools are linked from homepage",()=>{
