@@ -4,7 +4,7 @@ const assert=require("node:assert/strict");
 const fs=require("node:fs");
 const path=require("node:path");
 const src=p=>fs.readFileSync(path.join(__dirname,"..",p),"utf8");
-const home=src("public/index.html");
+const home=src("public/classic.html");
 const reset=src("public/viona-reset.css");
 const theme=src("public/payment-result-theme.css");
 const sw=src("public/sw.js");
@@ -27,7 +27,7 @@ test("Theme stylesheet is loaded last and cache is updated",()=>{
  assert.ok(home.indexOf(newStyle)>home.indexOf('viona-studio-polish.css'));
  assert.ok(home.indexOf(newStyle)>home.indexOf('viona-reset.css'));
  assert.match(home,/payment-result\.css\?v=19/);
- assert.match(sw,/viona-reboot-v39/);
+ assert.match(sw,/viona-reboot-v40/);
  assert.match(sw,/payment-result-theme\.css\?v=1/);
 });
 
