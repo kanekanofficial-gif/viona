@@ -6,7 +6,7 @@ const path=require("node:path");
 const base=path.resolve(__dirname,"..");
 const read=file=>fs.readFileSync(path.join(base,file),"utf8");
 const css=read("public/viona-reset.css");
-const html=read("public/index.html");
+const html=read("public/classic.html");
 const js=read("public/v15.js");
 const manifest=JSON.parse(read("public/manifest.webmanifest"));
 
