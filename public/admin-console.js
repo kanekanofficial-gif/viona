@@ -105,11 +105,46 @@
  async function loadInquiries(){const response=await api("/inquiries");state.inquiries=Array.isArray(response.inquiries)?response.inquiries:[];renderInquiries()}
  function showMode(mode){
   state.mode=mode;
-  $("#adminOrdersWorkspace").hidden=mode!=="orders";$("#adminInquiries").hidden=mode!=="inquiries";
+  $("#adminOrdersWorkspace").hidden=mode!=="orders";
+  $("#v2AdminWorkspace").hidden=!["music","careers"].includes(mode);$("#adminInquiries").hidden=mode!=="inquiries";
   $("#adminClearOrders").hidden=mode!=="orders";$("#adminArchiveToggle").hidden=mode!=="orders";
   document.querySelectorAll("#adminModes [data-admin-mode]").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.adminMode===mode)));
  }
 
+ async function loadV2Items(){
+  const kind=state.mode;
+  const result=await api("/v2/"+kind);
+  const rows=Array.isArray(result.items)?result.items:[];
+  $("#v2AdminTitle").textContent=kind==="music"?"SoundLab / музыкальные заявки":"Команда / отклики";
+  $("#v2AdminItems").innerHTML=rows.length?rows.map(item=>{
+   const music=kind==="music";
+   const title=music?item.title:item.name;
+   const fields=music?[
+    ["Жанр",item.genre],["Вокал",item.voice==="female"?"Женский":"Мужской"],
+    ["Текст",item.lyrics_mode==="commission"?"Написать текст за дополнительную плату":"Текст клиента"],
+    ["Настроение",item.mood],["Инструменты",item.instrumentation],["Референсы",item.reference_note]
+   ]:[["Специализация",item.specialty],["Доступность",item.availability],["Портфолио",item.portfolio]];
+   const contents=music?item.lyrics_or_brief:item.skills;
+   const statuses=music?[["new","Новая"],["reviewing","На рассмотрении"],["accepted","Принята"],["declined","Отклонена"],["completed","Готово"]]:[["new","Новая"],["reviewing","На рассмотрении"],["invited","Приглашён"],["declined","Отклонён"]];
+   return '<article class="ad-inquiry" data-v2-id="'+esc(item.id)+'"><span class="ad-label">'+esc(music?"MUSIC REQUEST":"CAREER APPLICATION")+'</span>'+
+    '<div class="ad-split"><strong>'+esc(title||"Новая заявка")+'</strong><small>'+esc(stamp(item.created_at))+'</small></div>'+
+    '<p><b>Контакт:</b> '+esc(item.contact)+'</p>'+
+    fields.filter(x=>x[1]).map(x=>'<p><b>'+esc(x[0])+':</b> '+esc(x[1])+'</p>').join("")+
+    '<div class="ad-brief-content">'+esc(contents||"Нет описания")+'</div>'+
+    '<form class="ad-form ad-v2-status"><label class="ad-field">Этап <select name="status">'+statuses.map(([v,l])=>'<option value="'+v+'" '+(item.status===v?"selected":"")+'>'+esc(l)+'</option>').join("")+'</select></label><div class="ad-actions"><button type="submit">Сохранить этап</button></div></form></article>';
+  }).join(""):'<p class="ad-empty">Заявок в этом разделе пока нет.</p>';
+ }
+ $("#v2AdminItems").addEventListener("submit",async e=>{
+  const form=e.target.closest(".ad-v2-status");
+  if(!form)return;e.preventDefault();
+  const item=form.closest("[data-v2-id]");
+  if(!item||!["music","careers"].includes(state.mode))return;
+  const button=form.querySelector('button[type="submit"]');button.disabled=true;
+  try{
+   await api("/v2/"+state.mode+"/"+encodeURIComponent(item.dataset.v2Id)+"/status",json("PATCH",{status:form.elements.status.value}));
+   await loadV2Items();say("Этап обновлён.");
+  }catch(err){say(err.message,true)}finally{button.disabled=false}
+ });
  async function afterChange(message){await loadOrders();if(state.id)await selectOrder(state.id);say(message)}
  async function googleLogin(token){
   try{
@@ -150,6 +185,7 @@
  $("#adminModes").addEventListener("click",async e=>{
   const b=e.target.closest("[data-admin-mode]");if(!b)return;
   showMode(b.dataset.adminMode);if(state.mode==="inquiries")try{await loadInquiries();say("Заявки с сайта загружены.")}catch(err){say(err.message,true)}
+  if(["music","careers"].includes(state.mode))try{await loadV2Items();say("Заявки VIONA 2.0 загружены.")}catch(err){say(err.message,true)}
  });
  $("#adminArchiveToggle").addEventListener("click",async()=>{
   state.archived=!state.archived;state.id=null;state.detail=null;
