@@ -4,7 +4,7 @@ const assert=require("node:assert/strict");
 const fs=require("node:fs");
 const path=require("node:path");
 const src=name=>fs.readFileSync(path.join(__dirname,"..",name),"utf8");
-const html=src("public/studio.html"),home=src("public/index.html");
+const html=src("public/studio.html"),home=src("public/classic.html");
 const studio=src("public/viona-studio.js"),bot=src("public/viona-telegram-builder.js");
 const css=src("public/viona-studio-polish.css"),theme=src("public/viona-theme.js");
 const server=src("server.js"),icons=src("public/assets/studio-icons.svg");
