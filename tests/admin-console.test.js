@@ -80,6 +80,6 @@ test("the unlisted panel handles status, upload and download; UI shows demo noti
  assert.match(result,/deliveryHtml/);
  assert.match(result,/Скачать готовый файл/);
  assert.match(src("public/v16.js"),/stageLabels/);
- assert.match(src("public/index.html"),/payment-result\.js\?v=20/);
- assert.doesNotMatch(src("public/index.html"),/href="\/admin-console"/);
+ assert.match(src("public/classic.html"),/payment-result\.js\?v=20/);
+ assert.doesNotMatch(src("public/classic.html"),/href="\/admin-console"/);
 });
