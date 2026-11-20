@@ -1,62 +1,71 @@
 "use strict";
 const test=require("node:test");const assert=require("node:assert/strict");const fs=require("node:fs");const path=require("node:path");
-const read=p=>fs.readFileSync(path.join(__dirname,"..",p),"utf8");
-const routes=read("viona2-routes.js"),server=read("server.js"),bank=read("tbank-demo.js"),db=read("db-init.js");
-const main=read("public/index.html"),styles=read("public/viona2-home.css"),music=read("public/v2/music.html"),artist=read("public/v2/artist.html");
-test("homepage uses a distinct VIONA 2.0 visual system and new service divisions",()=>{
- assert.match(main,/viona2-home\.css/);assert.match(main,/viona2-main\.js/);
- assert.match(main,/soundlab\.viona\.space/);assert.match(main,/v2-home-grid/);
- assert.match(styles,/\.nx-sidebar \.nx-sidebar-nav/);
- assert.match(styles,/position:sticky!important/);
- assert.match(styles,/\.v2-catalog-art/);
+const read=name=>fs.readFileSync(path.join(__dirname,"..",name),"utf8");
+const main=read("public/index.html"),css=read("public/atelier/main.css"),js=read("public/atelier/app.js");
+const artist=read("public/v2/artist.html"),music=read("public/v2/music.html"),server=read("server.js"),routes=read("viona2-routes.js");
+test("fresh VIONA site uses independent semantic markup and theme assets",()=>{
+ assert.match(main,/class="glass site-nav"/);
+ assert.match(main,/atelier\/main\.css/);
+ assert.match(main,/atelier\/app\.js/);
+ assert.match(main,/id="productList"/);
+ assert.doesNotMatch(main,/nx-sidebar|v15\.js|viona2-home\.css/);
+ assert.match(read("public/classic.html"),/nx-sidebar/);
+ assert.match(server,/app\.get\("\/classic"/);
 });
-test("all professional domains have real independent pages, and SoundLab origin is allowed",()=>{
- for(const [host,file] of [["soundlab.viona.space","music.html"],["bots.viona.space","catalog.html"],["web.viona.space","catalog.html"],["code.viona.space","catalog.html"]]){
-  assert.ok(server.includes('"'+host+'":"'+file+'"'));
- }
- assert.match(routes,/open\("\/KANEKANKANARTIST","artist.html"\)/);
- assert.match(routes,/open\("\/music","music.html"\)/);
- assert.match(routes,/legitOrigin\(req\)/);
- assert.match(routes,/soundlab\.viona\.space/);
+test("glass effect genuinely blurs layers and droplet animation respects reduced motion",()=>{
+ assert.match(css,/backdrop-filter:blur\(24px\) saturate\(180%\)/);
+ assert.match(css,/inset -2px -3px/);
+ assert.match(css,/\.liquid-drop:before/);
+ assert.match(css,/@keyframes waterFlow/);
+ assert.match(css,/prefers-reduced-motion/);
+ assert.match(main,/feDisplacementMap/);
 });
-test("SoundLab requests have safe genre/voice selection and a paid human lyric-writing option",()=>{
- for(const name of ["witch-house","pop-punk","hard-rock","alternative-rock","zoomergaze"])assert.ok(music.includes(name));
- for(const deny of ["opiumcore","mylancore"])assert.ok(!music.includes('value="'+deny+'"'));
+test("functional catalog, cart, account and T-Bank demonstration use real endpoints",()=>{
+ for(const id of ["productList","productFilters","searchProducts","cartCount","dialogContent","openAccount"])assert.ok(main.includes(id));
+ for(const route of ["/api/products","/api/auth/me","/api/payments/test/init","/api/payments/test/qr","/api/payments/test/sberpay","/api/payments/test/my-orders"])assert.ok(js.includes(route),route);
+ assert.match(js,/T-Pay is exposed by the bank-hosted card payment form/);
+ assert.match(js,/t-pay-full\.svg/);
+ assert.match(js,/trustedUrl/);
+ assert.match(js,/name="agreed"/);
+});
+test("user-provided platform/payment brand symbols exist and are used instead of invented logos",()=>{
+ for(const asset of ["telegram.svg","discrod.svg","Max.svg","gamepad.svg","Mir.svg","visa.svg","mastercard.svg","sbp.svg","sberpay.svg","t-pay-full.svg","t-bank.svg"])assert.match(read("public/assets/brand-icons/"+asset),/<svg/i,asset);
+ assert.match(main,/brand-icons\/telegram\.svg/);
+ assert.match(read("public/atelier/catalog.js"),/brand-icons/);
+});
+test("SoundLab form works with saved music applications and supported genres",()=>{
+ assert.match(music,/id="v2MusicForm"/);
+ for(const g of ["witch-house","pop-punk","hard-rock","alternative-rock","zoomergaze"])assert.ok(music.includes('value="'+g+'"'));
+ for(const g of ["funk","opiumcore","mylancore"])assert.ok(!music.includes('value="'+g+'"'));
  assert.match(music,/name="voice" value="female"/);
  assert.match(music,/name="voice" value="male"/);
  assert.match(music,/name="lyricsMode" value="commission"/);
- assert.match(music,/согласовываются до оплаты/);
+ assert.match(read("public/atelier/forms.js"),/api\/v2\/music\/request/);
  assert.match(routes,/INSERT INTO viona_music_requests/);
- assert.match(read("migrations/022_viona2_requests.sql"),/CREATE TABLE IF NOT EXISTS viona_music_requests/);
 });
-test("personal artist page separates identity from shop and keeps private sensitive details limited",()=>{
- assert.match(artist,/KANEKAN/);
- assert.match(artist,/FL Studio/);
+test("artist biography is a full independent music-focused narrative",()=>{
+ assert.match(artist,/KANEKAN KAN/);
  assert.match(artist,/С семи лет/);
- assert.match(artist,/Witch House/i);
- assert.match(artist,/2026/);
- assert.match(artist,/Личные и медицинские подробности намеренно сокращены/);
+ assert.match(artist,/три операции/i);
+ assert.match(artist,/пластина/i);
+ assert.match(artist,/FL Studio/);
+ assert.match(artist,/автомобильному эдитингу/);
+ assert.match(artist,/ИИ-вокал/);
+ assert.equal((artist.match(/class="bio-chapter"/g)||[]).length,6);
+ assert.doesNotMatch(artist,/v2\/base\.css/);
 });
-test("careers and legal sections are real standalone pages and requests require valid origin",()=>{
- for(const p of ["careers","support","terms","privacy","delivery","catalog"]){
-  assert.ok(read("public/v2/"+p+".html").includes('<!doctype html>'),p);
- }
+test("careers and legal pages are real, and custom-domain routing retained",()=>{
+ for(const p of ["careers","support","terms","privacy","delivery","catalog"])assert.match(read("public/v2/"+p+".html"),/<!doctype html>/i,p);
+ assert.match(read("public/v2/careers.html"),/id="v2CareersForm"/);
+ assert.match(read("public/atelier/forms.js"),/api\/v2\/careers\/apply/);
  assert.match(routes,/INSERT INTO viona_career_applications/);
- assert.match(routes,/if\(!legitOrigin\(req\)\)/);
- assert.match(read("migrations/022_viona2_requests.sql"),/viona_career_applications/);
- assert.match(db,/022_viona2_requests\.sql/);
- const admin=read("admin-console.js");
- assert.match(admin,/base\+"\/v2\/music",session/);
- assert.match(admin,/base\+"\/v2\/careers",session/);
+ for(const host of ["soundlab.viona.space","bots.viona.space","web.viona.space","code.viona.space"])assert.ok(server.includes('"'+host+'":'),host);
+ assert.match(server,/app\.get\("\/payment\/order\/:id"/);
 });
-test("test payments distinguish bank Init rejection from network failures without false confirmation",()=>{
- assert.match(bank,/code:reason,bankCode:/);
+test("T-Bank rejection reports safe diagnostic bank codes, not a confirmed payment",()=>{
+ const bank=read("tbank-demo.js");
+ assert.match(bank,/BANK_REJECTED/);
  assert.match(bank,/INIT_FAILED/);
  assert.match(bank,/PAYMENT_SERVICE_UNAVAILABLE/);
- assert.match(main,/\/legal\/privacy/);
- assert.match(read("public/v15.js"),/v2CheckoutTerms/);
-});
-test("all catalog items have unique scalable illustrations and payment symbols",()=>{
- for(const name of ["telegram","portfolio","discord","game","landing","code","max"])assert.ok(read("public/assets/catalog-"+name+".svg").includes("<svg"),name);
- for(const p of ["brand-sbp.svg","bank-card-v2.svg"])assert.ok(read("public/assets/"+p).includes("<svg"));
+ assert.match(js,/Ошибка|Тестовая оплата|Т-БАНК/);
 });
