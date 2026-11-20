@@ -4,7 +4,7 @@ const assert=require("node:assert/strict");
 const fs=require("node:fs");
 const path=require("node:path");
 const at=file=>fs.readFileSync(path.resolve(__dirname,"..",file),"utf8");
-const home=at("public/index.html"),studio=at("public/studio.html"),site=at("public/viona-studio.js");
+const home=at("public/classic.html"),studio=at("public/studio.html"),site=at("public/viona-studio.js");
 const glass=at("public/viona-glass27.css"),enhance=at("public/viona-glass27.js"),settings=at("public/viona-settings.js"),cmd=at("public/viona-command.js");
 const sw=at("public/sw.js"),server=at("server.js"),codeEdit=at("public/code-edit.html");
 test("all agreed Studio tools are linked from homepage",()=>{
@@ -91,7 +91,7 @@ test("command center works on all pages and is keyboard accessible",()=>{
  for(const page of [home,studio,codeEdit])assert.match(page,/viona-command\.js\?v=1/);
 });
 test("offline cache references Studio and all visual assets",()=>{
- assert.match(sw,/viona-reboot-v39/);
+ assert.match(sw,/viona-reboot-v40/);
  for(const path of ["/studio.html","/viona-glass27.css?v=1","/viona-studio.js?v=2","/viona-command.js?v=1","/viona-editor-prefs.js?v=1"])assert.ok(sw.includes('"'+path+'"'));
  assert.match(home,/viona-glass27\.css\?v=1/);
 });
