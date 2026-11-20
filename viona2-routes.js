@@ -4,7 +4,16 @@ const path=require("node:path");
 const GENRES=new Set(["witch-house","pop-punk","hard-rock","alternative-rock","zoomergaze","synth-pop","dream-pop","indie-rock","post-punk","shoegaze","electronic-rock"]);
 const LIMIT=5000;
 function trimmed(v,max){return typeof v==="string"?v.trim().slice(0,max):""}
-function legitOrigin(req){try{return new URL(req.get("origin")).origin===new URL(process.env.PUBLIC_BASE_URL||"https://viona.space").origin}catch{return false}}
+function legitOrigin(req){
+ try{
+  const origin=new URL(req.get("origin"));
+  if(origin.protocol!=="https:")return false;
+  const allowed=new Set(["viona.space","soundlab.viona.space","bots.viona.space","web.viona.space","code.viona.space"]);
+  const site=new URL(process.env.PUBLIC_BASE_URL||"https://viona.space");
+  return (allowed.has(origin.hostname)||origin.origin===site.origin)&&
+   origin.hostname===req.hostname;
+ }catch{return false}
+}
 function registerViona2(app,db){
  const open=(route,file)=>app.get(route,(_req,res)=>res.sendFile(path.join(__dirname,"public","v2",file)));
  open("/KANEKANKANARTIST","artist.html");
