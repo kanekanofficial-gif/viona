@@ -8,12 +8,14 @@
   "/code":{title:"Код, который<br><em>решает задачи.</em>",kicker:"VIONA / DEVELOPMENT",intro:"Доработка Node.js, JavaScript, TypeScript, HTML/CSS и Python-проектов после проверки технического задания.",cards:[["01 / FIX","Исправление ошибок","Разбор проблемы, подготовка правки, проверка результата."],["02 / FEATURE","Новые возможности","Доработка логики, интерфейса или интеграции."],["03 / REVIEW","Аудит кода","Проверка качества, безопасности и поддерживаемости проекта."]]}
  };
  if($("#v2CatalogCards")){
-  const data=catalog[location.pathname]||catalog["/web"];
+  const routeByHost={"bots.viona.space":"/bots","web.viona.space":"/web","code.viona.space":"/code"};
+  const chosen=routeByHost[location.hostname]||location.pathname;
+  const data=catalog[chosen]||catalog["/web"];
   $("#v2CatalogTitle").innerHTML=data.title;
   $("#v2CatalogKicker").textContent=data.kicker;
   $("#v2CatalogIntro").textContent=data.intro;
   $("#v2CatalogCards").innerHTML=data.cards.map(([num,title,desc])=>'<article class="v2-card"><small>'+esc(num)+'</small><h3>'+esc(title)+'</h3><p>'+esc(desc)+'</p><a class="v2-card-arrow" href="/#contact" aria-label="Оставить заявку: '+esc(title)+'">↗</a></article>').join("");
-  document.title="VIONA — "+(location.pathname==="/bots"?"Telegram-боты":location.pathname==="/code"?"Разработка и код":"Сайты и дизайн");
+  document.title="VIONA — "+(chosen==="/bots"?"Telegram-боты":chosen==="/code"?"Разработка и код":"Сайты и дизайн");
  }
  const post=async(url,details)=>{
   const r=await fetch(url,{method:"POST",credentials:"same-origin",cache:"no-store",headers:{"Content-Type":"application/json"},body:JSON.stringify(details)});
