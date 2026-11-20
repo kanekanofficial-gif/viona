@@ -102,8 +102,11 @@ function registerTestPayments(app,pool,getCatalog){
    if(method==="sberpay")initFields.DATA={SberPayWeb:"true",Device:sberDesktop?"Desktop":"Mobile"};
    const result=await bank("Init",initFields);
    if(result.Success!==true||!result.PaymentId||((method==="card"||method==="sberpay")&&!trustedPaymentUrl(result.PaymentURL))){
-    console.warn("Demo payment Init bank response:",safeBankFailure(result));
-    return res.status(502).json({error:"Банк не создал тестовый платёж."});
+    const info=safeBankFailure(result);
+    console.warn("Demo payment Init bank response:",info);
+    await pool.query("UPDATE viona_demo_payments SET status='INIT_FAILED',updated_at=NOW() WHERE order_id=$1",[orderId]).catch(e=>console.error("VIONA payment init failure save:",e.message));
+    const reason=result.Success!==true?"BANK_REJECTED":!result.PaymentId?"MISSING_PAYMENT_ID":"UNTRUSTED_PAYMENT_URL";
+    return res.status(502).json({error:"Т-Банк не подтвердил создание тестового платежа. Повтори попытку после проверки настроек терминала.",code:reason,bankCode:/^[A-Za-z0-9_-]{1,20}$/.test(String(result.ErrorCode))?String(result.ErrorCode):"unknown"});
    }
    const paymentId=String(result.PaymentId);
    await pool.query("UPDATE viona_demo_payments SET payment_id=$2,status='INITIATED' WHERE order_id=$1",[orderId,paymentId]);
@@ -140,7 +143,7 @@ function registerTestPayments(app,pool,getCatalog){
    res.json({qrImage,qrLink,orderId,mode:"demo"});
   }catch(e){
    console.error("Demo payment "+method+":",e.message,"network:",safeNetworkError(e));
-   res.status(503).json({error:"Не удалось создать тестовый платёж."});
+   res.status(503).json({error:"Платёжный сервис временно недоступен. Проверь соединение и настройки тестового терминала.",code:"PAYMENT_SERVICE_UNAVAILABLE"});
   }
  }
  app.post("/api/payments/test/init",(req,res)=>createCheckout(req,res,"card"));
