@@ -58,6 +58,12 @@ app.post("/api/request",async(req,res)=>{
  if(pool){try{await pool.query("INSERT INTO requests(name,contact,details) VALUES($1,$2,$3)",[String(name).slice(0,100),String(contact).slice(0,200),String(details).slice(0,5000)]);return res.status(201).json({message:"Заявка сохранена."});}catch(e){console.error(e.message);return res.status(500).json({error:"Не удалось сохранить заявку."});}}
  res.status(202).json({message:"Демо-режим: заявка не сохранена. Подключи PostgreSQL."});
 });
+// The classic view is kept for features not yet migrated into the new front end.
+app.get("/classic",(_req,res)=>res.sendFile(path.join(__dirname,"public","classic.html")));
+app.get("/payment/order/:id",(req,res,next)=>{
+ if(!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(req.params.id))return next();
+ return res.sendFile(path.join(__dirname,"public","classic.html"));
+});
 app.get("/code-edit",(_req,res)=>res.sendFile(path.join(__dirname,"public","code-edit.html")));
 app.get("/studio",(_req,res)=>res.sendFile(path.join(__dirname,"public","studio.html")));
 app.get("/studio/:view", (req,res,next)=>{
