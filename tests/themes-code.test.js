@@ -5,7 +5,7 @@ const fs=require("node:fs");
 const path=require("node:path");
 const root=path.resolve(__dirname,"..");
 const read=file=>fs.readFileSync(path.join(root,file),"utf8");
-const html=read("public/index.html"),theme=read("public/viona-theme.js"),themeCss=read("public/viona-theme.css");
+const html=read("public/classic.html"),theme=read("public/viona-theme.js"),themeCss=read("public/viona-theme.css");
 const lang=read("public/viona-checkout-i18n.js"),requirements=read("public/viona-requirements.js");
 const codeEdit=read("public/code-edit.html"),codeForm=read("public/code-edit.js");
 const server=read("server.js"),db=read("db-init.js"),app=read("public/v15.js"),sw=read("public/sw.js");
