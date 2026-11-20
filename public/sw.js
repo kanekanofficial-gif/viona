@@ -1,6 +1,13 @@
-/* VIONA v30: network-first CSS/JS, no stale seasonal skin or checkout cache. */
-const CACHE="viona-reboot-v39";
+/* VIONA 3.0: network-first assets, new glass storefront, legacy pages retained. */
+const CACHE="viona-reboot-v40";
 const SHELL=[
+ "/rebuild/liquid.css?v=1","/rebuild/app.js?v=1","/rebuild/sound.css?v=1",
+ "/rebuild/catalog.css?v=1","/rebuild/catalog.js?v=1","/rebuild/secondary.css?v=1",
+ "/v2/artist-v3.css?v=1","/v2/artist-v3.js?v=1",
+ "/v2/music.html","/v2/artist.html","/v2/catalog.html","/v2/careers.html",
+ "/classic.html","/assets/brand-icons/telegram.svg","/assets/brand-icons/discrod.svg",
+ "/assets/brand-icons/Max.svg","/assets/brand-icons/visa.svg","/assets/brand-icons/sbp.svg",
+ "/assets/brand-icons/sberpay.svg","/assets/brand-icons/t-pay-full.svg",
  "/","/manifest.webmanifest?v=30","/favicon.svg?v=30",
  "/rich-details.css?v=1","/v14.css?v=1","/v15.css?v=1",
  "/v16.css?v=1","/telegram-login.css?v=2",
