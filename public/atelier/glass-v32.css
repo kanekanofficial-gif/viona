@@ -38,3 +38,33 @@
 :is(.tool,.account-control,.cta-primary,.cta-secondary,.product-bottom button,.locale-trigger):hover{box-shadow:0 13px 26px var(--glass-shadow),inset 0 1px 3px var(--glass-sheen)}
 @media(max-width:680px){:root{--glass-blur:2px}.glass:after{animation-duration:19s}}
 @media(prefers-reduced-motion:reduce){.glass:after{animation:none!important}}
+
+/* Original SVG artwork supplied for the three product types */
+.product-scene img.catalog-illustration{width:min(52%,160px);height:118px;max-width:52%;max-height:118px;object-fit:contain;filter:drop-shadow(0 10px 15px rgba(0,15,24,.36));transition:transform .5s cubic-bezier(.22,1,.36,1)}
+.product-card:hover img.catalog-illustration{transform:translateY(-5px) scale(1.07)}
+.category-item-art .category-original-art{width:min(52%,144px);height:132px;object-fit:contain;max-width:66%;filter:drop-shadow(0 10px 14px #0017)}
+.product-full-logo img[src^="/assets/catalog/"]{max-width:64px;max-height:64px;object-fit:contain}
+/* Give each new original illustration its own background and safe spacing. */
+.product-card:nth-child(2) .product-scene{background:linear-gradient(128deg,rgba(56,124,127,.37),rgba(87,152,182,.27))}
+.product-card:nth-child(5) .product-scene{background:linear-gradient(140deg,rgba(78,102,174,.42),rgba(84,139,168,.21))}
+.product-card:nth-child(6) .product-scene{background:linear-gradient(140deg,rgba(32,78,127,.46),rgba(92,141,186,.3))}
+/* On secondary pages, the persisted theme must remain respected. */
+:root[data-theme=light]:not([data-style=pink]):not([data-style=gothic]) body{background:#eaf3f6!important}
+:root[data-theme=light]:not([data-style=pink]):not([data-style=gothic]) .sound-bg{background:radial-gradient(ellipse 860px 730px at 78% 10%,#bde6d9,transparent 68%),linear-gradient(#e9f4f4,#ddeef0)}
+:root[data-theme=light]:not([data-style=pink]):not([data-style=gothic]) .artist-aura{background:radial-gradient(ellipse 870px 650px at 87% 2%,#f6d6e7,transparent 70%),linear-gradient(#f3f0f6,#e9e1eb)}
+:root[data-theme=light]:not([data-style=pink]):not([data-style=gothic]) .sound-nav{color:#16443d;border-bottom-color:#2c86775c}
+:root[data-theme=light]:not([data-style=pink]):not([data-style=gothic]) .artist-nav{color:#3a293c;border-bottom-color:#8b6e8660}
+:root[data-theme=light]:not([data-style=pink]):not([data-style=gothic]) body:has(.sound-nav){--ink:#173e3c;--muted:#476860;--accent:#1e7762;--line:rgba(46,123,104,.29);color:#173e3c}
+:root[data-theme=light]:not([data-style=pink]):not([data-style=gothic]) body:has(.artist-nav){--ink:#39293b;--muted:#675269;--hot:#853969;--line:rgba(134,73,111,.27);color:#39293b}
+:root[data-theme=light]:not([data-style=pink]):not([data-style=gothic]) .bio-chapter p{color:#5d4c5e}
+:root[data-theme=light]:not([data-style=pink]):not([data-style=gothic]) .bio-chapter strong{color:#312037}
+:root[data-theme=light]:not([data-style=pink]):not([data-style=gothic]) .genre-grid article{background:rgba(255,255,255,.63)}
+:root[data-theme=light]:not([data-style=pink]):not([data-style=gothic]) .sound-opening p,
+:root[data-theme=light]:not([data-style=pink]):not([data-style=gothic]) .artist-opening p{color:var(--muted)}
+:root[data-style=gothic] .sound-bg{background:radial-gradient(ellipse at 75% 14%,#4031487a,transparent 60%),linear-gradient(#100f16,#17131d)}
+:root[data-style=gothic] .artist-aura{background:radial-gradient(ellipse at 90% 9%,#44344569,transparent 65%),linear-gradient(#100e15,#15111c)}
+:root[data-style=gothic] body:has(.sound-nav){--ink:#f0eaf5;--muted:#c4b8ca;--accent:#e1d9ed;--line:rgba(218,211,231,.3);color:#f0eaf5}
+:root[data-style=gothic] body:has(.artist-nav){--ink:#f1ecf6;--muted:#c4b8cd;--hot:#dcd0e8;--line:rgba(222,212,239,.32);color:#f1ecf6}
+:root[data-style=gothic] .music-form button{background:linear-gradient(120deg,#eeeaf2,#b4a9bc);color:#1b1520}
+:root[data-style=gothic] .artist-action{background:linear-gradient(120deg,#29212e,#0f0d14)}
+:root[data-style=gothic] .artist-action>a{background:#ded5e8;color:#211725}
