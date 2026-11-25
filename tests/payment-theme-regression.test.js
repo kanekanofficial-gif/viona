@@ -27,7 +27,7 @@ test("Theme stylesheet is loaded last and cache is updated",()=>{
  assert.ok(home.indexOf(newStyle)>home.indexOf('viona-studio-polish.css'));
  assert.ok(home.indexOf(newStyle)>home.indexOf('viona-reset.css'));
  assert.match(home,/payment-result\.css\?v=19/);
- assert.match(sw,/viona-reboot-v42/);
+ assert.match(sw,/viona-reboot-v44/);
  assert.match(sw,/payment-result-theme\.css\?v=1/);
 });
 
