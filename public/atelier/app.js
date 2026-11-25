@@ -17,7 +17,7 @@
  const request=async(path,opt={})=>{const response=await fetch(path,{credentials:"same-origin",cache:"no-store",...opt});const data=await response.json().catch(()=>({}));if(!response.ok)throw Object.assign(new Error(data.error||"Не удалось выполнить запрос."),{code:data.code,bankCode:data.bankCode,status:response.status});return data};
  const post=(path,data)=>request(path,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(data)});
  const visual={
- 1:{kind:"bots",icons:["telegram.svg"]},2:{kind:"web"},3:{kind:"bots",icons:["discrod.svg"]},4:{kind:"game",icons:["gamepad.svg"]},5:{kind:"web"},6:{kind:"code"},7:{kind:"bots",icons:["Max.svg"]}
+ 1:{kind:"bots",icons:["telegram.svg"]},2:{kind:"art",art:"portfolio-ui.svg"},3:{kind:"bots",icons:["discrod.svg"]},4:{kind:"game",icons:["gamepad.svg"]},5:{kind:"art",art:"landing-windows.svg"},6:{kind:"art",art:"code-editor.svg"},7:{kind:"bots",icons:["Max.svg"]}
  };
  const displayProducts=()=>[...state.products,musicCard()];
  const filtered=()=>displayProducts().filter(p=>(state.category==="Все"||p.category===state.category)&&[p.title,p.description,p.category,p.tag].join(" ").toLocaleLowerCase().includes(state.query));
@@ -27,7 +27,8 @@
  function card(p,index=0){
   if(p.id==="music")return '<article class="glass product-card" style="--card-index:'+index+'"><div class="product-scene music-product"><div class="music-poster" aria-hidden="true"><span>K.</span></div></div><div class="product-meta">'+escape(t("music.category","Музыка"))+' / KANEKAN KAN</div><h3>'+escape(p.title)+'</h3><p>'+escape(p.description)+'</p><div class="product-bottom"><b>'+escape(t("music.price","Индивидуальный заказ"))+'</b><button type="button" data-product="music">'+escape(t("btn.more","Подробнее ↗"))+'</button></div></article>';
   const id=Number(p.id),spec=visual[id]||{kind:"code"},price=Number(p.price||0);
-  const art=spec.icons?spec.icons.map(x=>'<img src="'+icon(x)+'" alt="" loading="lazy">').join("")
+  const art=spec.art?'<img class="catalog-original-svg" src="/assets/catalog/'+encodeURIComponent(spec.art)+'" alt="" loading="lazy">'
+    :spec.icons?spec.icons.map(x=>'<img src="'+icon(x)+'" alt="" loading="lazy">').join("")
     :spec.kind==="web"?'<div class="preview-browser"><b>create something.</b><span></span></div>':'<span class="preview-code">&lt;/&gt;</span>';
   return '<article class="glass product-card" style="--card-index:'+index+'"><div class="product-scene">'+art+'</div><div class="product-meta">'+escape(p.category)+' / VIONA '+String(id).padStart(2,"0")+'</div><h3>'+escape(p.title)+'</h3><p>'+escape(p.description)+'</p><div class="product-bottom"><b>'+(price>0?rub(price):escape(t("details.request","По согласованию")))+'</b><button type="button" data-product="'+id+'">'+escape(t("btn.more","Подробнее ↗"))+'</button></div></article>';
  }
@@ -54,7 +55,7 @@
   const p=id==="music"?musicCard():state.products.find(x=>Number(x.id)===id);if(!p)return;
   const d=detailed(id)||{what:p.description,how:"Уточни детали перед началом работы.",included:["Результат по согласованной задаче."],who:"Клиентам с подходящей задачей.",notes:"Точный состав файлов и условия согласовываются отдельно."};
   const visualData=visual[id]||{icons:id==="music"?[]:[]};
-  const pic=id==="music"?'<div class="music-poster" style="width:62px;height:62px"><span>K.</span></div>':visualData.icons?.length?'<img src="'+icon(visualData.icons[0])+'" alt="">':'<span style="font-size:31px">⌘</span>';
+  const pic=id==="music"?'<div class="music-poster" style="width:62px;height:62px"><span>K.</span></div>':visualData.art?'<img src="/assets/catalog/'+encodeURIComponent(visualData.art)+'" alt="">':visualData.icons?.length?'<img src="'+icon(visualData.icons[0])+'" alt="">':'<span style="font-size:31px">⌘</span>';
   const price=Number(p.price||0);
   const block=(heading,body)=>'<section class="detail-block"><h3>'+escape(t("details."+heading,({what:"Что это",works:"Как это работает",includes:"Что входит",best:"Кому подойдёт",note:"Важные условия"})[heading]))+'</h3><p>'+escape(body)+'</p></section>';
   let html='<span class="micro">VIONA / '+(id==="music"?"SOUNDLAB":"PRODUCT "+String(id).padStart(2,"0"))+'</span><div class="product-full-header"><div class="product-full-logo">'+pic+'</div><div><h2 id="dialogHeading">'+escape(p.title)+'</h2><small style="color:var(--muted)">'+escape(p.category)+'</small></div></div>';
@@ -185,7 +186,7 @@
  if(!read("viona-atelier-welcome",false)&&!new URLSearchParams(location.search).has("auth")){window.addEventListener("load",()=>{welcome.hidden=false;$("#closeWelcome").focus()},{once:true})}
  const savedTheme=read("viona-atelier-theme","dark");function setTheme(value){document.documentElement.dataset.theme=value;save("viona-atelier-theme",value)}
  setTheme(savedTheme==="light"?"light":"dark");
- $("#changeTheme").addEventListener("click",()=>setTheme(document.documentElement.dataset.theme==="dark"?"light":"dark"));
+ $("#changeTheme").addEventListener("click",()=>{setTheme(document.documentElement.dataset.theme==="dark"?"light":"dark");location.reload()});
  window.addEventListener("viona:locale",()=>{render();me().catch(()=>{})});
 
  if("IntersectionObserver"in window){const observer=new IntersectionObserver(entries=>{entries.filter(x=>x.isIntersecting).forEach(entry=>{entry.target.classList.add("shown");observer.unobserve(entry.target)})},{threshold:.08});$$("[data-appear]").forEach(el=>observer.observe(el))}else $$("[data-appear]").forEach(el=>el.classList.add("shown"));
