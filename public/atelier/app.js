@@ -134,7 +134,7 @@
    '<label class="check-line"><input type="checkbox" required name="agreed"> '+escape(t("checkout.agree","Я прочитал условия и политику конфиденциальности."))+'</label><button class="cta-primary" type="submit">'+escape(t("checkout.start","Запустить тестовую оплату ↗"))+'</button><div id="payStatus" class="status-box" role="status"></div></form>');
  }
 
-  const trustedUrl=v=>{if(typeof v!=="string"||v.includes("\\\\"))return false;try{const u=new URL(v),h=u.hostname.toLowerCase();return u.protocol==="https:"&&!u.username&&!u.password&&!u.port&&(["tinkoff.ru","tbank.ru","tbank-online.com"].some(d=>h===d||h.endsWith("."+d)))}catch{return false}};
+  const trustedUrl=v=>{if(typeof v!=="string"||v.includes("\\"))return false;try{const u=new URL(v),h=u.hostname.toLowerCase();return u.protocol==="https:"&&!u.username&&!u.password&&!u.port&&(["tinkoff.ru","tbank.ru","tbank-online.com"].some(d=>h===d||h.endsWith("."+d)))}catch{return false}};
  const trustedSber=v=>{try{const u=new URL(v),h=u.hostname.toLowerCase();return u.protocol==="https:"&&!u.username&&!u.password&&!u.port&&["sberbank.ru","sber.ru","sberpay.ru","sberbankonline.ru"].some(d=>h===d||h.endsWith("."+d))}catch{return false}};
  async function submitPay(form){if(state.submitting||!form.reportValidity())return;const value=Object.fromEntries(new FormData(form)),status=$("#payStatus"),button=$('[type=submit]',form);
   const method=value.method;state.submitting=true;button.disabled=true;status.textContent="Обращаемся к тестовому терминалу…";
