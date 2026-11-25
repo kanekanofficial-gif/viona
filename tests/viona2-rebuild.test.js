@@ -55,11 +55,15 @@ test("music is visible as a catalog category and product descriptions are inform
  for(const field of ["what","how","included","who","notes"])assert.ok(descriptions.includes(field),field);
  assert.match(descriptions,/Custom music track|Commission an original music track/);
 });
-test("five modes: RU, EN, Japanese, German and pink, shared between pages",()=>{
+test("six modes: RU, EN, Japanese, German, femboy and gothic, reloaded and shared between pages",()=>{
  const src=read("public/atelier/language.js");
- for(const locale of ["ru","en","ja","de","pink"])assert.ok(src.includes(locale),locale);
+ for(const locale of ["ru","en","ja","de","pink","gothic"])assert.ok(src.includes(locale),locale);
  assert.match(src,/viona-language-v1/);
  assert.match(read("public/atelier/language.css"),/data-style=pink/);
+ assert.match(read("public/atelier/glass-v32.css"),/data-style=gothic/);
+ assert.match(src,/window\.location\.reload\(\)/);
+ assert.match(src,/Мой уютный уголок/);
+ assert.match(src,/Хранилище заказов/);
  for(const page of ["public/index.html","public/v2/music.html","public/v2/artist.html","public/v2/catalog.html","public/v2/careers.html"])assert.match(read(page),/atelier\/language\.js/,page);
 });
 test("artist profile links to the six provided official channels",()=>{
@@ -81,4 +85,30 @@ test("entire public artist story has complete EN/JA/DE paragraphs without losing
  assert.match(t,/window\.addEventListener\("viona:locale",apply\)/);
  assert.match(read("public/v2/artist.html"),/artist-translations\.js/);
  for(const fact of ["FL Studio","KANEKAN KAN","Witch House"])assert.ok(t.includes(fact),fact);
+});
+
+test("VIONA 3.2 glass filter uses refractive displaced backdrop without distorting content",()=>{
+ const ripple=read("public/atelier/refract-v32.js");
+ const glass=read("public/atelier/glass-v32.css");
+ assert.match(ripple,/feTurbulence/);assert.match(ripple,/feGaussianBlur/);
+ assert.match(ripple,/feDisplacementMap/);
+ assert.match(glass,/backdrop-filter:url\("#viona-ripple"\)/);
+ assert.match(glass,/--glass-blur:3px/);
+ assert.match(glass,/data-theme=light/);
+ assert.match(glass,/\.overlay\[data-mode\] \.dialog/);
+ assert.match(read("public/index.html"),/atelier\/glass-v32\.css/);
+});
+test("actual supplied icons are installed in three respective catalog cards",()=>{
+ for(const file of ["portfolio-ui-ux.svg","landing-browser-windows.svg","vscode.svg"])
+   assert.match(read("public/assets/catalog/"+file),/<svg\b/i,file);
+ for(const file of ["portfolio-ui-ux.svg","landing-browser-windows.svg","vscode.svg"])
+   assert.ok(app.includes(file),file);
+ assert.match(read("public/atelier/catalog.js"),/category-original-art/);
+});
+test("bank Init rejects unknown redirect hosts and exposes non-secret diagnostics",()=>{
+ const bank=read("tbank-demo.js");
+ assert.match(bank,/tbank-online\.com/);
+ assert.match(bank,/paymentHostForLog\(result\.PaymentURL\)/);
+ assert.match(bank,/bankMatches\(remote/);
+ assert.match(app,/bankHost:data\.bankHost/);
 });
