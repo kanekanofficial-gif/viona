@@ -87,3 +87,8 @@
 .theme-control:hover{background:rgba(255,255,255,.17);transform:translateY(-2px)}
 :root[data-theme=light]:not([data-style=pink]):not([data-style=goth]) .theme-control{color:#1e4757;background:#fff9;border-color:#9ebec9}
 @media(max-width:600px){.theme-control{width:36px;height:36px}}
+
+/* Modal scroll must never be overridden by the generic glass surface. */
+.dialog.glass{overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;max-height:92dvh}
+.overlay[data-mode="drawer"] .dialog.glass{max-height:100dvh;height:100dvh;overflow-y:auto;overflow-x:hidden}
+.product-card.glass,.service-card.glass,.category-item.glass{overflow:hidden}
