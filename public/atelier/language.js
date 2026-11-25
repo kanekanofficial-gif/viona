@@ -192,6 +192,7 @@ for(const triple of [...home,...music,...artist,...catalog,...careers]){
 }
 function apply(){
  setLocaleCode(current);
+ const fixed=['pink','goth','alt','cute'].includes(current);if(fixed)document.documentElement.dataset.theme=current==='cute'?'light':'dark';
  const i=({ru:-1,pink:-1,goth:-1,alt:-1,cute:-1,en:0,ja:1,de:2})[current];
  for(const entry of entries){
   const value=i<0?entry.base:entry.vals[i];
@@ -219,7 +220,7 @@ const header=document.querySelector(".site-nav,.sound-nav,.artist-nav");
 if(header){
  const wrap=document.createElement("div");wrap.className="locale-switcher";wrap.innerHTML='<button type="button" class="locale-trigger" id="vionaLanguageButton" aria-haspopup="menu" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" width="18" height="18" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c4 4 4 14 0 18M12 3c-4 4-4 14 0 18"/></svg><span class="locale-code"></span><svg class="locale-chevron" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m7 10 5 5 5-5"/></svg></button><div class="locale-menu" id="vionaLanguageMenu" role="menu" hidden></div>';
  const menu=wrap.querySelector("#vionaLanguageMenu");
- menu.innerHTML=Object.entries(tr).map(([key,v])=>'<button type="button" role="menuitemradio" data-lang-value="'+key+'" aria-checked="false"><span>'+v.locale+'</span><strong>'+v.name+'</strong><span class="locale-check">✓</span></button>').join("");
+ menu.innerHTML=Object.entries(tr).map(([key,v])=>'<button type="button" role="menuitemradio" data-lang-value="'+key+'" aria-checked="false"><span>'+(key==='alt'||key==='cute'?'<img class="locale-avatar" src="/assets/locale-'+key+'.svg" alt="">':key==='goth'?'<svg viewBox="0 0 48 32" width="43" height="30" fill="none" stroke="currentColor" stroke-width="2"><path d="M24 2v28M16 11h16M5 4l13 17m-8-1 8-6M43 4 30 21m8-1-8-6"/></svg>':v.locale)+'</span><strong>'+v.name+'</strong><span class="locale-check">✓</span></button>').join("");
  const tools=header.querySelector(".nav-tools");
  if(tools)tools.insertBefore(wrap,tools.firstChild);
  else {const back=header.querySelector(".back-store");if(back&&back.parentElement===header)header.insertBefore(wrap,back);else header.append(wrap)}
