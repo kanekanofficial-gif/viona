@@ -66,25 +66,31 @@ const fs=require("node:fs");const {chromium}=require("playwright");
     assert.equal(await page.locator(".choices .payment-logo").count(),5,"All branded logos are required");
     await page.locator("#closeDialog").click();await page.locator("#overlay").waitFor({state:"hidden"});
    }
-   await page.locator("#vionaLanguageButton").click();
-   await page.locator('[data-lang-value="en"]').click();
+   const changeLanguage=async value=>{
+    await page.locator("#vionaLanguageButton").click();
+    await Promise.all([page.waitForEvent("framenavigated"),page.locator('[data-lang-value="'+value+'"]').click()]);
+    await page.waitForFunction(v=>document.documentElement.dataset.language===v,value,{timeout:8000});
+   };
+   const changeTheme=async expected=>{
+    await Promise.all([page.waitForEvent("framenavigated"),page.locator("#changeTheme").click()]);
+    await page.waitForFunction(v=>document.documentElement.dataset.theme===v,expected,{timeout:8000});
+   };
+   await changeLanguage("en");
    assert.equal(await page.locator("html").getAttribute("lang"),"en");
    assert.match(await page.locator(".intro h1").innerText(),/Your idea/);
    if(label==="desktop"){
-    await page.locator("#vionaLanguageButton").click();await page.locator('[data-lang-value="ja"]').click();
+    await changeLanguage("ja");
     assert.equal(await page.locator("html").getAttribute("lang"),"ja");
-    await page.locator("#vionaLanguageButton").click();await page.locator('[data-lang-value="de"]').click();
+    await changeLanguage("de");
     assert.equal(await page.locator("html").getAttribute("lang"),"de");
    }
-   await page.locator("#vionaLanguageButton").click();
-   await page.locator('[data-lang-value="pink"]').click();
+   await changeLanguage("pink");
    assert.equal(await page.locator("html").getAttribute("data-style"),"pink");
    await noOverflow("/ with pink theme");
-   await page.locator("#vionaLanguageButton").click();
-   await page.locator('[data-lang-value="ru"]').click();
+   await changeLanguage("ru");
    assert.equal(await page.locator("html").getAttribute("data-style"),"default");
-   await page.locator("#changeTheme").click();assert.equal(await page.locator("html").getAttribute("data-theme"),"light");
-   await page.locator("#changeTheme").click();assert.equal(await page.locator("html").getAttribute("data-theme"),"dark");
+   await changeTheme("light");assert.equal(await page.locator("html").getAttribute("data-theme"),"light");
+   await changeTheme("dark");assert.equal(await page.locator("html").getAttribute("data-theme"),"dark");
    await open("/music");
    assert.ok(await page.locator("#v2MusicForm").isVisible());
    assert.ok(await page.locator("#vionaLanguageButton").isVisible());
@@ -110,11 +116,11 @@ const fs=require("node:fs");const {chromium}=require("playwright");
    assert.equal(await page.locator(".platform-link").count(),6,"Official artist channels missing");
    assert.ok(await page.locator("#vionaLanguageButton").isVisible());
    if(label==="desktop"){
-    await page.locator("#vionaLanguageButton").click();await page.locator('[data-lang-value="en"]').click();
+    await changeLanguage("en");
     assert.match(await page.locator(".bio-chapter").first().locator("h3").innerText(),/The urge to create/);
-    await page.locator("#vionaLanguageButton").click();await page.locator('[data-lang-value="ja"]').click();
+    await changeLanguage("ja");
     assert.match(await page.locator(".bio-chapter").first().locator("h3").innerText(),/最初の曲/);
-    await page.locator("#vionaLanguageButton").click();await page.locator('[data-lang-value="ru"]').click();
+    await changeLanguage("ru");
    }
    await noOverflow("/KANEKANKANARTIST");
    await page.screenshot({path:"screenshots/artist-"+label+".png",fullPage:true});
