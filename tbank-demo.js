@@ -16,7 +16,7 @@ function sign(fields,password){
 // Both tbank.ru and tbank-online.com are official bank-operated domains.
 const PAYMENT_DOMAINS=Object.freeze(["tinkoff.ru","tbank.ru","tbank-online.com"]);
 function trustedPaymentUrl(value){
- if(typeof value!=="string"||value.length>4096||value.includes("\\\\"))return false;
+ if(typeof value!=="string"||value.length>4096||value.includes("\\"))return false;
  try{
   const url=new URL(value.trim()),host=url.hostname.toLowerCase();
   return url.protocol==="https:"&&!url.username&&!url.password&&!url.port &&
