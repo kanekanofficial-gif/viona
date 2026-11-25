@@ -1,0 +1,65 @@
+/* VIONA 3.2: actual backdrop refraction when supported; conservative blur otherwise */
+:root{--glass-veil:rgba(207,243,245,.065);--glass-refraction-veil:rgba(183,221,233,.09);--glass-highlight:rgba(255,255,255,.52);--dialog-bg:rgba(20,38,52,.91)}
+:root[data-theme=light]{--glass-veil:rgba(255,255,255,.29);--glass-refraction-veil:rgba(248,252,255,.26);--glass-highlight:rgba(255,255,255,.95);--dialog-bg:rgba(239,247,251,.96)}
+:root[data-style=pink]{--glass-veil:rgba(248,171,226,.095);--glass-refraction-veil:rgba(255,195,236,.13);--glass-highlight:rgba(255,214,247,.7);--dialog-bg:rgba(43,20,46,.94)}
+:root[data-style=goth]{--bg:#09090e;--bg-solid:#09090e;--text:#f0eef5;--muted:#b7b1c1;--primary:#cac2ec;--primary-deep:#24212e;--edge:rgba(190,182,221,.32);--surface:rgba(126,119,161,.075);--surface-strong:rgba(170,163,210,.14);--shadow:rgba(0,0,0,.72);--glass-veil:rgba(95,89,120,.055);--glass-refraction-veil:rgba(110,105,146,.09);--glass-highlight:rgba(241,235,255,.43);--dialog-bg:rgba(18,18,27,.96);color-scheme:dark}
+:root[data-style=goth] body{background:#09090e;color:var(--text)}
+:root[data-style=goth] .light-a{background:#454050}
+:root[data-style=goth] .light-b{background:#4b3455}
+:root[data-style=goth] .light-c{background:#24182d}
+:root[data-style=goth] .mark{background:linear-gradient(145deg,#dedbea,#78718c,#393344);color:#1e1c2b}
+:root[data-style=goth] .shimmer{background-image:linear-gradient(110deg,#f5efff,#bbb0d1,#d9d4e6)}
+:root[data-style=goth] .cta-primary{background:linear-gradient(115deg,#dfd7ed,#afa0cb);color:#22172e}
+:root[data-style=goth] .hero-composition{background:linear-gradient(125deg,#aaa0c317,#28233121)}
+:root[data-style=goth] .composition-glow{color:#e8dfef}
+:root[data-style=goth] .locale-menu{background:#12121b}
+:root[data-style=goth] .locale-menu button.selected{background:#d9d0fb23;border-color:#ccc0f97b}
+:root[data-style=goth] .music-form button{background:linear-gradient(105deg,#dcd3eb,#baa7cb);color:#291c37}
+:root[data-style=goth] .music-form,:root[data-style=goth] .artist-intro{background:rgba(105,91,133,.17);border-color:#ccc3ee61}
+:root[data-style=goth] .artist-aura{background:radial-gradient(ellipse 700px 700px at 90% 3%,#47304a6f,transparent),linear-gradient(#0e0c12,#211825,#0c0b10)}
+:root[data-style=goth] .sound-bg{background:radial-gradient(ellipse 800px 800px at 80% 10%,#43304d88,transparent),linear-gradient(#111016,#1e1827)}
+:root[data-style=goth] .artist-opening h1 em,:root[data-style=goth] .sound-opening h1 em,:root[data-style=goth] .artist-platforms h2 em{color:#dbc8f3}
+.glass{background:var(--glass-veil);-webkit-backdrop-filter:blur(7px) saturate(143%);backdrop-filter:blur(7px) saturate(143%);overflow:visible}
+.glass .glass-refraction{position:absolute;z-index:0;inset:1px;border-radius:inherit;pointer-events:none;overflow:hidden;background:var(--glass-refraction-veil);box-shadow:inset 0 2px 1px var(--glass-highlight),inset 0 -2px 3px rgba(250,255,255,.24);-webkit-backdrop-filter:blur(3px) saturate(125%);backdrop-filter:blur(3px) saturate(125%)}
+.glass .glass-refraction:before{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;background:radial-gradient(ellipse 80% 40% at 25% 0%,var(--glass-highlight),transparent 85%);opacity:.2}
+.glass.has-refraction>:not(.glass-refraction){position:relative;z-index:1}
+.glass.has-refraction>.glass-refraction{z-index:0}
+.glass.has-refraction>.glass-refraction::after{content:"";position:absolute;inset:0;border-radius:inherit;box-shadow:inset 1px 1px 1px var(--glass-highlight),inset -1px -2px 2px rgba(255,255,255,.25)}
+@supports (backdrop-filter: url("#viona-glass-ripple")){
+ .glass.has-refraction>.glass-refraction{-webkit-backdrop-filter:url("#viona-glass-ripple") blur(2px) saturate(135%);backdrop-filter:url("#viona-glass-ripple") blur(2px) saturate(135%)}
+}
+.site-nav,.market-toolbar{overflow:visible}
+.site-nav.glass .glass-refraction{border-radius:inherit}
+.glass:before,.glass:after{pointer-events:none}
+.dialog.glass{background:var(--dialog-bg);border:1px solid var(--edge);box-shadow:inset 0 2px 3px var(--glass-highlight),0 32px 80px var(--shadow);-webkit-backdrop-filter:blur(9px) saturate(125%);backdrop-filter:blur(9px) saturate(125%)}
+.dialog.glass .glass-refraction{display:none}
+.dialog{color:var(--text)}
+.dialog h2,.dialog h3,.dialog strong,.dialog b,.dialog li,.dialog .modal-line,.dialog .modal-total,.dialog .product-meta{color:var(--text)}
+.dialog p,.dialog small,.dialog .detail-block p,.dialog .detail-list li,.dialog .panel-notice,.dialog .detail-highlight{color:var(--muted)}
+.dialog .detail-block{border-color:var(--edge)}
+.dialog .detail-highlight,.dialog .panel-notice{background:var(--surface-strong);border-color:var(--edge)}
+.dialog .product-full-header h2{color:var(--text)}
+.dialog .product-full-header small{color:var(--muted)!important}
+.dialog .legal-links a{color:var(--primary)}
+.dialog .cta-secondary,.dialog .modal-line button{color:var(--text);border-color:var(--edge)}
+.dialog input:not([type=radio]):not([type=checkbox]),.dialog textarea,.dialog select{background:var(--surface);color:var(--text);border:1px solid var(--edge)}
+.dialog input::placeholder,.dialog textarea::placeholder{color:var(--muted)}
+:root[data-theme=light] .dialog{--text:#153044;--muted:#415d6c;--primary:#21634f;--edge:rgba(29,75,95,.22);--surface:rgba(255,255,255,.7);--surface-strong:rgba(211,234,242,.64);--shadow:rgba(30,70,81,.22)}
+:root[data-theme=light] .dialog .detail-highlight,:root[data-theme=light] .dialog .panel-notice{color:#315264}
+:root[data-theme=light] .dialog .product-full-logo{background:#e4f4f8}
+:root[data-theme=light] .dialog .dialog-close{color:#183040;background:#d7e6ed}
+:root[data-theme=light] .dialog .cta-primary{background:linear-gradient(120deg,#256b5a,#398b7b);color:#fff}
+:root[data-theme=light] .dialog .choices label{background:rgba(255,255,255,.55)}
+:root[data-theme=light] .dialog .choices label:has(input:checked){background:rgba(135,213,192,.24);border-color:#3b8878}
+:root[data-theme=light] .dialog .profile-card{background:#dbeaf0}
+:root[data-theme=light] .dialog .profile-status{background:#d1eae0}
+:root[data-theme=light] .dialog .order-card{background:#edf5f7}
+:root[data-theme=light] .dialog .detail-list li{color:#385466}
+.payment-logo{overflow:hidden;border-radius:12px;padding:0}
+.payment-logo img{width:100%;height:100%;object-fit:contain;max-height:none;border-radius:12px;overflow:hidden}
+.payment-icons .payment-logo:first-child{box-shadow:0 0 0 1px rgba(255,255,255,.15)}
+.product-scene .catalog-original-svg{width:105px;height:105px;max-width:none;max-height:none;object-fit:contain;filter:drop-shadow(0 14px 17px rgba(3,12,26,.35))}
+.product-card:nth-child(5) .catalog-original-svg{width:120px;height:120px}
+.product-full-logo img{max-width:60px;max-height:60px;object-fit:contain}
+.tool,.account-control,.locale-trigger,.filters button,.product-bottom button{backdrop-filter:blur(1px);-webkit-backdrop-filter:blur(1px)}
+@media (prefers-reduced-motion:reduce){.glass .glass-refraction{animation:none!important}}
