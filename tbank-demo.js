@@ -18,9 +18,16 @@ function trustedPaymentUrl(value){
  try{
   const url=new URL(value);
   const hostname=url.hostname.toLowerCase();
-  const bankHost=["tinkoff.ru","tbank.ru"].some(domain=>
-   hostname===domain||hostname.endsWith("."+domain)) ||
-   hostname==="pay.tbank-online.com";
+  // Bank-issued hosted form addresses observed in official acquiring integrations:
+  // securepay, securepayments, and the demo test host. Never trust arbitrary subdomains.
+  const bankHost=new Set([
+   "securepay.tinkoff.ru",
+   "securepayments.tinkoff.ru",
+   "rest-api-test.tinkoff.ru",
+   "pay.tbank-online.com",
+   "securepay.tbank.ru",
+   "pay.tbank.ru"
+  ]).has(hostname);
   return url.protocol==="https:" && !url.username && !url.password &&
    !url.port && bankHost;
  }catch{return false}
@@ -264,4 +271,4 @@ function registerTestPayments(app,pool,getCatalog){
  });
  registerPaymentOrders(app,pool,bank,configured);
 }
-module.exports={registerTestPayments,bank,configured};
+module.exports={registerTestPayments,bank,configured,trustedPaymentUrl};

@@ -1,13 +1,14 @@
 "use strict";
 /* Four written-language translations and an optional pink Russian theme. Persisted across VIONA pages. */
 (()=>{
-const langKey="viona-language-v1",allowed=new Set(["ru","en","ja","de","pink"]);
+const langKey="viona-language-v1",allowed=new Set(["ru","en","ja","de","pink","goth"]);
 const safeRead=()=>{try{const s=localStorage.getItem(langKey);return allowed.has(s)?s:"ru"}catch{return"ru"}};
 let current=safeRead();
 const tr={
  ru:{show:"Языки",locale:"RU",name:"Русский"},en:{show:"Language",locale:"EN",name:"English"},
  ja:{show:"言語",locale:"日本語",name:"日本語"},de:{show:"Sprache",locale:"DE",name:"Deutsch"},
- pink:{show:"Тема",locale:"♡",name:"Фембойский · розовый"}
+ pink:{show:"Язык",locale:"♡",name:"Фембойский"},
+ goth:{show:"Язык",locale:"☾",name:"Готический"}
 };
 const keystrings={
  "btn.more":["Подробнее ↗","Details ↗","詳しく見る ↗","Mehr erfahren ↗"],
@@ -52,10 +53,15 @@ const keystrings={
  "toast.exit":["Выход выполнен","Signed out","ログアウトしました","Abgemeldet"]
 };
 const t=(key,fallback="")=>{
- const v=keystrings[key];const index=({ru:0,en:1,ja:2,de:3,pink:0})[current];
+ const v=keystrings[key];const index=({ru:0,en:1,ja:2,de:3,pink:0,goth:0})[current];
+ const special={
+  pink:{"btn.more":"Посмотреть поближе ♡","btn.bag":"Корзиночка ♡","btn.login":"Войти, милашка ♡","btn.orders":"Мои заказики ♡","btn.logout":"До встречи ♡","btn.add":"В корзиночку ♡","btn.pay":"К оплате, ура ♡","btn.music":"Хочу свою песенку ♡","cart.title":"Твоя корзиночка ♡","cart.empty":"Здесь пока пустенько ♡","cart.total":"Всего","profile.hello":"Мой уголок ♡","profile.telegram":"Telegram подключён ♡","details.what":"Что это за чудо?","details.works":"Как оно работает?","details.includes":"Что получу?","details.best":"Кому подойдёт?","details.note":"Важно знать ♡","checkout.demo":"Тестовый платёж ♡","checkout.start":"Начать тестовую оплату ♡","toast.add":"Ура, добавлено ♡"},
+  goth:{"btn.more":"Открыть досье ☾","btn.bag":"Хранилище","btn.login":"Войти во тьму","btn.orders":"Архив заказов","btn.logout":"Покинуть тени","btn.add":"Забрать в хранилище ☾","btn.pay":"К ритуалу оплаты ☾","btn.music":"Заказать тёмную мелодию ☾","cart.title":"Твоё хранилище","cart.empty":"Хранилище пустует.","cart.total":"Итого","profile.hello":"Твой архив ☾","profile.telegram":"Связь Telegram установлена","details.what":"Суть артефакта","details.works":"Механизм действия","details.includes":"Содержимое","details.best":"Кому предназначено","details.note":"Предостережения","checkout.demo":"Испытание платежа","checkout.start":"Начать испытание ☾","toast.add":"Артефакт помещён в хранилище"}
+ };
+ if(special[current]?.[key])return special[current][key];
  return v?.[index]??fallback;
 };
-const setLocaleCode=value=>{document.documentElement.lang=value==="ja"?"ja":value==="de"?"de":value==="en"?"en":"ru";document.documentElement.dataset.style=value==="pink"?"pink":"default";document.documentElement.dataset.language=value;};
+const setLocaleCode=value=>{document.documentElement.lang=value==="ja"?"ja":value==="de"?"de":value==="en"?"en":"ru";document.documentElement.dataset.style=value==="pink"?"pink":value==="goth"?"goth":"default";document.documentElement.dataset.language=value;};
 const home=[
  [".nav-links a:nth-child(1)","Services","サービス","Bereiche"],
  [".nav-links a:nth-child(2)","Catalog","カタログ","Katalog"],
@@ -183,7 +189,7 @@ for(const triple of [...home,...music,...artist,...catalog,...careers]){
 }
 function apply(){
  setLocaleCode(current);
- const i=({ru:-1,pink:-1,en:0,ja:1,de:2})[current];
+ const i=({ru:-1,pink:-1,goth:-1,en:0,ja:1,de:2})[current];
  for(const entry of entries){
   const value=i<0?entry.base:entry.vals[i];
   if(entry.mode==="placeholder")entry.node.setAttribute("placeholder",value);
@@ -206,6 +212,7 @@ function change(next){
  current=next;try{localStorage.setItem(langKey,current)}catch{}
  apply();const menu=document.querySelector("#vionaLanguageMenu");
  if(menu){menu.hidden=true;document.querySelector("#vionaLanguageButton")?.setAttribute("aria-expanded","false")}
+ location.reload();
 }
 const header=document.querySelector(".site-nav,.sound-nav,.artist-nav");
 if(header){

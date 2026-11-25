@@ -1,6 +1,7 @@
 /* VIONA v30: network-first CSS/JS, no stale seasonal skin or checkout cache. */
-const CACHE="viona-reboot-v42";
+const CACHE="viona-reboot-v44";
 const SHELL=[
+ "/atelier/glass-v32.css?v=1","/atelier/glass-v32.js?v=1","/atelier/special-voices.js?v=1","/atelier/theme-global.js?v=1","/assets/catalog/portfolio-ui.svg","/assets/catalog/landing-windows.svg","/assets/catalog/code-editor.svg",
  "/atelier/main.css?v=2","/atelier/polish.css?v=1","/atelier/language.css?v=1","/atelier/language.js?v=1","/atelier/artist-translations.js?v=1","/atelier/product-details.js?v=1","/atelier/app.js?v=2","/atelier/artist.css?v=1",
  "/atelier/music.css?v=1","/atelier/catalog.css?v=1","/atelier/catalog.js?v=1",
  "/atelier/secondary.css?v=1","/atelier/forms.js?v=2",
@@ -8,7 +9,7 @@ const SHELL=[
  "/assets/brand-icons/telegram.svg","/assets/brand-icons/discrod.svg",
  "/assets/brand-icons/Max.svg","/assets/brand-icons/t-pay-full.svg",
  "/assets/brand-icons/visa.svg","/assets/brand-icons/Mir.svg","/assets/brand-icons/sbp.svg",
- "/assets/brand-icons/sberpay.svg",
+ "/assets/brand-icons/sberpay.svg","/assets/catalog/portfolio-ui.svg","/assets/catalog/landing-windows.svg","/assets/catalog/code-editor.svg",
  "/","/manifest.webmanifest?v=30","/favicon.svg?v=30",
  "/rich-details.css?v=1","/v14.css?v=1","/v15.css?v=1",
  "/v16.css?v=1","/telegram-login.css?v=2",
