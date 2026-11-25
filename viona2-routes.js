@@ -3,6 +3,15 @@ const crypto=require("node:crypto");
 const path=require("node:path");
 const GENRES=new Set(["witch-house","pop-punk","hard-rock","alternative-rock","zoomergaze","synth-pop","dream-pop","indie-rock","post-punk","shoegaze","electronic-rock"]);
 const LIMIT=5000;
+// Free genre choice, with just the four excluded genres/groups blocked.
+function validMusicGenre(value){
+ if(typeof value!=="string")return false;
+ const genre=value.trim().normalize("NFKC");
+ if(genre.length<2||genre.length>48)return false;
+ if(!/^[\p{L}\p{N}][\p{L}\p{N}\p{M} +'&./()_-]*$/u.test(genre))return false;
+ const compact=genre.toLowerCase().replace(/[\s._-]+/g,"");
+ return !/(?:opiumcore|mylancore|brazilianfunk|funk|фанк|опиумкор|майланкор)/iu.test(compact);
+}
 function trimmed(v,max){return typeof v==="string"?v.trim().slice(0,max):""}
 function legitOrigin(req){
  try{
@@ -31,7 +40,7 @@ function registerViona2(app,db){
   if(!db)return res.status(503).json({error:"Приём заявок недоступен: база данных не подключена."});
   const v=req.body||{};
   const contact=trimmed(v.contact,200),title=trimmed(v.title,140),genre=trimmed(v.genre,48),voice=trimmed(v.voice,12),lyricsMode=trimmed(v.lyricsMode,16),brief=trimmed(v.brief,LIMIT);
-  if(contact.length<3||title.length<2||brief.length<10||!GENRES.has(genre)||!["female","male"].includes(voice)||!["provided","commission"].includes(lyricsMode))
+  if(contact.length<3||title.length<2||brief.length<10||!validMusicGenre(genre)||!["female","male"].includes(voice)||!["provided","commission"].includes(lyricsMode))
    return res.status(400).json({error:"Проверь контакт, название, жанр, голос и описание песни."});
   const id=crypto.randomUUID();
   try{
@@ -57,4 +66,4 @@ function registerViona2(app,db){
   }catch(e){console.error("VIONA 2 career request:",e.message);res.status(503).json({error:"Отклик не сохранён."})}
  });
 }
-module.exports={registerViona2,GENRES,legitOrigin};
+module.exports={registerViona2,GENRES,validMusicGenre,legitOrigin};

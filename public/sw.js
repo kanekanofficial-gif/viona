@@ -1,13 +1,13 @@
 /* VIONA v30: network-first CSS/JS, no stale seasonal skin or checkout cache. */
-const CACHE="viona-reboot-v40";
+const CACHE="viona-reboot-v42";
 const SHELL=[
- "/atelier/main.css?v=1","/atelier/app.js?v=1","/atelier/artist.css?v=1",
+ "/atelier/main.css?v=2","/atelier/polish.css?v=1","/atelier/language.css?v=1","/atelier/language.js?v=1","/atelier/artist-translations.js?v=1","/atelier/product-details.js?v=1","/atelier/app.js?v=2","/atelier/artist.css?v=1",
  "/atelier/music.css?v=1","/atelier/catalog.css?v=1","/atelier/catalog.js?v=1",
- "/atelier/secondary.css?v=1","/atelier/forms.js?v=1",
+ "/atelier/secondary.css?v=1","/atelier/forms.js?v=2",
  "/classic.html","/v2/music.html","/v2/artist.html","/v2/catalog.html",
  "/assets/brand-icons/telegram.svg","/assets/brand-icons/discrod.svg",
  "/assets/brand-icons/Max.svg","/assets/brand-icons/t-pay-full.svg",
- "/assets/brand-icons/visa.svg","/assets/brand-icons/sbp.svg",
+ "/assets/brand-icons/visa.svg","/assets/brand-icons/Mir.svg","/assets/brand-icons/sbp.svg",
  "/assets/brand-icons/sberpay.svg",
  "/","/manifest.webmanifest?v=30","/favicon.svg?v=30",
  "/rich-details.css?v=1","/v14.css?v=1","/v15.css?v=1",

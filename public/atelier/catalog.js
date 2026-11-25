@@ -12,5 +12,5 @@
  $("#catKicker").textContent=data.kicker;$("#catTitle").innerHTML=data.title;$("#catIntro").textContent=data.intro;$("#catWord").textContent=data.word;
  if(data.icon)$("#catIcon").src="/assets/brand-icons/"+encodeURIComponent(data.icon);else $("#catIcon").style.display="none";
  $("#catCards").innerHTML=data.cards.map(([label,title,body,icon],i)=>
-  '<article class="glass category-item"><div class="category-item-art '+escape(key)+'"><span class="liquid-drop" aria-hidden="true"></span>'+(icon?'<img src="/assets/brand-icons/'+encodeURIComponent(icon)+'" alt="">':'<div class="category-mock">'+(key==="web"?'design.':'&lt;/&gt;')+'</div>')+'</div><small class="micro">'+escape(label)+'</small><h3>'+escape(title)+'</h3><p>'+escape(body)+'</p><a href="https://viona.space/#contact">Оставить заявку ↗</a></article>').join("");
+  '<article class="glass category-item"><div class="category-item-art '+escape(key)+'">'+(icon?'<img src="/assets/brand-icons/'+encodeURIComponent(icon)+'" alt="">':'<div class="category-mock">'+(key==="web"?'design.':'&lt;/&gt;')+'</div>')+'</div><small class="micro">'+escape(label)+'</small><h3>'+escape(title)+'</h3><p>'+escape(body)+'</p><a href="https://viona.space/#contact">Оставить заявку ↗</a></article>').join("");
 })();
