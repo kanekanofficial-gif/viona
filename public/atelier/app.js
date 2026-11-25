@@ -185,8 +185,10 @@
  document.addEventListener("keydown",e=>{if(e.key==="Escape"){if(!welcome.hidden)closeWelcome();else if(!modal.hidden)closeDialog()}});
  if(!read("viona-atelier-welcome",false)&&!new URLSearchParams(location.search).has("auth")){window.addEventListener("load",()=>{welcome.hidden=false;$("#closeWelcome").focus()},{once:true})}
  const savedTheme=read("viona-atelier-theme","dark");function setTheme(value){document.documentElement.dataset.theme=value;save("viona-atelier-theme",value)}
- setTheme(savedTheme==="light"?"light":"dark");
- $("#changeTheme").addEventListener("click",()=>{setTheme(document.documentElement.dataset.theme==="dark"?"light":"dark");location.reload()});
+ const fixedTheme=({pink:"dark",goth:"dark",alt:"dark",cute:"light"})[currentLang()];
+ document.documentElement.dataset.theme=fixedTheme||(savedTheme==="light"?"light":"dark");
+ if(fixedTheme)$("#changeTheme").hidden=true;
+ $("#changeTheme").addEventListener("click",()=>{if(fixedTheme)return;setTheme(document.documentElement.dataset.theme==="dark"?"light":"dark");location.reload()});
  window.addEventListener("viona:locale",()=>{render();me().catch(()=>{})});
 
  if("IntersectionObserver"in window){const observer=new IntersectionObserver(entries=>{entries.filter(x=>x.isIntersecting).forEach(entry=>{entry.target.classList.add("shown");observer.unobserve(entry.target)})},{threshold:.08});$$("[data-appear]").forEach(el=>observer.observe(el))}else $$("[data-appear]").forEach(el=>el.classList.add("shown"));
