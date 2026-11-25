@@ -68,3 +68,8 @@
 :root[data-style=gothic] .music-form button{background:linear-gradient(120deg,#eeeaf2,#b4a9bc);color:#1b1520}
 :root[data-style=gothic] .artist-action{background:linear-gradient(120deg,#29212e,#0f0d14)}
 :root[data-style=gothic] .artist-action>a{background:#ded5e8;color:#211725}
+
+/* Readable from the first animation frame: slide/scale still animate,
+   but never run a blur filter over headings or fine print. */
+.dialog,.overlay.is-open .dialog{filter:none!important}
+.overlay.is-open{-webkit-backdrop-filter:blur(9px)!important;backdrop-filter:blur(9px)!important}
