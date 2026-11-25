@@ -1,0 +1,40 @@
+/* VIONA 3.2: optical refraction, readable surfaces, restrained blur. */
+:root{--glass-ink:#f1fbff;--glass-dim:#b6cbd3;--glass-panel:rgba(18,34,51,.92);--glass-wash:rgba(166,220,240,.1);--glass-edge:rgba(224,250,255,.48);--glass-sheen:rgba(255,255,255,.51);--glass-shadow:rgba(1,16,27,.5);--glass-blur:3px}
+:root[data-theme=light]:not([data-style=pink]):not([data-style=gothic]){--glass-ink:#193344;--glass-dim:#3b5868;--glass-panel:rgba(244,252,255,.97);--glass-wash:rgba(227,245,252,.45);--glass-edge:rgba(255,255,255,.91);--glass-sheen:rgba(255,255,255,.98);--glass-shadow:rgba(21,62,79,.19)}
+:root[data-style=pink]{--glass-ink:#fff1fa;--glass-dim:#ebc4d9;--glass-panel:rgba(50,19,47,.94);--glass-wash:rgba(245,139,210,.16);--glass-edge:rgba(255,211,239,.63)}
+:root[data-style=gothic]{--bg:#09090e;--bg-solid:#09090e;--text:#ebe8f1;--muted:#bcb7c9;--primary:#dad7e3;--primary-deep:#17141d;--surface:rgba(31,28,40,.48);--surface-strong:rgba(64,60,73,.55);--edge:rgba(220,215,233,.38);--shadow:rgba(0,0,0,.66);--glass-ink:#f0edf7;--glass-dim:#c1bccb;--glass-panel:rgba(16,15,23,.96);--glass-wash:rgba(164,158,190,.12);--glass-edge:rgba(222,215,240,.45);--glass-shadow:rgba(0,0,0,.73);color-scheme:dark}
+:root[data-style=gothic] body{background:#09090e!important}
+:root[data-style=gothic] .light{background:#403748!important;opacity:.37}
+:root[data-style=gothic] .mark{background:linear-gradient(140deg,#e9e6ed,#7c778a);color:#16131c}
+:root[data-style=gothic] .shimmer{background-image:linear-gradient(110deg,#fff,#a6a2b4,#e0deee,#79758b)}
+:root[data-style=gothic] .cta-primary{background:linear-gradient(120deg,#efedf5,#b0a9c3);color:#14131c}
+:root[data-style=gothic] .hero-composition{background:linear-gradient(140deg,#7770873b,#201d2d8c)}
+:root[data-style=gothic] .music-feature{background:linear-gradient(125deg,#2c2734,#0e0e13)}
+/* Refractive backdrop in a separate optical layer: do not distort text or icons. */
+.glass{isolation:isolate;background:transparent!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;box-shadow:0 16px 40px var(--glass-shadow),inset 0 1px 2px var(--glass-sheen);border-color:var(--glass-edge)!important}
+.glass:before{content:"";position:absolute;inset:0;z-index:-1;border-radius:inherit;background:var(--glass-wash);pointer-events:none;-webkit-backdrop-filter:blur(var(--glass-blur)) saturate(132%);backdrop-filter:blur(var(--glass-blur)) saturate(132%);box-shadow:inset 0 2px 2px var(--glass-sheen),inset 0 -2px 6px rgba(85,125,144,.24)}
+.glass:after{content:"";position:absolute;inset:1px;z-index:-1;border-radius:inherit;pointer-events:none;background:linear-gradient(110deg,transparent 15%,rgba(255,255,255,.2) 32%,transparent 52%,rgba(255,255,255,.09) 71%,transparent 90%);background-size:200% 100%;box-shadow:inset 1px 1px 1px var(--glass-sheen),inset -1px -1px 2px rgba(255,255,255,.14);animation:liquidCaustic 12s ease-in-out infinite}
+@supports (backdrop-filter:url("#viona-ripple")){.glass:before{-webkit-backdrop-filter:url("#viona-ripple") blur(var(--glass-blur)) saturate(132%);backdrop-filter:url("#viona-ripple") blur(var(--glass-blur)) saturate(132%)}}
+@keyframes liquidCaustic{0%,100%{background-position:110% 0}50%{background-position:-25% 0}}
+/* Product and cart overlays always use palette tokens. */
+.overlay[data-mode] .dialog{color:var(--glass-ink)!important;background:var(--glass-panel)!important;border:1px solid var(--glass-edge)!important;box-shadow:0 25px 72px var(--glass-shadow),inset 0 2px 2px var(--glass-sheen);-webkit-backdrop-filter:blur(7px) saturate(130%)!important;backdrop-filter:blur(7px) saturate(130%)!important}
+.dialog :is(h1,h2,h3,strong,b,li,.detail-block h3,.product-full-header h2){color:var(--glass-ink)!important}
+.dialog :is(p,small,.detail-block p,.detail-block li,.modal-line small,.panel-notice,.profile-row span){color:var(--glass-dim)!important}
+.dialog .detail-block,.dialog .modal-line{border-color:var(--glass-edge)!important}
+.dialog :is(.detail-highlight,.panel-notice,.profile-card,.order-card){color:var(--glass-ink)!important;background:var(--glass-wash)!important;border-color:var(--glass-edge)!important}
+.dialog .detail-highlight{line-height:1.8}.dialog .legal-links a,.dialog .profile-handle,.dialog .micro{color:var(--primary)!important}
+:root[data-theme=light]:not([data-style=pink]):not([data-style=gothic]) .dialog :is(.legal-links a,.profile-handle,.micro){color:#145950!important}
+.dialog .dialog-close{color:var(--glass-ink)!important;background:var(--glass-wash)!important;border:1px solid var(--glass-edge)!important}
+.dialog input:not([type=radio]):not([type=checkbox]),.dialog select,.dialog textarea{color:var(--glass-ink)!important;background:var(--glass-wash)!important;border-color:var(--glass-edge)!important}
+.dialog input::placeholder,.dialog textarea::placeholder{color:var(--glass-dim)!important;opacity:.78}
+.dialog .choices label{color:var(--glass-ink)!important;background:var(--glass-wash)!important}
+.dialog .cta-secondary{color:var(--glass-ink)!important;border-color:var(--glass-edge)!important}
+.payment-logo,.payment-logo img{border-radius:12px!important}.payment-logo img{overflow:hidden;clip-path:inset(0 round 9px);object-fit:contain}
+.payment-logo{background:rgba(255,255,255,.94)!important;box-shadow:inset 0 1px 2px #fff,0 5px 12px rgba(0,20,40,.17)!important}
+.payment-logo img[src$="visa.svg"]{clip-path:inset(0 round 9px);background:#164acf}
+.tool,.locale-trigger,.account-control{backdrop-filter:blur(3px) saturate(128%)!important;-webkit-backdrop-filter:blur(3px) saturate(128%)!important}
+.locale-menu{background:var(--glass-panel)!important;color:var(--glass-ink)!important;border-color:var(--glass-edge)!important}.locale-menu button{color:var(--glass-ink)!important}
+:is(.tool,.account-control,.cta-primary,.cta-secondary,.product-bottom button,.locale-trigger):active{transform:scale(.965)}
+:is(.tool,.account-control,.cta-primary,.cta-secondary,.product-bottom button,.locale-trigger):hover{box-shadow:0 13px 26px var(--glass-shadow),inset 0 1px 3px var(--glass-sheen)}
+@media(max-width:680px){:root{--glass-blur:2px}.glass:after{animation-duration:19s}}
+@media(prefers-reduced-motion:reduce){.glass:after{animation:none!important}}
