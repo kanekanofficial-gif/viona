@@ -1,13 +1,14 @@
 "use strict";
 /* Four written-language translations and an optional pink Russian theme. Persisted across VIONA pages. */
 (()=>{
-const langKey="viona-language-v1",allowed=new Set(["ru","en","ja","de","pink"]);
+const langKey="viona-language-v1",allowed=new Set(["ru","en","ja","de","pink","gothic"]);
 const safeRead=()=>{try{const s=localStorage.getItem(langKey);return allowed.has(s)?s:"ru"}catch{return"ru"}};
 let current=safeRead();
 const tr={
  ru:{show:"Языки",locale:"RU",name:"Русский"},en:{show:"Language",locale:"EN",name:"English"},
  ja:{show:"言語",locale:"日本語",name:"日本語"},de:{show:"Sprache",locale:"DE",name:"Deutsch"},
- pink:{show:"Тема",locale:"♡",name:"Фембойский · розовый"}
+ pink:{show:"Язык и настроение",locale:"♡",name:"Фембойский"},
+ gothic:{show:"Язык и настроение",locale:"✦",name:"Готический"}
 };
 const keystrings={
  "btn.more":["Подробнее ↗","Details ↗","詳しく見る ↗","Mehr erfahren ↗"],
@@ -51,11 +52,17 @@ const keystrings={
  "toast.sign":["Сначала войди через Telegram","Please sign in with Telegram","先にTelegramでログインしてください","Bitte zuerst mit Telegram anmelden"],
  "toast.exit":["Выход выполнен","Signed out","ログアウトしました","Abgemeldet"]
 };
+// Two invented interface dialects: distinct word choices, not color-only themes.
+const personality={
+ pink:{"btn.more":"Глянуть поближе ♡","btn.bag":"Корзиночка ♡","btn.login":"Войти в свой уголок ♡","btn.orders":"Мои заказики ♡","btn.logout":"Пока-пока ♡","btn.add":"В корзиночку ♡","btn.pay":"К оплате, ура ♡","btn.music":"Хочу свой трек ♡","cart.title":"Твоя корзиночка ♡","cart.empty":"Пока пустенько. Выбери что-нибудь милое ♡","cart.total":"Всё вместе","details.what":"Что это за чудо?","details.works":"Как это работает? ♡","details.includes":"Что получишь","details.best":"Кому подойдёт ♡","details.note":"Обязательно прочитай","details.price":"Стоит","details.category":"Раздел","details.request":"Обсудим лично ♡","profile.hello":"Мой уютный уголок ♡","profile.telegram":"Telegram подключён ♡","profile.name":"Твоё имя","profile.handle":"Твой ник","profile.id":"Твой Telegram ID","profile.orders":"Мои заказики ♡","profile.files":"Когда всё будет готово, файлик появится в заказе ♡","music.category":"Музычка ♡","music.price":"Особенный заказ ♡","checkout.demo":"Тестовая оплата ♡","checkout.contact":"Как с тобой связаться?","checkout.brief":"Расскажи о мечте ♡","checkout.method":"Как будем платить?","checkout.card":"Карточкой ♡","checkout.agree":"Условия прочитаны, всё хорошо ♡","checkout.start":"Открыть тестовую оплату ♡","toast.add":"Добавлено в корзиночку ♡","toast.empty":"В корзиночке пусто ♡","toast.sign":"Сначала зайди через Telegram ♡","toast.exit":"До скорого ♡"},
+ gothic:{"btn.more":"Раскрыть подробности ✦","btn.bag":"Хранилище","btn.login":"Войти в профиль","btn.orders":"Архив заказов","btn.logout":"Покинуть профиль","btn.add":"Сохранить в хранилище","btn.pay":"Перейти к расчёту","btn.music":"Заказать композицию ✦","cart.title":"Хранилище заказов","cart.empty":"Хранилище пусто. Найди свой следующий проект.","cart.total":"Общая сумма","details.what":"Суть проекта","details.works":"Механика","details.includes":"Состав поставки","details.best":"Назначение","details.note":"Важное предупреждение","details.price":"Стоимость","details.category":"Категория","details.request":"По согласованию","profile.hello":"Личный архив","profile.telegram":"Соединение с Telegram установлено","profile.name":"Имя владельца","profile.handle":"Псевдоним","profile.id":"Идентификатор","profile.orders":"Архив заказов","profile.files":"Завершённые файлы хранятся в соответствующих заказах.","music.category":"Тёмное звучание","music.price":"Особый заказ","checkout.demo":"Проверка оплаты","checkout.contact":"Контакт","checkout.brief":"Техническое задание","checkout.method":"Платёжный способ","checkout.card":"Банковская карта","checkout.agree":"Условия и положения прочитаны.","checkout.start":"Открыть платёжную форму","toast.add":"Сохранено в хранилище","toast.empty":"Хранилище пусто","toast.sign":"Для доступа требуется Telegram","toast.exit":"Сеанс завершён"}
+};
 const t=(key,fallback="")=>{
- const v=keystrings[key];const index=({ru:0,en:1,ja:2,de:3,pink:0})[current];
+ const personalized=personality[current]?.[key];if(personalized)return personalized;
+ const v=keystrings[key];const index=({ru:0,en:1,ja:2,de:3,pink:0,gothic:0})[current];
  return v?.[index]??fallback;
 };
-const setLocaleCode=value=>{document.documentElement.lang=value==="ja"?"ja":value==="de"?"de":value==="en"?"en":"ru";document.documentElement.dataset.style=value==="pink"?"pink":"default";document.documentElement.dataset.language=value;};
+const setLocaleCode=value=>{document.documentElement.lang=value==="ja"?"ja":value==="de"?"de":value==="en"?"en":"ru";document.documentElement.dataset.style=value==="pink"?"pink":value==="gothic"?"gothic":"default";document.documentElement.dataset.language=value;};
 const home=[
  [".nav-links a:nth-child(1)","Services","サービス","Bereiche"],
  [".nav-links a:nth-child(2)","Catalog","カタログ","Katalog"],
@@ -166,6 +173,30 @@ const careers=[
  [".secondary-opening .cta-primary","Apply ↗","応募する ↗","Bewerben ↗"],
  [".career-app h2","Tell us<br><em>about yourself.</em>","あなたについて<br><em>教えてください。</em>","Erzähl uns<br><em>von dir.</em>"]
 ];
+const personaCopy={
+ ".nav-links a:nth-child(1)":["Направления ♡","Направления"],
+ ".nav-links a:nth-child(2)":["Всё красивое ♡","Каталог проектов"],
+ ".nav-links a:nth-child(4)":["Наш артист ♡","Артист"],
+ ".nav-links a:nth-child(5)":["Наша команда ♡","Команда"],
+ ".intro h1":["Твоя мечта.<br><span class='shimmer'>Наш уютный<br>мирок ♡</span>","Твоя идея.<br><span class='shimmer'>Новая глава<br>проекта.</span>"],
+ ".intro-lead":["Собираем твои идеи в прекрасные проекты: сайтики, ботики, код и музыку ♡","В мире VIONA каждая идея обретает форму: код, цифровые пространства и музыка."],
+ ".intro-actions .cta-primary":["В уютный каталог ♡ <span>↗</span>","Открыть каталог <span>↗</span>"],
+ ".intro-actions .cta-secondary":["Посмотреть всё ♡ <span>↓</span>","Исследовать направления <span>↓</span>"],
+ "#services .section-top h2":["Разные мирочки.<br><em>Одна мечта ♡</em>","Множество путей.<br><em>Один выбор.</em>"],
+ ".service-tiles .service-card:nth-child(1) h3":["Ботики и помощь ♡","Боты и автоматизация"],
+ ".service-tiles .service-card:nth-child(2) h3":["Сайтики и дизайн ♡","Сайты и интерфейсы"],
+ ".service-tiles .service-card:nth-child(3) h3":["Волшебство кода ♡","Программирование"],
+ ".music-feature h3":["Когда мысли<br><em>поют для тебя ♡</em>","Когда чувства<br><em>обретают звук.</em>"],
+ ".music-feature-link":["Хочу в SoundLab ♡ ↗","Войти в SoundLab ✦"],
+ ".market .section-top h2":["Каталог мечтаний.<br><em>Выбирай с любовью ♡</em>","Каталог идей.<br><em>Без компромиссов.</em>"],
+ ".process .section-top h2":["От идеи<br><em>до чудесного результата ♡</em>","От замысла<br><em>до результата.</em>"],
+ ".hire-call h2":["Вместе<br><em>создавать приятнее ♡</em>","В одиночку — идея.<br><em>Вместе — проект.</em>"],
+ ".contact h2":["Есть идейка?<br><em>Расскажи ♡</em>","Есть замысел?<br><em>Раскрой его.</em>"],
+ ".sound-opening h1":["Песенка для<br><em>твоей истории ♡</em>","Твой сюжет.<br><em>Твой звук.</em>"],
+ ".music-form h3":["Твой новый трек ♡","Новая композиция"],
+ ".artist-opening h1":["Звук.<br>Чувства.<br><em>KANEKAN ♡</em>","Тени.<br>Звук.<br><em>KANEKAN.</em>"],
+ ".secondary-opening h1":["С нами будет<br><em>уютнее ♡</em>","Создавай новое.<br><em>Оставь свой след.</em>"]
+};
 let entries=[];
 for(const triple of [...home,...music,...artist,...catalog,...careers]){
  const [selector,en,ja,de,mode="html"]=triple;
@@ -183,9 +214,10 @@ for(const triple of [...home,...music,...artist,...catalog,...careers]){
 }
 function apply(){
  setLocaleCode(current);
- const i=({ru:-1,pink:-1,en:0,ja:1,de:2})[current];
+ const i=({ru:-1,pink:-1,gothic:-1,en:0,ja:1,de:2})[current];
  for(const entry of entries){
-  const value=i<0?entry.base:entry.vals[i];
+  const special=(current==="pink"||current==="gothic")&&Object.entries(personaCopy).find(([selector])=>document.querySelector(selector)===entry.node);
+  const value=special?special[1][current==="pink"?0:1]:i<0?entry.base:entry.vals[i];
   if(entry.mode==="placeholder")entry.node.setAttribute("placeholder",value);
   else if(entry.mode==="textNode")entry.node.nodeValue=value;
   else entry.node.innerHTML=value;
@@ -203,8 +235,12 @@ function apply(){
 }
 function change(next){
  if(!allowed.has(next))return;
+ if(current===next)return;
  current=next;try{localStorage.setItem(langKey,current)}catch{}
- apply();const menu=document.querySelector("#vionaLanguageMenu");
+ // Requested page refresh: all dynamic catalog/profile content and static copy
+ // are rebuilt consistently in the selected language on every route.
+ window.location.reload();return;
+ const menu=document.querySelector("#vionaLanguageMenu");
  if(menu){menu.hidden=true;document.querySelector("#vionaLanguageButton")?.setAttribute("aria-expanded","false")}
 }
 const header=document.querySelector(".site-nav,.sound-nav,.artist-nav");
