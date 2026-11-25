@@ -3,7 +3,10 @@
  const KEY="viona-atelier-theme";
  let theme="dark";
  try{const value=JSON.parse(localStorage.getItem(KEY));if(value==="light")theme="light"}catch{}
- document.documentElement.dataset.theme=theme;
+ let locale;try{locale=localStorage.getItem("viona-language-v1")}catch{}
+ const fixed=({pink:"dark",goth:"dark",alt:"dark",cute:"light"})[locale];
+ document.documentElement.dataset.theme=fixed||theme;
+ if(fixed){const button=document.querySelector("#changeTheme");if(button)button.hidden=true;return;}
  if(document.querySelector("#changeTheme"))return;
  const header=document.querySelector(".site-nav,.sound-nav,.artist-nav");
  if(!header)return;
