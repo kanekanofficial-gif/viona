@@ -1,7 +1,7 @@
 "use strict";
 const crypto=require("node:crypto");
 const {getUser}=require("./telegram-auth");
-const {registerPaymentOrders}=require("./payment-order");
+const {registerPaymentOrders,bankMatches}=require("./payment-order");
 const BASE="https://securepay.tinkoff.ru/v2";
 // Only log network error codes, never request bodies, terminal credentials or payment tokens.
 function safeNetworkError(err){const cause=err?.cause;const code=typeof cause?.code==="string"?cause.code:"unknown";const syscall=typeof cause?.syscall==="string"?cause.syscall:"unknown";const name=typeof err?.name==="string"?err.name:"Error";return {name,code,syscall,aborted:name==="AbortError"||name==="TimeoutError"};}
@@ -13,16 +13,14 @@ function sign(fields,password){
 // Its payment hosts may differ between test and production terminals.
 // The API also returns https://pay.tbank-online.com for DEMO checkouts.
 // Trust only HTTPS hosts under bank-owned DNS suffixes (exact dot boundary).
+// Both tbank.ru and tbank-online.com are official bank-operated domains.
+const PAYMENT_DOMAINS=Object.freeze(["tinkoff.ru","tbank.ru","tbank-online.com"]);
 function trustedPaymentUrl(value){
- if(typeof value!=="string")return false;
+ if(typeof value!=="string"||value.length>4096||value.includes("\\"))return false;
  try{
-  const url=new URL(value);
-  const hostname=url.hostname.toLowerCase();
-  const bankHost=["tinkoff.ru","tbank.ru"].some(domain=>
-   hostname===domain||hostname.endsWith("."+domain)) ||
-   hostname==="pay.tbank-online.com";
-  return url.protocol==="https:" && !url.username && !url.password &&
-   !url.port && bankHost;
+  const url=new URL(value.trim()),host=url.hostname.toLowerCase();
+  return url.protocol==="https:"&&!url.username&&!url.password&&!url.port &&
+    PAYMENT_DOMAINS.some(domain=>host===domain||host.endsWith("."+domain));
  }catch{return false}
 }
 function trustedSberPayUrl(value){
@@ -101,12 +99,27 @@ function registerTestPayments(app,pool,getCatalog){
    }
    if(method==="sberpay")initFields.DATA={SberPayWeb:"true",Device:sberDesktop?"Desktop":"Mobile"};
    const result=await bank("Init",initFields);
-   if(result.Success!==true||!result.PaymentId||((method==="card"||method==="sberpay")&&!trustedPaymentUrl(result.PaymentURL))){
-    const info=safeBankFailure(result);
-    console.warn("Demo payment Init bank response:",info);
-    await pool.query("UPDATE viona_demo_payments SET status='INIT_FAILED',updated_at=NOW() WHERE order_id=$1",[orderId]).catch(e=>console.error("VIONA payment init failure save:",e.message));
-    const reason=result.Success!==true?"BANK_REJECTED":!result.PaymentId?"MISSING_PAYMENT_ID":"UNTRUSTED_PAYMENT_URL";
-    return res.status(502).json({error:"Т-Банк не подтвердил создание тестового платежа. Повтори попытку после проверки настроек терминала.",code:reason,bankCode:/^[A-Za-z0-9_-]{1,20}$/.test(String(result.ErrorCode))?String(result.ErrorCode):"unknown"});
+   const needsUrl=method==="card"||method==="sberpay";
+   const validIdentity=result.Success===true&&Boolean(result.PaymentId)&&
+    (!result.OrderId||String(result.OrderId)===orderId)&&
+    (!result.Amount||Number(result.Amount)===amount)&&
+    (!result.TerminalKey||result.TerminalKey===process.env.TBANK_DEMO_TERMINAL);
+   const missingUrl=needsUrl&&typeof result.PaymentURL!=="string";
+   const unsafeUrl=needsUrl&&!missingUrl&&!trustedPaymentUrl(result.PaymentURL);
+   if(!validIdentity||missingUrl||unsafeUrl){
+    console.warn("Demo payment Init bank response:",safeBankFailure(result));
+    await pool.query("UPDATE viona_demo_payments SET status='INIT_FAILED',updated_at=NOW() WHERE order_id=$1",[orderId]).catch(()=>{});
+    const reason=result.Success!==true?"BANK_REJECTED":!result.PaymentId?"MISSING_PAYMENT_ID":
+     (result.OrderId&&String(result.OrderId)!==orderId)||(result.Amount&&Number(result.Amount)!==amount)||
+     (result.TerminalKey&&result.TerminalKey!==process.env.TBANK_DEMO_TERMINAL)?"PAYMENT_IDENTITY_MISMATCH":
+     missingUrl?"MISSING_PAYMENT_URL":"UNTRUSTED_PAYMENT_URL";
+    return res.status(502).json({
+     error:reason==="UNTRUSTED_PAYMENT_URL"?"Т-Банк создал тестовый платёж, но вернул неподдерживаемый адрес платёжной страницы.":
+      reason==="MISSING_PAYMENT_URL"?"Т-Банк принял платёж, но не прислал ссылку на оплату.":
+      "Т-Банк не подтвердил создание тестового платежа. Проверь настройки терминала.",
+     code:reason,bankCode:/^[A-Za-z0-9_-]{1,20}$/.test(String(result.ErrorCode))?String(result.ErrorCode):"unknown",
+     ...(reason==="UNTRUSTED_PAYMENT_URL"?{bankHost:paymentHostForLog(result.PaymentURL)}:{})
+    });
    }
    const paymentId=String(result.PaymentId);
    await pool.query("UPDATE viona_demo_payments SET payment_id=$2,status='INITIATED' WHERE order_id=$1",[orderId,paymentId]);
@@ -240,12 +253,12 @@ function registerTestPayments(app,pool,getCatalog){
    if(!r.rowCount)return res.sendStatus(404);
    const payment=r.rows[0];
    // A DEMO SBP notification might be delayed; verify status with the bank.
-   if(["sbp","sberpay"].includes(payment.method) && payment.payment_id && ["INITIATED","QR_CREATED","AUTHORIZED","AUTHORIZING","FORM_SHOWED"].includes(payment.status)){
+   if(payment.payment_id && ["INITIATED","QR_CREATED","AUTHORIZED","AUTHORIZING","FORM_SHOWED"].includes(payment.status)){
     try{
      const remote=await bank("GetState",{PaymentId:payment.payment_id});
-     const valid=remote.Success===true && String(remote.PaymentId)===String(payment.payment_id) &&
-       String(remote.OrderId)===String(req.params.id) && Number(remote.Amount)===Number(payment.amount_kopecks);
-     const next=String(remote.Status||"");
+     const valid=bankMatches(remote,{payment_id:payment.payment_id,order_id:req.params.id,
+        amount_kopecks:payment.amount_kopecks});
+      const next=String(remote.Status||"");
      if(valid && ["AUTHORIZED","CONFIRMED","REJECTED","DEADLINE_EXPIRED","REVERSED","CANCELED","AUTH_FAIL"].includes(next)){
       await pool.query(
        "UPDATE viona_demo_payments SET status=CASE WHEN status IN ('REFUNDED','REVERSED') THEN status ELSE $2 END,"+
@@ -264,4 +277,4 @@ function registerTestPayments(app,pool,getCatalog){
  });
  registerPaymentOrders(app,pool,bank,configured);
 }
-module.exports={registerTestPayments,bank,configured};
+module.exports={registerTestPayments,bank,configured,trustedPaymentUrl,paymentHostForLog};
