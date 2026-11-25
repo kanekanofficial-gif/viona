@@ -22,6 +22,9 @@ const fs=require("node:fs");const {chromium}=require("playwright");
    assert.equal(await page.locator(".liquid-drop").count(),0,"Unwanted drops still render");
    assert.ok(await page.locator(".hero-composition").isVisible(),"New hero art missing");
    assert.ok(await page.locator("#vionaLanguageButton").isVisible(),"Language switcher missing");
+   assert.ok((await page.locator(".product-card:nth-child(2) .catalog-illustration").getAttribute("src")).includes("portfolio-ui-ux"));
+   assert.ok((await page.locator(".product-card:nth-child(5) .catalog-illustration").getAttribute("src")).includes("landing-browser-windows"));
+   assert.ok((await page.locator(".product-card:nth-child(6) .catalog-illustration").getAttribute("src")).includes("vscode"));
    await noOverflow("/");
    await page.screenshot({path:"screenshots/atelier-"+label+".png",fullPage:true});
    await page.locator('#productFilters [data-filter="Музыка"]').click();
@@ -66,25 +69,53 @@ const fs=require("node:fs");const {chromium}=require("playwright");
     assert.equal(await page.locator(".choices .payment-logo").count(),5,"All branded logos are required");
     await page.locator("#closeDialog").click();await page.locator("#overlay").waitFor({state:"hidden"});
    }
+   await page.locator("#changeTheme").click();
+   await page.waitForFunction(()=>document.documentElement.dataset.theme==="light"&&document.readyState==="complete");
+   await page.waitForFunction(()=>document.querySelectorAll(".product-card").length>=8);
+   await page.locator('[data-product="3"]').first().click();
+   await page.locator("#overlay").waitFor({state:"visible"});
+   const contrast=await page.evaluate(()=>({
+    color:getComputedStyle(document.querySelector(".dialog h2")).color,
+    background:getComputedStyle(document.querySelector(".dialog")).backgroundColor
+   }));
+   assert.ok(contrast.color.includes("25, 51, 68")||contrast.color.includes("23, 48, 68"),"Unclear light heading "+contrast.color);
+   assert.ok(contrast.background.includes("244, 252, 255"),"Dialog stayed dark: "+contrast.background);
+   await page.screenshot({path:"screenshots/light-product-"+label+".png"});
+   await page.locator("#closeDialog").click();await page.locator("#overlay").waitFor({state:"hidden"});
+   await page.locator("#changeTheme").click();
+   await page.waitForFunction(()=>document.documentElement.dataset.theme==="dark"&&document.readyState==="complete");
+   await page.waitForFunction(()=>document.querySelectorAll(".product-card").length>=8);
    await page.locator("#vionaLanguageButton").click();
    await page.locator('[data-lang-value="en"]').click();
+   await page.waitForFunction(locale=>document.documentElement.dataset.language===locale&&document.readyState==="complete","en");
    assert.equal(await page.locator("html").getAttribute("lang"),"en");
    assert.match(await page.locator(".intro h1").innerText(),/Your idea/);
    if(label==="desktop"){
     await page.locator("#vionaLanguageButton").click();await page.locator('[data-lang-value="ja"]').click();
+   await page.waitForFunction(locale=>document.documentElement.dataset.language===locale&&document.readyState==="complete","ja");
     assert.equal(await page.locator("html").getAttribute("lang"),"ja");
     await page.locator("#vionaLanguageButton").click();await page.locator('[data-lang-value="de"]').click();
+   await page.waitForFunction(locale=>document.documentElement.dataset.language===locale&&document.readyState==="complete","de");
     assert.equal(await page.locator("html").getAttribute("lang"),"de");
    }
    await page.locator("#vionaLanguageButton").click();
    await page.locator('[data-lang-value="pink"]').click();
+   await page.waitForFunction(locale=>document.documentElement.dataset.language===locale&&document.readyState==="complete","pink");
    assert.equal(await page.locator("html").getAttribute("data-style"),"pink");
+   assert.match(await page.locator(".intro h1").innerText(),/мечта/i,"Femboy mode should change copy");
    await noOverflow("/ with pink theme");
    await page.locator("#vionaLanguageButton").click();
+   await page.locator('[data-lang-value="gothic"]').click();
+   await page.waitForFunction(()=>document.documentElement.dataset.language==="gothic"&&document.readyState==="complete");
+   assert.equal(await page.locator("html").getAttribute("data-style"),"gothic");
+   assert.match(await page.locator(".intro h1").innerText(),/глава/i,"Gothic mode should change copy");
+   await noOverflow("/ with gothic theme");
+   await page.locator("#vionaLanguageButton").click();
    await page.locator('[data-lang-value="ru"]').click();
+   await page.waitForFunction(locale=>document.documentElement.dataset.language===locale&&document.readyState==="complete","ru");
    assert.equal(await page.locator("html").getAttribute("data-style"),"default");
-   await page.locator("#changeTheme").click();assert.equal(await page.locator("html").getAttribute("data-theme"),"light");
-   await page.locator("#changeTheme").click();assert.equal(await page.locator("html").getAttribute("data-theme"),"dark");
+   await page.locator("#changeTheme").click();await page.waitForFunction(()=>document.documentElement.dataset.theme==="light"&&document.readyState==="complete");assert.equal(await page.locator("html").getAttribute("data-theme"),"light");
+   await page.locator("#changeTheme").click();await page.waitForFunction(()=>document.documentElement.dataset.theme==="dark"&&document.readyState==="complete");assert.equal(await page.locator("html").getAttribute("data-theme"),"dark");
    await open("/music");
    assert.ok(await page.locator("#v2MusicForm").isVisible());
    assert.ok(await page.locator("#vionaLanguageButton").isVisible());
@@ -111,10 +142,13 @@ const fs=require("node:fs");const {chromium}=require("playwright");
    assert.ok(await page.locator("#vionaLanguageButton").isVisible());
    if(label==="desktop"){
     await page.locator("#vionaLanguageButton").click();await page.locator('[data-lang-value="en"]').click();
+   await page.waitForFunction(locale=>document.documentElement.dataset.language===locale&&document.readyState==="complete","en");
     assert.match(await page.locator(".bio-chapter").first().locator("h3").innerText(),/The urge to create/);
     await page.locator("#vionaLanguageButton").click();await page.locator('[data-lang-value="ja"]').click();
+   await page.waitForFunction(locale=>document.documentElement.dataset.language===locale&&document.readyState==="complete","ja");
     assert.match(await page.locator(".bio-chapter").first().locator("h3").innerText(),/最初の曲/);
     await page.locator("#vionaLanguageButton").click();await page.locator('[data-lang-value="ru"]').click();
+   await page.waitForFunction(locale=>document.documentElement.dataset.language===locale&&document.readyState==="complete","ru");
    }
    await noOverflow("/KANEKANKANARTIST");
    await page.screenshot({path:"screenshots/artist-"+label+".png",fullPage:true});
