@@ -1,8 +1,10 @@
 "use strict";
 (()=>{
  const mode=window.VionaLocale?.get();
- if(mode!=="pink"&&mode!=="goth")return;
+ if(!["pink","goth","alt","cute"].includes(mode))return;
  const scripts={
+ alt:{".intro h1":"Твоя идея.<br><span class='shimmer'>Не как у всех.</span>",".intro-lead":"Сайты, код, боты и музыка. Сделай что-то своё.",".intro-actions .cta-primary":"Смотреть каталог ↗",".market .section-top h2":"Выбирай.<br><em>Создавай своё.</em>",".sound-opening h1":"Твой звук.<br><em>Твои правила.</em>"},
+ cute:{".intro h1":"Твоя мечта.<br><span class='shimmer'>Наш уютный<br>мир ♡</span>",".intro-lead":"Создаём милые сайты, полезных ботиков и красивые песенки.",".intro-actions .cta-primary":"В каталог ♡",".market .section-top h2":"Маленькие идеи.<br><em>Большие чудеса ♡</em>",".sound-opening h1":"Песенка<br><em>для твоей истории ♡</em>"},
   pink:{
    ".intro h1":"Твоя идея.<br><span class='shimmer'>Наш маленький<br>волшебный мир ♡</span>",
    ".intro-lead":"Здесь рождаются красивые сайты, милые боты, крутой код и музыка с настроением. Расскажи, что хочешь создать ♡",
