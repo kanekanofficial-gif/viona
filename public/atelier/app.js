@@ -131,23 +131,26 @@
   showDialog('<span class="micro">VIONA / T-BANK DEMO</span><h2 id="dialogHeading">'+escape(t("checkout.demo","Тестовая оплата"))+'</h2><div class="modal-total"><span>'+escape(t("cart.total","Итого"))+'</span><strong>'+rub(cartTotal())+'</strong></div><form id="payForm"><label>'+escape(t("checkout.contact","Контакт"))+'<input name="contact" required minlength="3" maxlength="200" placeholder="@username или email"></label><label>'+escape(t("checkout.brief","Опиши задачу"))+'<textarea name="brief" required minlength="10" maxlength="4000" rows="4" placeholder="Что именно нужно получить?"></textarea></label><div><b style="font-size:12px">'+escape(t("checkout.method","Способ оплаты"))+'</b><div class="choices" style="margin-top:10px">'+methods+'</div></div>'+
    '<div class="panel-notice">'+escape("Резервные способы оплаты. Используется тестовый терминал Т-Банка.")+'</div>'+
    '<div id="sberPhoneWrap" hidden><label>Номер телефона для SberPay на ПК<input name="phone" inputmode="tel" placeholder="+79990000000" maxlength="16"></label></div>'+legal+
-   '<label class="check-line"><input type="checkbox" required name="agreed"> '+escape(t("checkout.agree","Я прочитал условия и политику конфиденциальности."))+'</label><button class="cta-primary" type="submit">'+escape(t("checkout.start","Запустить тестовую оплату ↗"))+'</button><div id="payStatus" class="status-box" role="status"></div><div id="bankQuickButtons" style="display:grid;gap:8px;margin-top:14px" aria-label="Быстрая оплата Т-Банка"></div><div id="bankQuickStatus" class="status-box" role="status"></div></form>');
+   '<label class="check-line"><input type="checkbox" required name="agreed"> '+escape(t("checkout.agree","Я прочитал условия и политику конфиденциальности."))+'</label><button class="cta-primary" type="submit">'+escape(t("checkout.start","Запустить тестовую оплату ↗"))+'</button><div id="payStatus" class="status-box" role="status"></div><div id="bankQuickButtons" style="display:block;width:100%;min-height:56px;margin-top:14px" aria-label="Быстрая оплата Т-Банка"></div><div id="bankQuickStatus" class="status-box" role="status"></div></form>');
    mountBankQuickButtons($("#payForm"));
  }
 
   const trustedUrl=v=>{try{const u=new URL(v),h=u.hostname.toLowerCase();return u.protocol==="https:"&&!u.username&&!u.password&&!u.port&&(new Set(["securepay.tinkoff.ru","securepayments.tinkoff.ru","rest-api-test.tinkoff.ru","pay.tbank-online.com","securepay.tbank.ru","pay.tbank.ru"]).has(h)||h.endsWith(".linksecurepayment.com"))}catch{return false}};
  const trustedSber=v=>{try{const u=new URL(v),h=u.hostname.toLowerCase();return u.protocol==="https:"&&!u.username&&!u.password&&!u.port&&["sberbank.ru","sber.ru","sberpay.ru","sberbankonline.ru"].some(d=>h===d||h.endsWith("."+d))}catch{return false}};
  // Official T-Bank SDK; terminal password never enters the browser.
- let bankSdkPromise=null,bankIntegrationPromise=null,bankQuickMount=0;
+ let bankIntegrationPromise=null,bankQuickMount=0;
  function loadBankSdk(){
   if(window.PaymentIntegration)return Promise.resolve(window.PaymentIntegration);
-  if(!bankSdkPromise)bankSdkPromise=new Promise((resolve,reject)=>{
-   const script=document.createElement("script");script.src="https://integrationjs.t-static.ru/integration.js";script.async=true;
-   const timer=setTimeout(()=>{script.remove();reject(Error("SDK timeout"))},15000);
-   script.onload=()=>{clearTimeout(timer);window.PaymentIntegration?resolve(window.PaymentIntegration):reject(Error("SDK missing"))};
-   script.onerror=()=>{clearTimeout(timer);script.remove();reject(Error("SDK load failed"))};document.head.append(script);
-  }).catch(err=>{bankSdkPromise=null;throw err});
-  return bankSdkPromise;
+  return new Promise((resolve,reject)=>{
+   const script=document.getElementById("tbankIntegrationScript");
+   if(!script)return reject(Error("SDK_SCRIPT_MISSING"));
+   const timer=setTimeout(()=>{cleanup();reject(Error("SDK_LOAD_TIMEOUT"))},15000);
+   function cleanup(){clearTimeout(timer);script.removeEventListener("load",loaded);script.removeEventListener("error",failed)}
+   function loaded(){cleanup();window.PaymentIntegration?resolve(window.PaymentIntegration):reject(Error("SDK_GLOBAL_MISSING"))}
+   function failed(){cleanup();reject(Error("SDK_NETWORK_ERROR"))}
+   script.addEventListener("load",loaded,{once:true});script.addEventListener("error",failed,{once:true});
+   if(window.PaymentIntegration)loaded();
+  });
  }
  async function startBankWidgetPayment(){
   const form=$("#payForm");if(!form||state.submitting)throw Error("Платёж уже обрабатывается или форма закрыта.");
@@ -166,24 +169,33 @@
  }
  async function mountBankQuickButtons(form){
   const root=$("#bankQuickButtons",form),status=$("#bankQuickStatus",form),mountId=++bankQuickMount;
+  let stage="config";
   status.textContent="Загружаем официальные кнопки Т-Банка…";
+  const report=(step)=>console.info("VIONA T-Bank SDK:",step);
   try{
    if(!bankIntegrationPromise)bankIntegrationPromise=(async()=>{
     const config=await request("/api/payments/test/config");
-    if(!config.enabled||config.mode!=="demo"||!String(config.terminalKey||"").endsWith("DEMO"))throw Error("Тестовый терминал недоступен.");
-    const sdk=await loadBankSdk();
-    const integration=await sdk.init({terminalKey:config.terminalKey,product:"eacq",features:{payment:{}}});
-    await integration.payments.setPaymentStartCallback(startBankWidgetPayment);
-    return integration.payments.create("viona-speedpay",{});
+    if(!config.enabled||config.mode!=="demo"||!String(config.terminalKey||"").endsWith("DEMO"))throw Error("DEMO_CONFIG_UNAVAILABLE");
+    stage="load";const sdk=await loadBankSdk();report("loaded");
+    stage="init";const integration=await sdk.init({terminalKey:config.terminalKey,product:"eacq",features:{payment:{}}});report("initialized");
+    stage="callback";await integration.payments.setPaymentStartCallback(startBankWidgetPayment);report("callback registered");
+    return integration;
    })().catch(err=>{bankIntegrationPromise=null;throw err});
-   const widget=await bankIntegrationPromise;
+   const integration=await bankIntegrationPromise;
    if(!root.isConnected||mountId!==bankQuickMount)return;
-   await widget.mount(root);
+   stage="layout";await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
    if(!root.isConnected||mountId!==bankQuickMount)return;
-   await widget.updateWidgetTypes(["tpay","sberpay","sbp"]);
+   stage="create";const widget=await integration.payments.create("viona-speedpay-"+mountId,{});report("created");
+   if(!root.isConnected||mountId!==bankQuickMount)return;
+   stage="mount";await widget.mount(root);report("mounted");
+   if(!root.isConnected||mountId!==bankQuickMount)return;
+   stage="updateWidgetTypes";await widget.updateWidgetTypes(["tpay","sberpay","sbp"]);report("widget types requested");
    if(status.isConnected)status.textContent="";
-   console.info("VIONA T-Bank quick-pay SDK mounted");
-  }catch(err){if(status.isConnected)status.textContent="Быстрые кнопки недоступны. Используй резервный способ оплаты.";console.warn("VIONA T-Bank quick-pay SDK unavailable",err?.name||"Error")}
+  }catch(err){
+   if(status.isConnected)status.textContent="Быстрые кнопки недоступны ["+stage+"]. Используй резервную оплату.";
+   const msg=String(err?.message||err?.name||"Error").replace(/https?:\/\/\S+/g,"[url]").replace(/\d{8,}/g,"[redacted]").slice(0,240);
+   console.warn("VIONA T-Bank SDK failed",{stage,message:msg});
+  }
  }
  async function submitPay(form){if(state.submitting||!form.reportValidity())return;const value=Object.fromEntries(new FormData(form)),status=$("#payStatus"),button=$('[type=submit]',form);
   const method=value.method;state.submitting=true;button.disabled=true;status.textContent="Обращаемся к тестовому терминалу…";
