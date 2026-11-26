@@ -60,6 +60,7 @@ app.post("/api/request",async(req,res)=>{
 });
 // Keep previously released account and order-detail experience available during the full site relaunch.
 app.get("/classic",(_req,res)=>res.sendFile(path.join(__dirname,"public","classic.html")));
+app.get(["/payment/success","/payment/fail"],(_req,res)=>res.sendFile(path.join(__dirname,"public","classic.html")));
 app.get("/payment/order/:id",(req,res,next)=>{
  if(!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(req.params.id))return next();
  return res.sendFile(path.join(__dirname,"public","classic.html"));
