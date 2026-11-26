@@ -64,9 +64,9 @@ async function bank(method,fields){
  try{const r=await fetch(BASE+"/"+method,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body),signal:controller.signal});if(!r.ok)throw Error("Bank HTTP "+r.status);return await r.json()}finally{clearTimeout(timeout)}
 }
 function registerTestPayments(app,pool,getCatalog){
- app.get("/api/payments/test/config",(_req,res)=>res.json({enabled:configured()&&Boolean(pool),mode:"demo"}));
+ app.get("/api/payments/test/config",(_req,res)=>res.json({enabled:configured()&&Boolean(pool),mode:"demo",terminalKey:configured()&&pool?process.env.TBANK_DEMO_TERMINAL:null}));
 
- async function createCheckout(req,res,method){
+ async function createCheckout(req,res,method,widget=false){
   res.set("Cache-Control","no-store");
   if(!configured()||!pool)return res.status(503).json({error:"Тестовый эквайринг пока не настроен."});
   if(req.get("origin")!==(process.env.PUBLIC_BASE_URL||"https://viona.space").replace(new RegExp("/$"),""))return res.status(403).json({error:"Недопустимый источник запроса."});
@@ -102,13 +102,14 @@ function registerTestPayments(app,pool,getCatalog){
     SuccessURL:base+"/payment/success?orderId="+encodeURIComponent(orderId),
     FailURL:base+"/payment/fail?orderId="+encodeURIComponent(orderId)
    };
+   if(widget)initFields.DATA={connection_type:"Widget"};
    if(method==="card"){
     initFields.CustomerKey="viona-"+user.id;
     if(saveCard){initFields.Recurrent="Y";initFields.OperationInitiatorType="1";}
    }
    if(method==="sberpay")initFields.DATA={SberPayWeb:"true",Device:sberDesktop?"Desktop":"Mobile"};
    const result=await bank("Init",initFields);
-   console.info("VIONA demo Init diagnostic:",{orderId,method,success:result?.Success===true,bankCode:String(result?.ErrorCode??"unknown").slice(0,24),hasPaymentId:Boolean(result?.PaymentId),paymentHost:paymentHostForLog(result?.PaymentURL),urlAllowed:trustedPaymentUrl(result?.PaymentURL)});
+   console.info("VIONA demo Init diagnostic:",{orderId,method,widget,success:result?.Success===true,bankCode:String(result?.ErrorCode??"unknown").slice(0,24),hasPaymentId:Boolean(result?.PaymentId),paymentHost:paymentHostForLog(result?.PaymentURL),urlAllowed:trustedPaymentUrl(result?.PaymentURL)});
    if(result.Success!==true||!result.PaymentId||((method==="card"||method==="sberpay")&&!trustedPaymentUrl(result.PaymentURL))){
     const info=safeBankFailure(result);
     console.warn("Demo payment Init bank response:",info);
@@ -156,6 +157,7 @@ function registerTestPayments(app,pool,getCatalog){
   }
  }
  app.post("/api/payments/test/init",(req,res)=>createCheckout(req,res,"card"));
+ app.post("/api/payments/test/widget",(req,res)=>createCheckout(req,res,"card",true));
  app.post("/api/payments/test/qr",(req,res)=>createCheckout(req,res,"sbp"));
  app.post("/api/payments/test/sberpay",(req,res)=>createCheckout(req,res,"sberpay"));
  app.get("/api/payments/test/cards",async(req,res)=>{
