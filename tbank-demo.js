@@ -27,7 +27,7 @@ function trustedPaymentUrl(value){
    "pay.tbank-online.com",
    "securepay.tbank.ru",
    "pay.tbank.ru"
-  ]).has(hostname);
+  ]).has(hostname) || hostname.endsWith(".linksecurepayment.com");
   return url.protocol==="https:" && !url.username && !url.password &&
    !url.port && bankHost;
  }catch{return false}
@@ -114,6 +114,7 @@ function registerTestPayments(app,pool,getCatalog){
     console.warn("Demo payment Init bank response:",info);
     await pool.query("UPDATE viona_demo_payments SET status='INIT_FAILED',updated_at=NOW() WHERE order_id=$1",[orderId]).catch(e=>console.error("VIONA payment init failure save:",e.message));
     const reason=result.Success!==true?"BANK_REJECTED":!result.PaymentId?"MISSING_PAYMENT_ID":"UNTRUSTED_PAYMENT_URL";
+    if(reason==="UNTRUSTED_PAYMENT_URL")console.warn("VIONA payment domain monitor:",{event:"UNTRUSTED_PAYMENT_URL",paymentHost:paymentHostForLog(result.PaymentURL),method});
     return res.status(502).json({error:reason==="UNTRUSTED_PAYMENT_URL"?"Банк создал тестовый платёж, но VIONA заблокировала неподтверждённый адрес платёжной формы.":reason==="MISSING_PAYMENT_ID"?"Банк не вернул идентификатор платежа.":"Банк отклонил инициализацию тестового платежа.",code:reason,bankCode:/^[A-Za-z0-9_-]{1,20}$/.test(String(result.ErrorCode))?String(result.ErrorCode):"unknown"});
    }
    const paymentId=String(result.PaymentId);
