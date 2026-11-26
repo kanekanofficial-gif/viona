@@ -65,6 +65,8 @@ async function bank(method,fields){
 }
 function registerTestPayments(app,pool,getCatalog){
  app.get("/api/payments/test/config",(_req,res)=>res.json({enabled:configured()&&Boolean(pool),mode:"demo",terminalKey:configured()&&pool?process.env.TBANK_DEMO_TERMINAL:null}));
+ // Public terminal identifier only; no live payment endpoint or live signing credentials.
+ app.get("/api/payments/widget-preview/config",(_req,res)=>{res.set("Cache-Control","no-store");const key=String(process.env.TBANK_TERMINAL||"").trim();const enabled=/^[A-Za-z0-9_-]{1,64}$/.test(key)&&!key.toUpperCase().endsWith("DEMO");return res.json({enabled,mode:"preview",terminalKey:enabled?key:null});});
 
  async function createCheckout(req,res,method,widget=false){
   res.set("Cache-Control","no-store");
