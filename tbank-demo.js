@@ -108,12 +108,13 @@ function registerTestPayments(app,pool,getCatalog){
    }
    if(method==="sberpay")initFields.DATA={SberPayWeb:"true",Device:sberDesktop?"Desktop":"Mobile"};
    const result=await bank("Init",initFields);
+   console.info("VIONA demo Init diagnostic:",{orderId,method,success:result?.Success===true,bankCode:String(result?.ErrorCode??"unknown").slice(0,24),hasPaymentId:Boolean(result?.PaymentId),paymentHost:paymentHostForLog(result?.PaymentURL),urlAllowed:trustedPaymentUrl(result?.PaymentURL)});
    if(result.Success!==true||!result.PaymentId||((method==="card"||method==="sberpay")&&!trustedPaymentUrl(result.PaymentURL))){
     const info=safeBankFailure(result);
     console.warn("Demo payment Init bank response:",info);
     await pool.query("UPDATE viona_demo_payments SET status='INIT_FAILED',updated_at=NOW() WHERE order_id=$1",[orderId]).catch(e=>console.error("VIONA payment init failure save:",e.message));
     const reason=result.Success!==true?"BANK_REJECTED":!result.PaymentId?"MISSING_PAYMENT_ID":"UNTRUSTED_PAYMENT_URL";
-    return res.status(502).json({error:"Т-Банк не подтвердил создание тестового платежа. Повтори попытку после проверки настроек терминала.",code:reason,bankCode:/^[A-Za-z0-9_-]{1,20}$/.test(String(result.ErrorCode))?String(result.ErrorCode):"unknown"});
+    return res.status(502).json({error:reason==="UNTRUSTED_PAYMENT_URL"?"Банк создал тестовый платёж, но VIONA заблокировала неподтверждённый адрес платёжной формы.":reason==="MISSING_PAYMENT_ID"?"Банк не вернул идентификатор платежа.":"Банк отклонил инициализацию тестового платежа.",code:reason,bankCode:/^[A-Za-z0-9_-]{1,20}$/.test(String(result.ErrorCode))?String(result.ErrorCode):"unknown"});
    }
    const paymentId=String(result.PaymentId);
    await pool.query("UPDATE viona_demo_payments SET payment_id=$2,status='INITIATED' WHERE order_id=$1",[orderId,paymentId]);
