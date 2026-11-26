@@ -127,15 +127,64 @@
   const cart=listCart();if(!cart.length){toast(t("toast.empty","Корзина пуста"));return}
   const method=(value,title,iconMarkup,checked=false)=>'<label class="payment-method"><input type="radio" name="method" value="'+value+'"'+(checked?' checked':'')+'><span class="payment-icons">'+iconMarkup+'</span><span class="method-text">'+title+'</span></label>';
   const img=(filename,alt,cls="")=>'<span class="payment-logo '+cls+'"><img src="'+icon(filename)+'" alt="'+alt+'" loading="lazy"></span>';
-  const methods=method("card",t("checkout.card","Банковская карта"),img("visa.svg","Visa")+img("Mir.svg","МИР"),true)+method("sbp","СБП",img("sbp.svg","СБП","logo-sbp"))+method("sberpay","SberPay",img("sberpay.svg","SberPay","logo-sber"))+method("tpay","T-Pay",img("t-pay-full.svg","T-Pay","logo-tpay"));
+  const methods=method("card",t("checkout.card","Банковская карта"),img("visa.svg","Visa")+img("Mir.svg","МИР"),true)+method("sbp","СБП",img("sbp.svg","СБП","logo-sbp"))+method("sberpay","SberPay",img("sberpay.svg","SberPay","logo-sber"));
   showDialog('<span class="micro">VIONA / T-BANK DEMO</span><h2 id="dialogHeading">'+escape(t("checkout.demo","Тестовая оплата"))+'</h2><div class="modal-total"><span>'+escape(t("cart.total","Итого"))+'</span><strong>'+rub(cartTotal())+'</strong></div><form id="payForm"><label>'+escape(t("checkout.contact","Контакт"))+'<input name="contact" required minlength="3" maxlength="200" placeholder="@username или email"></label><label>'+escape(t("checkout.brief","Опиши задачу"))+'<textarea name="brief" required minlength="10" maxlength="4000" rows="4" placeholder="Что именно нужно получить?"></textarea></label><div><b style="font-size:12px">'+escape(t("checkout.method","Способ оплаты"))+'</b><div class="choices" style="margin-top:10px">'+methods+'</div></div>'+
-   '<div class="panel-notice">'+escape(t("checkout.tpay","T-Pay доступен только если он включён на платёжной странице Т-Банка. Реальные деньги не списываются."))+'</div>'+
+   '<div class="panel-notice">'+escape("Резервные способы оплаты. Используется тестовый терминал Т-Банка.")+'</div>'+
    '<div id="sberPhoneWrap" hidden><label>Номер телефона для SberPay на ПК<input name="phone" inputmode="tel" placeholder="+79990000000" maxlength="16"></label></div>'+legal+
-   '<label class="check-line"><input type="checkbox" required name="agreed"> '+escape(t("checkout.agree","Я прочитал условия и политику конфиденциальности."))+'</label><button class="cta-primary" type="submit">'+escape(t("checkout.start","Запустить тестовую оплату ↗"))+'</button><div id="payStatus" class="status-box" role="status"></div></form>');
+   '<label class="check-line"><input type="checkbox" required name="agreed"> '+escape(t("checkout.agree","Я прочитал условия и политику конфиденциальности."))+'</label><button class="cta-primary" type="submit">'+escape(t("checkout.start","Запустить тестовую оплату ↗"))+'</button><div id="payStatus" class="status-box" role="status"></div><div id="bankQuickButtons" style="display:grid;gap:8px;margin-top:14px" aria-label="Быстрая оплата Т-Банка"></div><div id="bankQuickStatus" class="status-box" role="status"></div></form>');
+   mountBankQuickButtons($("#payForm"));
  }
 
   const trustedUrl=v=>{try{const u=new URL(v),h=u.hostname.toLowerCase();return u.protocol==="https:"&&!u.username&&!u.password&&!u.port&&(new Set(["securepay.tinkoff.ru","securepayments.tinkoff.ru","rest-api-test.tinkoff.ru","pay.tbank-online.com","securepay.tbank.ru","pay.tbank.ru"]).has(h)||h.endsWith(".linksecurepayment.com"))}catch{return false}};
  const trustedSber=v=>{try{const u=new URL(v),h=u.hostname.toLowerCase();return u.protocol==="https:"&&!u.username&&!u.password&&!u.port&&["sberbank.ru","sber.ru","sberpay.ru","sberbankonline.ru"].some(d=>h===d||h.endsWith("."+d))}catch{return false}};
+ // Official T-Bank SDK; terminal password never enters the browser.
+ let bankSdkPromise=null,bankIntegrationPromise=null,bankQuickMount=0;
+ function loadBankSdk(){
+  if(window.PaymentIntegration)return Promise.resolve(window.PaymentIntegration);
+  if(!bankSdkPromise)bankSdkPromise=new Promise((resolve,reject)=>{
+   const script=document.createElement("script");script.src="https://integrationjs.t-static.ru/integration.js";script.async=true;
+   const timer=setTimeout(()=>{script.remove();reject(Error("SDK timeout"))},15000);
+   script.onload=()=>{clearTimeout(timer);window.PaymentIntegration?resolve(window.PaymentIntegration):reject(Error("SDK missing"))};
+   script.onerror=()=>{clearTimeout(timer);script.remove();reject(Error("SDK load failed"))};document.head.append(script);
+  }).catch(err=>{bankSdkPromise=null;throw err});
+  return bankSdkPromise;
+ }
+ async function startBankWidgetPayment(){
+  const form=$("#payForm");if(!form||state.submitting)throw Error("Платёж уже обрабатывается или форма закрыта.");
+  if(!form.reportValidity())throw Error("Заполни контакт, описание задачи и прими условия.");
+  const value=Object.fromEntries(new FormData(form)),status=$("#bankQuickStatus"),button=$('[type=submit]',form);
+  const payload={items:listCart().map(p=>Number(p.id)),contact:String(value.contact).trim(),brief:String(value.brief).trim()};
+  state.submitting=true;button.disabled=true;if(status)status.textContent="Создаём тестовый платёж…";
+  try{
+   const data=await post("/api/payments/test/widget",payload);
+   if(!trustedUrl(data.paymentUrl))throw Error("Банк вернул неподтверждённый адрес.");
+   if(data.orderId){state.order=data.orderId;try{sessionStorage.setItem("viona-checkout-pending",JSON.stringify({orderId:data.orderId,items:payload.items}))}catch{}}
+   if(status?.isConnected)status.textContent="Платёж создан. Продолжи в окне Т-Банка.";
+   return data.paymentUrl;
+  }catch(err){if(status?.isConnected)status.textContent=err.message;throw err}
+  finally{state.submitting=false;if(button.isConnected)button.disabled=false}
+ }
+ async function mountBankQuickButtons(form){
+  const root=$("#bankQuickButtons",form),status=$("#bankQuickStatus",form),mountId=++bankQuickMount;
+  status.textContent="Загружаем официальные кнопки Т-Банка…";
+  try{
+   if(!bankIntegrationPromise)bankIntegrationPromise=(async()=>{
+    const config=await request("/api/payments/test/config");
+    if(!config.enabled||config.mode!=="demo"||!String(config.terminalKey||"").endsWith("DEMO"))throw Error("Тестовый терминал недоступен.");
+    const sdk=await loadBankSdk();
+    const integration=await sdk.init({terminalKey:config.terminalKey,product:"eacq",features:{payment:{}}});
+    await integration.payments.setPaymentStartCallback(startBankWidgetPayment);
+    return integration.payments.create("viona-speedpay",{});
+   })().catch(err=>{bankIntegrationPromise=null;throw err});
+   const widget=await bankIntegrationPromise;
+   if(!root.isConnected||mountId!==bankQuickMount)return;
+   await widget.mount(root);
+   if(!root.isConnected||mountId!==bankQuickMount)return;
+   await widget.updateWidgetTypes(["tpay","sberpay","sbp"]);
+   if(status.isConnected)status.textContent="";
+   console.info("VIONA T-Bank quick-pay SDK mounted");
+  }catch(err){if(status.isConnected)status.textContent="Быстрые кнопки недоступны. Используй резервный способ оплаты.";console.warn("VIONA T-Bank quick-pay SDK unavailable",err?.name||"Error")}
+ }
  async function submitPay(form){if(state.submitting||!form.reportValidity())return;const value=Object.fromEntries(new FormData(form)),status=$("#payStatus"),button=$('[type=submit]',form);
   const method=value.method;state.submitting=true;button.disabled=true;status.textContent="Обращаемся к тестовому терминалу…";
   try{
@@ -143,7 +192,6 @@
    let route="/api/payments/test/init";
    if(method==="sbp")route="/api/payments/test/qr";
    if(method==="sberpay"){route="/api/payments/test/sberpay";payload.device=innerWidth>760?"desktop":"mobile";payload.phone=(value.phone||"").trim();if(payload.device==="desktop"&&!/^\+[1-9][0-9]{6,14}$/.test(payload.phone))throw Error("Нужен номер +79990000000 для SberPay на компьютере.")}
-   // T-Pay is exposed by the bank-hosted card payment form, when enabled for a terminal.
    const data=await post(route,payload);
    if(data.orderId){state.order=data.orderId;try{sessionStorage.setItem("viona-checkout-pending",JSON.stringify({orderId:data.orderId,items:payload.items}))}catch{}}
    if(method==="sbp"){if(!/^data:image\/png;base64,/.test(data.qrImage||""))throw Error("Банк не вернул QR-код.");showDialog('<span class="micro">Т-БАНК / СБП</span><h2 id="dialogHeading">QR для тестовой оплаты</h2><img src="'+data.qrImage+'" alt="QR-код СБП" style="display:block;width:min(320px,100%);margin:20px auto"><p>Отсканируй код поддерживаемым банковским приложением. Заказ появится после подтверждения оплаты банком.</p><button type="button" class="cta-primary" id="refreshPayment">Проверить статус ↗</button><div class="status-box" id="payStatus" role="status"></div>');return}
